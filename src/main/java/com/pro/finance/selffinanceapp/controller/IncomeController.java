@@ -25,18 +25,16 @@ public class IncomeController {
 
     // Create income
     @PostMapping
-    public ResponseEntity<IncomeDTO> createIncome(@RequestBody IncomeDTO dto, Authentication authentication) {
-        String username = authentication.getName(); // depends on your JWT principal
-        User user = userService.findByEmail(username); // adapt if your principal is email/username
-        Income income = Income.builder()
-                .source(dto.getSource())
-                .amount(dto.getAmount())
-                .date(dto.getDate())
-                .user(user)
-                .build();
+    public ResponseEntity<IncomeDTO> createIncome(
+            @RequestBody IncomeDTO dto,
+            Authentication authentication
+    ) {
+        String username = authentication.getName();
+        User user = userService.findByEmail(username);
 
-        Income saved = incomeService.save(income);
-        dto.setId(saved.getId());
+        Income saved = incomeService.createIncome(dto, user);
+
+        dto.setId(saved.getId()); // optional
         return ResponseEntity.ok(dto);
     }
 

@@ -1,6 +1,8 @@
 package com.pro.finance.selffinanceapp.service;
 
+import com.pro.finance.selffinanceapp.dto.IncomeDTO;
 import com.pro.finance.selffinanceapp.model.Income;
+import com.pro.finance.selffinanceapp.model.IncomeCategory;
 import com.pro.finance.selffinanceapp.repository.IncomeRepository;
 import com.pro.finance.selffinanceapp.model.User;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +18,24 @@ public class IncomeServiceImpl implements IncomeService {
     private final IncomeRepository incomeRepository;
 
     @Override
-    public Income save(Income income) {
+    public Income createIncome(IncomeDTO dto, User user) {
+
+        IncomeCategory category;
+        try {
+            category = IncomeCategory.valueOf(dto.getCategory().toUpperCase());
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid income category");
+        }
+
+        Income income = Income.builder()
+                .amount(dto.getAmount())
+                .date(dto.getDate())
+                .source(dto.getSource())
+                .description(dto.getDescription())
+                .category(category)
+                .user(user)
+                .build();
+
         return incomeRepository.save(income);
     }
 
@@ -35,3 +54,4 @@ public class IncomeServiceImpl implements IncomeService {
         incomeRepository.deleteById(id);
     }
 }
+
