@@ -10,3 +10,24 @@ public class SelfFinanceAppApplication {
         SpringApplication.run(SelfFinanceAppApplication.class, args);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
