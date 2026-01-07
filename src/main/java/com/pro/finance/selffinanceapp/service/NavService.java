@@ -20,3 +20,4 @@ public class NavService {
         return Double.parseDouble(data.get(0).get("nav"));
     }
 }
+

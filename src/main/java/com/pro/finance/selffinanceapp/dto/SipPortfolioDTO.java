@@ -14,4 +14,5 @@ public class SipPortfolioDTO {
     public double currentValue;
     public double returns;
     public double xirr;
+    private boolean navAvailable;
 }

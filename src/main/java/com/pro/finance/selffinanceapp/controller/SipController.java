@@ -31,5 +31,12 @@ public class SipController {
     public List<Map<String, Object>> sipChart(@PathVariable Long sipId) {
         return sipService.getSipChart(sipId);
     }
+
+    @PostMapping("/{sipId}/execute")
+    public ResponseEntity<?> runSipNow(@PathVariable Long sipId) {
+        sipService.executeSipNow(sipId);
+        return ResponseEntity.ok("SIP executed successfully");
+    }
+
 }
 

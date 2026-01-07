@@ -1,10 +1,8 @@
 package com.pro.finance.selffinanceapp.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -24,13 +22,14 @@ public class SipInvestment {
 
     private String fundName;
 
-    private String fundCode; // used for NAV API
+    private String fundCode;
 
     private double monthlyAmount;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
 
-    private int sipDay; // 1–28 recommended
+    private int sipDay;
 
     private boolean active = true;
 }
