@@ -21,21 +21,22 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User register(RegisterDTO dto) {
+
         if (repo.existsByEmail(dto.getEmail())) {
             throw new IllegalArgumentException("Email already in use");
         }
+
         User user = new User();
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        // role: default to ROLE_USER unless admin specified
-        if (dto.getRole() != null && dto.getRole().equalsIgnoreCase("admin")) {
-            user.setRole(Role.ROLE_ADMIN);
-        } else {
-            user.setRole(Role.ROLE_USER);
-        }
+
+        // 🔒 SECURITY FIX: ALWAYS assign USER role
+        user.setRole(Role.ROLE_USER);
+
         return repo.save(user);
     }
+
 
     @Override
     public User findByEmail(String email) {

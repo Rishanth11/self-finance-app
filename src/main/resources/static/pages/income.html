@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Income | Personal Finance App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            font-family: system-ui, Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2 {
+            color: #111827;
+        }
+
+        .card {
+            background: #fff;
+            padding: 16px;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+            max-width: 600px;
+            margin-bottom: 20px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            margin-bottom: 12px;
+            border-radius: 4px;
+            border: 1px solid #d1d5db;
+        }
+
+        button {
+            padding: 8px 14px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 6px;
+        }
+
+        button:hover {
+            background: #1e40af;
+        }
+
+        .delete-btn {
+            background: #dc2626;
+        }
+
+        .delete-btn:hover {
+            background: #b91c1c;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+
+        th {
+            background: #f9fafb;
+        }
+    </style>
+</head>
+
+<body onload="requireAuth(); loadIncomes();">
+
+<h2>Income</h2>
+
+<!-- Add / Edit Income -->
+<div class="card">
+    <h3 id="formTitle">Add Income</h3>
+
+    <input id="source" placeholder="Source (Salary, Freelance...)">
+    <input id="amount" type="number" placeholder="Amount">
+    <input id="date" type="date">
+
+    <select id="category">
+        <option>SALARY</option>
+        <option>FREELANCE</option>
+        <option>BUSINESS</option>
+        <option>INTEREST</option>
+        <option>RENT</option>
+        <option>OTHER</option>
+    </select>
+
+    <input id="description" placeholder="Description (optional)">
+
+    <button onclick="saveIncome()" id="saveBtn">Add Income</button>
+    <button onclick="resetForm()" style="display:none;" id="cancelBtn">
+        Cancel
+    </button>
+</div>
+
+<!-- Income List -->
+<div class="card">
+    <h3>Your Incomes</h3>
+    <table>
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Source</th>
+            <th>Amount</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody id="incomeTable"></tbody>
+    </table>
+</div>
+
+<script src="../js/guard.js"></script>
+<script src="../js/api.js"></script>
+
+<script>
+    let editingIncomeId = null;
+
+    function saveIncome() {
+        const payload = {
+            source: document.getElementById("source").value,
+            amount: document.getElementById("amount").value,
+            date: document.getElementById("date").value,
+            category: document.getElementById("category").value,
+            description: document.getElementById("description").value
+        };
+
+        // EDIT MODE
+        if (editingIncomeId !== null) {
+            apiRequest("/incomes/" + editingIncomeId, {
+                method: "PUT",
+                body: JSON.stringify(payload)
+            }).then(res => {
+                if (res.ok) {
+                    resetForm();
+                    loadIncomes();
+                } else {
+                    alert("Update failed");
+                }
+            });
+            return;
+        }
+
+        // CREATE MODE
+        apiRequest("/incomes", {
+            method: "POST",
+            body: JSON.stringify(payload)
+        }).then(res => {
+            if (res.ok) {
+                resetForm();
+                loadIncomes();
+            } else {
+                alert("Failed to add income");
+            }
+        });
+    }
+
+    function editIncome(i) {
+        editingIncomeId = i.id;
+
+        document.getElementById("source").value = i.source;
+        document.getElementById("amount").value = i.amount;
+        document.getElementById("date").value = i.date;
+        document.getElementById("category").value = i.category;
+        document.getElementById("description").value = i.description || "";
+
+        document.getElementById("formTitle").innerText = "Edit Income";
+        document.getElementById("saveBtn").innerText = "Update Income";
+        document.getElementById("cancelBtn").style.display = "inline-block";
+    }
+
+    function resetForm() {
+        editingIncomeId = null;
+
+        document.getElementById("source").value = "";
+        document.getElementById("amount").value = "";
+        document.getElementById("date").value = "";
+        document.getElementById("category").value = "SALARY";
+        document.getElementById("description").value = "";
+
+        document.getElementById("formTitle").innerText = "Add Income";
+        document.getElementById("saveBtn").innerText = "Add Income";
+        document.getElementById("cancelBtn").style.display = "none";
+    }
+
+    function loadIncomes() {
+        apiRequest("/incomes")
+            .then(res => res.json())
+            .then(data => {
+                const table = document.getElementById("incomeTable");
+                table.innerHTML = "";
+
+                data.forEach(i => {
+                    table.innerHTML += `
+                        <tr>
+                            <td>${i.date}</td>
+                            <td>${i.source}</td>
+                            <td>${i.amount}</td>
+                            <td>
+                                <button onclick='editIncome(${JSON.stringify(i)})'>
+                                    Edit
+                                </button>
+                                <button class="delete-btn" onclick="deleteIncome(${i.id})">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            });
+    }
+
+    function deleteIncome(id) {
+        apiRequest("/incomes/" + id, {
+            method: "DELETE"
+        }).then(res => {
+            if (res.status === 204) {
+                loadIncomes();
+            } else {
+                alert("Not allowed");
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

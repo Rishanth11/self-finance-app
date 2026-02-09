@@ -2,10 +2,11 @@ package com.pro.finance.selffinanceapp.controller;
 
 import com.pro.finance.selffinanceapp.dto.IncomeDTO;
 import com.pro.finance.selffinanceapp.model.Income;
-import com.pro.finance.selffinanceapp.service.IncomeService;
 import com.pro.finance.selffinanceapp.model.User;
+import com.pro.finance.selffinanceapp.service.IncomeService;
 import com.pro.finance.selffinanceapp.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -21,49 +22,94 @@ import java.util.stream.Collectors;
 public class IncomeController {
 
     private final IncomeService incomeService;
-    private final UserService userService; // implement method to find user by email/username
+    private final UserService userService;
 
-    // Create income
+    // CREATE
     @PostMapping
-    public ResponseEntity<IncomeDTO> createIncome(
+    public ResponseEntity<?> createIncome(
             @RequestBody IncomeDTO dto,
+            Authentication authentication
+    ) {
+        try {
+            String username = authentication.getName();
+            User user = userService.findByEmail(username);
+
+            Income saved = incomeService.createIncome(dto, user);
+            dto.setId(saved.getId());
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(dto);
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to add income");
+        }
+    }
+
+    // READ
+    @GetMapping
+    public ResponseEntity<List<IncomeDTO>> getIncomes(Authentication authentication) {
+        String username = authentication.getName();
+        User user = userService.findByEmail(username);
+
+        List<IncomeDTO> out = incomeService.findByUser(user)
+                .stream()
+                .map(i -> {
+                    IncomeDTO d = new IncomeDTO();
+                    d.setId(i.getId());
+                    d.setSource(i.getSource());
+                    d.setAmount(i.getAmount());
+                    d.setDate(i.getDate());
+                    d.setCategory(i.getCategory().name());
+                    d.setDescription(i.getDescription());
+                    return d;
+                })
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(out);
+    }
+
+    // UPDATE
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateIncome(
+            @PathVariable Long id,
+            @RequestBody IncomeDTO dto,
+            Authentication authentication
+    ) {
+        try {
+            String username = authentication.getName();
+            User user = userService.findByEmail(username);
+
+            Income updated = incomeService.updateIncome(id, dto, user);
+            dto.setId(updated.getId());
+
+            return ResponseEntity.ok(dto);
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        }
+    }
+
+    // DELETE
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteIncome(
+            @PathVariable Long id,
             Authentication authentication
     ) {
         String username = authentication.getName();
         User user = userService.findByEmail(username);
 
-        Income saved = incomeService.createIncome(dto, user);
-
-        dto.setId(saved.getId()); // optional
-        return ResponseEntity.ok(dto);
-    }
-
-    // Get all incomes for current user
-    @GetMapping
-    public ResponseEntity<List<IncomeDTO>> getIncomes(Authentication authentication) {
-        String username = authentication.getName();
-        User user = userService.findByEmail(username);
-        List<Income> incomes = incomeService.findByUser(user);
-        List<IncomeDTO> out = incomes.stream().map(i -> {
-            IncomeDTO d = new IncomeDTO();
-            d.setId(i.getId());
-            d.setSource(i.getSource());
-            d.setAmount(i.getAmount());
-            d.setDate(i.getDate());
-            return d;
-        }).collect(Collectors.toList());
-        return ResponseEntity.ok(out);
-    }
-
-    // Delete
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteIncome(@PathVariable Long id, Authentication authentication) {
-        String username = authentication.getName();
-        User user = userService.findByEmail(username);
         return incomeService.findById(id)
                 .map(inc -> {
                     if (!inc.getUser().getId().equals(user.getId())) {
-                        return ResponseEntity.status(403).build();
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
                     }
                     incomeService.deleteById(id);
                     return ResponseEntity.noContent().build();

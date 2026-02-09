@@ -11,11 +11,10 @@ public class RegisterDTO {
     @Email @NotBlank
     private String email;
 
-    @Size(min = 6)
+    @Size(min = 6) @NotBlank
     private String password;
 
-    // optional: role selection; if not provided default to USER
-    private String role;
+
 
     // getters, setters
 
@@ -43,11 +42,4 @@ public class RegisterDTO {
         this.password = password;
     }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
 }

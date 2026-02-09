@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+</head>
+
+<body onload="requireAdmin()">
+
+<h2>Admin Dashboard</h2>
+<p>Only admins should access backend APIs from here.</p>
+
+<button onclick="callAdminApi()">Test Admin API</button>
+<p id="msg"></p>
+
+<!-- Load scripts FIRST -->
+<script src="../js/guard.js"></script>
+<script src="../js/api.js"></script>
+
+<script>
+    function callAdminApi() {
+        const msg = document.getElementById("msg");
+
+        apiRequest("/admin/test")
+            .then(res => {
+                if (res.status === 403) {
+                    msg.innerText = "Access denied (ADMIN only)";
+                } else if (res.ok) {
+                    msg.innerText = "Admin API success ✅";
+                } else {
+                    msg.innerText = "Unexpected error";
+                }
+            })
+            .catch(() => {
+                msg.innerText = "Server error";
+            });
+    }
+</script>
+
+</body>
+</html>

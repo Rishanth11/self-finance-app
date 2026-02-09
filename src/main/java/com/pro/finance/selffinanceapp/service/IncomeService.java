@@ -15,5 +15,7 @@ public interface IncomeService {
 
     Optional<Income> findById(Long id);
 
+    Income updateIncome(Long id, IncomeDTO dto, User user);
+
     void deleteById(Long id);
 }

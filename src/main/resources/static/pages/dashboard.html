@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            font-family: system-ui, Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2 {
+            color: #111827;
+        }
+
+        .card {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+            max-width: 500px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 16px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        .btn:hover {
+            background: #1e40af;
+        }
+
+        .logout-btn {
+            background: #dc2626;
+        }
+
+        .logout-btn:hover {
+            background: #b91c1c;
+        }
+    </style>
+</head>
+
+<body onload="requireAuth()">
+
+<h2>Dashboard</h2>
+
+<div class="card">
+    <p>Welcome to your personal finance dashboard.</p>
+
+    <!-- ✅ Income Button -->
+    <button class="btn" onclick="goToIncome()">Income</button>
+
+    <!-- Optional: future buttons -->
+    <!-- <button class="btn">Expenses</button> -->
+    <!-- <button class="btn">Investments</button> -->
+
+    <br><br>
+
+    <button class="btn logout-btn" onclick="logout()">Logout</button>
+</div>
+
+<script src="../js/guard.js"></script>
+<script src="../js/auth.js"></script>
+
+<script>
+    function goToIncome() {
+        window.location.href = "/pages/income.html";
+    }
+</script>
+
+</body>
+</html>
