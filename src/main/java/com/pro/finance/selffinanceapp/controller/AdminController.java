@@ -11,9 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminController {
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/api/admin/test")
+    @GetMapping("/test")
     public String adminTest() {
         return "ADMIN OK";
     }
-
 }

@@ -1,42 +1,20 @@
 package com.pro.finance.selffinanceapp.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.math.BigDecimal;
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class FinancialHealthDTO {
 
-    private double income;
-    private double expense;
-    private double savings;
-    private double score;
+    private BigDecimal totalIncome;
+    private BigDecimal totalExpense;
+    private BigDecimal savings;
+    private int score;
     private String status;
-
-    public FinancialHealthDTO(double income,
-                              double expense,
-                              double savings,
-                              double score,
-                              String status) {
-        this.income = income;
-        this.expense = expense;
-        this.savings = savings;
-        this.score = score;
-        this.status = status;
-    }
-
-    public double getIncome() {
-        return income;
-    }
-
-    public double getExpense() {
-        return expense;
-    }
-
-    public double getSavings() {
-        return savings;
-    }
-
-    public double getScore() {
-        return score;
-    }
-
-    public String getStatus() {
-        return status;
-    }
 }

@@ -4,6 +4,7 @@ import com.pro.finance.selffinanceapp.model.Expense;
 import com.pro.finance.selffinanceapp.repository.ExpenseRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -15,32 +16,32 @@ public class ExpenseService {
         this.repo = repo;
     }
 
-    // ✅ SAVE EXPENSE
     public Expense saveExpense(Expense expense) {
         return repo.save(expense);
     }
 
-    // ✅ GET EXPENSES BY USER ID
     public List<Expense> getExpensesByUser(Long userId) {
         return repo.findByUserIdOrderByExpenseDateDesc(userId);
     }
 
-
-    // ✅ DELETE EXPENSE
-    public void deleteExpense(Long id) {
-        repo.deleteById(id);
+    public BigDecimal getTotalExpense(Long userId) {
+        return repo.getTotalExpense(userId);
     }
 
-    // ✅ UPDATE EXPENSE
     public Expense updateExpense(Long id, Expense updatedExpense) {
-        Expense existingExpense = repo.findById(id)
+
+        Expense existing = repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Expense not found"));
 
-        existingExpense.setCategory(updatedExpense.getCategory());
-        existingExpense.setAmount(updatedExpense.getAmount());
-        existingExpense.setExpenseDate(updatedExpense.getExpenseDate());
-        existingExpense.setDescription(updatedExpense.getDescription());
+        existing.setCategory(updatedExpense.getCategory());
+        existing.setAmount(updatedExpense.getAmount());
+        existing.setExpenseDate(updatedExpense.getExpenseDate());
+        existing.setDescription(updatedExpense.getDescription());
 
-        return repo.save(existingExpense);
+        return repo.save(existing);
+    }
+
+    public void deleteExpense(Long id) {
+        repo.deleteById(id);
     }
 }

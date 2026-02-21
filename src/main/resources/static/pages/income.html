@@ -5,6 +5,8 @@
     <title>Income | Personal Finance App</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
         body {
             font-family: system-ui, Arial, sans-serif;
@@ -13,17 +15,25 @@
             padding: 20px;
         }
 
-        h2 {
-            color: #111827;
+        .container {
+            max-width: 1000px;
+            margin: auto;
         }
+
+        h2 { margin-bottom: 15px; }
 
         .card {
             background: #fff;
-            padding: 16px;
-            border-radius: 6px;
+            padding: 20px;
+            border-radius: 10px;
             border: 1px solid #e5e7eb;
-            max-width: 600px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        }
+
+        .summary {
+            font-size: 20px;
+            font-weight: 600;
         }
 
         input, select {
@@ -31,36 +41,25 @@
             padding: 10px;
             margin-top: 8px;
             margin-bottom: 12px;
-            border-radius: 4px;
+            border-radius: 6px;
             border: 1px solid #d1d5db;
         }
 
         button {
             padding: 8px 14px;
-            background: #2563eb;
-            color: white;
+            border-radius: 6px;
             border: none;
-            border-radius: 4px;
             cursor: pointer;
             margin-right: 6px;
         }
 
-        button:hover {
-            background: #1e40af;
-        }
-
-        .delete-btn {
-            background: #dc2626;
-        }
-
-        .delete-btn:hover {
-            background: #b91c1c;
-        }
+        .primary { background: #2563eb; color: white; }
+        .danger { background: #dc2626; color: white; }
+        .secondary { background: #9ca3af; color: white; }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
         }
 
         th, td {
@@ -69,111 +68,253 @@
             text-align: left;
         }
 
-        th {
-            background: #f9fafb;
+        th { background: #f9fafb; }
+
+        .error {
+            color: #dc2626;
+            font-size: 14px;
+            margin-bottom: 10px;
         }
+
+        .empty {
+            text-align: center;
+            padding: 20px;
+            color: #6b7280;
+        }
+
+        .chart-row {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .chart-container {
+            flex: 1;
+            min-width: 320px;
+            height: 320px;
+        }
+
+        .chart-container canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
     </style>
 </head>
 
 <body onload="requireAuth(); loadIncomes();">
 
-<h2>Income</h2>
+<div class="container">
 
-<!-- Add / Edit Income -->
-<div class="card">
-    <h3 id="formTitle">Add Income</h3>
+    <h2>Income</h2>
 
-    <input id="source" placeholder="Source (Salary, Freelance...)">
-    <input id="amount" type="number" placeholder="Amount">
-    <input id="date" type="date">
+    <!-- TOTAL INCOME -->
+    <div class="card summary">
+        Total Income: <span id="totalIncome">₹0</span>
+    </div>
 
-    <select id="category">
-        <option>SALARY</option>
-        <option>FREELANCE</option>
-        <option>BUSINESS</option>
-        <option>INTEREST</option>
-        <option>RENT</option>
-        <option>OTHER</option>
-    </select>
+    <!-- FORM -->
+    <div class="card">
+        <h3 id="formTitle">Add Income</h3>
+        <div class="error" id="errorMsg"></div>
 
-    <input id="description" placeholder="Description (optional)">
+        <input id="source" placeholder="Source (Salary, Freelance...)">
+        <input id="amount" type="number" step="0.01" placeholder="Amount">
+        <input id="date" type="date">
 
-    <button onclick="saveIncome()" id="saveBtn">Add Income</button>
-    <button onclick="resetForm()" style="display:none;" id="cancelBtn">
-        Cancel
-    </button>
-</div>
+        <select id="category">
+            <option>SALARY</option>
+            <option>FREELANCE</option>
+            <option>BUSINESS</option>
+            <option>INTEREST</option>
+            <option>RENT</option>
+            <option>OTHER</option>
+        </select>
 
-<!-- Income List -->
-<div class="card">
-    <h3>Your Incomes</h3>
-    <table>
-        <thead>
-        <tr>
-            <th>Date</th>
-            <th>Source</th>
-            <th>Amount</th>
-            <th>Action</th>
-        </tr>
-        </thead>
-        <tbody id="incomeTable"></tbody>
-    </table>
+        <input id="description" placeholder="Description (optional)">
+
+        <button class="primary" onclick="saveIncome()" id="saveBtn">Add Income</button>
+        <button class="secondary" onclick="resetForm()" id="cancelBtn" style="display:none;">Cancel</button>
+    </div>
+
+    <!-- TABLE -->
+    <div class="card">
+        <h3>Your Incomes</h3>
+        <div id="emptyState" class="empty" style="display:none;">
+            No income records found.
+        </div>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Date</th>
+                <th>Source</th>
+                <th>Amount</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody id="incomeTable"></tbody>
+        </table>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="card">
+        <h3>Income Overview</h3>
+        <div class="chart-row">
+            <div class="chart-container">
+                <canvas id="monthlyChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script src="../js/guard.js"></script>
 <script src="../js/api.js"></script>
 
 <script>
+
     let editingIncomeId = null;
+    let monthlyChart;
+    let categoryChart;
+
+    function formatCurrency(amount) {
+        return new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR'
+        }).format(amount);
+    }
+
+    function validateForm(payload) {
+        if (!payload.source.trim()) return "Source is required";
+        if (!payload.amount || payload.amount <= 0) return "Amount must be greater than 0";
+        if (!payload.date) return "Date is required";
+        return null;
+    }
 
     function saveIncome() {
+
         const payload = {
             source: document.getElementById("source").value,
-            amount: document.getElementById("amount").value,
+            amount: parseFloat(document.getElementById("amount").value),
             date: document.getElementById("date").value,
             category: document.getElementById("category").value,
             description: document.getElementById("description").value
         };
 
-        // EDIT MODE
-        if (editingIncomeId !== null) {
-            apiRequest("/incomes/" + editingIncomeId, {
-                method: "PUT",
-                body: JSON.stringify(payload)
-            }).then(res => {
-                if (res.ok) {
-                    resetForm();
-                    loadIncomes();
-                } else {
-                    alert("Update failed");
-                }
-            });
+        const error = validateForm(payload);
+        if (error) {
+            document.getElementById("errorMsg").innerText = error;
             return;
         }
 
-        // CREATE MODE
-        apiRequest("/incomes", {
-            method: "POST",
+        document.getElementById("errorMsg").innerText = "";
+
+        const method = editingIncomeId ? "PUT" : "POST";
+        const url = editingIncomeId ? "/incomes/" + editingIncomeId : "/incomes";
+
+        apiRequest(url, {
+            method: method,
             body: JSON.stringify(payload)
         }).then(res => {
             if (res.ok) {
                 resetForm();
                 loadIncomes();
             } else {
-                alert("Failed to add income");
+                document.getElementById("errorMsg").innerText = "Operation failed";
             }
+        });
+    }
+
+    function loadIncomes() {
+        apiRequest("/incomes")
+            .then(res => res.json())
+            .then(data => {
+
+                const table = document.getElementById("incomeTable");
+                table.innerHTML = "";
+
+                let total = 0;
+
+                if (data.length === 0) {
+                    document.getElementById("emptyState").style.display = "block";
+                    document.getElementById("totalIncome").innerText = "₹0";
+                    renderCharts([]);
+                    return;
+                }
+
+                document.getElementById("emptyState").style.display = "none";
+
+                data.forEach(i => {
+                    total += parseFloat(i.amount);
+
+                    table.innerHTML += `
+                        <tr>
+                            <td>${i.date}</td>
+                            <td>${i.source}</td>
+                            <td>${formatCurrency(i.amount)}</td>
+                            <td>
+                                <button onclick='editIncome(${JSON.stringify(i)})'>Edit</button>
+                                <button class="danger" onclick="deleteIncome(${i.id})">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                document.getElementById("totalIncome").innerText = formatCurrency(total);
+
+                renderCharts(data);
+            });
+    }
+
+    function renderCharts(data) {
+
+        const monthlyMap = {};
+        const categoryMap = {};
+
+        data.forEach(i => {
+            const month = i.date.substring(0,7);
+            monthlyMap[month] = (monthlyMap[month] || 0) + parseFloat(i.amount);
+            categoryMap[i.category] = (categoryMap[i.category] || 0) + parseFloat(i.amount);
+        });
+
+        if (monthlyChart) monthlyChart.destroy();
+        if (categoryChart) categoryChart.destroy();
+
+        monthlyChart = new Chart(document.getElementById("monthlyChart"), {
+            type: 'bar',
+            data: {
+                labels: Object.keys(monthlyMap),
+                datasets: [{
+                    label: 'Monthly Income',
+                    data: Object.values(monthlyMap)
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+
+        categoryChart = new Chart(document.getElementById("categoryChart"), {
+            type: 'pie',
+            data: {
+                labels: Object.keys(categoryMap),
+                datasets: [{
+                    data: Object.values(categoryMap)
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
         });
     }
 
     function editIncome(i) {
         editingIncomeId = i.id;
-
         document.getElementById("source").value = i.source;
         document.getElementById("amount").value = i.amount;
         document.getElementById("date").value = i.date;
         document.getElementById("category").value = i.category;
         document.getElementById("description").value = i.description || "";
-
         document.getElementById("formTitle").innerText = "Edit Income";
         document.getElementById("saveBtn").innerText = "Update Income";
         document.getElementById("cancelBtn").style.display = "inline-block";
@@ -181,56 +322,25 @@
 
     function resetForm() {
         editingIncomeId = null;
-
         document.getElementById("source").value = "";
         document.getElementById("amount").value = "";
         document.getElementById("date").value = "";
         document.getElementById("category").value = "SALARY";
         document.getElementById("description").value = "";
-
         document.getElementById("formTitle").innerText = "Add Income";
         document.getElementById("saveBtn").innerText = "Add Income";
         document.getElementById("cancelBtn").style.display = "none";
     }
 
-    function loadIncomes() {
-        apiRequest("/incomes")
-            .then(res => res.json())
-            .then(data => {
-                const table = document.getElementById("incomeTable");
-                table.innerHTML = "";
+    function deleteIncome(id) {
+        if (!confirm("Delete this income?")) return;
 
-                data.forEach(i => {
-                    table.innerHTML += `
-                        <tr>
-                            <td>${i.date}</td>
-                            <td>${i.source}</td>
-                            <td>${i.amount}</td>
-                            <td>
-                                <button onclick='editIncome(${JSON.stringify(i)})'>
-                                    Edit
-                                </button>
-                                <button class="delete-btn" onclick="deleteIncome(${i.id})">
-                                    Delete
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                });
+        apiRequest("/incomes/" + id, { method: "DELETE" })
+            .then(res => {
+                if (res.status === 204) loadIncomes();
             });
     }
 
-    function deleteIncome(id) {
-        apiRequest("/incomes/" + id, {
-            method: "DELETE"
-        }).then(res => {
-            if (res.status === 204) {
-                loadIncomes();
-            } else {
-                alert("Not allowed");
-            }
-        });
-    }
 </script>
 
 </body>

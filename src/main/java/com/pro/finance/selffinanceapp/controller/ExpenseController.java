@@ -3,62 +3,68 @@ package com.pro.finance.selffinanceapp.controller;
 import com.pro.finance.selffinanceapp.dto.ExpenseDTO;
 import com.pro.finance.selffinanceapp.model.Expense;
 import com.pro.finance.selffinanceapp.service.ExpenseService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/expenses")
+@CrossOrigin(origins = "*")
 public class ExpenseController {
 
-    @Autowired
-    private ExpenseService service;
+    private final ExpenseService service;
 
-    // Create Expense
+    public ExpenseController(ExpenseService service) {
+        this.service = service;
+    }
+
+    // TEMP USER (until JWT extraction implemented properly)
+    private final Long USER_ID = 1L;
+
+    // CREATE
     @PostMapping
-    public ExpenseDTO addExpense(@RequestBody ExpenseDTO expenseDTO) {
-        Expense expense = mapToEntity(expenseDTO);
-        Expense savedExpense = service.saveExpense(expense);
-        return mapToDTO(savedExpense);
+    public ExpenseDTO addExpense(@RequestBody ExpenseDTO dto) {
+        Expense expense = mapToEntity(dto);
+        expense.setUserId(USER_ID);
+        Expense saved = service.saveExpense(expense);
+        return mapToDTO(saved);
     }
 
-    // Get all expenses for a user
-    @GetMapping("/{userId}")
-    public List<ExpenseDTO> getExpenses(@PathVariable Long userId) {
-        List<Expense> expenses = service.getExpensesByUser(userId);
-        return expenses.stream().map(this::mapToDTO).collect(Collectors.toList());
-    }
-
-    // Update expense by ID
-    @PutMapping("/{id}")
-    public ExpenseDTO updateExpense(@PathVariable Long id, @RequestBody ExpenseDTO expenseDTO) {
-        Expense existingExpense = service.getExpensesByUser(expenseDTO.getUserId())
+    // ✅ FIXED GET (No userId in path)
+    @GetMapping
+    public List<ExpenseDTO> getExpenses() {
+        return service.getExpensesByUser(USER_ID)
                 .stream()
-                .filter(e -> e.getId().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Expense not found"));
-
-        // Update fields
-        existingExpense.setCategory(expenseDTO.getCategory());
-        existingExpense.setAmount(expenseDTO.getAmount());
-        existingExpense.setExpenseDate(expenseDTO.getExpenseDate());
-        existingExpense.setDescription(expenseDTO.getDescription());
-
-        Expense updatedExpense = service.saveExpense(existingExpense);
-        return mapToDTO(updatedExpense);
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 
-    // Delete expense by ID
+    // GET TOTAL
+    @GetMapping("/total")
+    public BigDecimal getTotal() {
+        return service.getTotalExpense(USER_ID);
+    }
+
+    // UPDATE
+    @PutMapping("/{id}")
+    public ExpenseDTO updateExpense(@PathVariable Long id,
+                                    @RequestBody ExpenseDTO dto) {
+        Expense updated = service.updateExpense(id, mapToEntity(dto));
+        return mapToDTO(updated);
+    }
+
+    // DELETE
     @DeleteMapping("/{id}")
     public void deleteExpense(@PathVariable Long id) {
         service.deleteExpense(id);
     }
 
-    // Utility method to map entity to DTO
+    // MAPPER METHODS
     private ExpenseDTO mapToDTO(Expense expense) {
         ExpenseDTO dto = new ExpenseDTO();
+        dto.setId(expense.getId());
         dto.setUserId(expense.getUserId());
         dto.setCategory(expense.getCategory());
         dto.setAmount(expense.getAmount());
@@ -67,10 +73,9 @@ public class ExpenseController {
         return dto;
     }
 
-    // Utility method to map DTO to entity
     private Expense mapToEntity(ExpenseDTO dto) {
         Expense expense = new Expense();
-        expense.setUserId(dto.getUserId());
+        expense.setId(dto.getId());
         expense.setCategory(dto.getCategory());
         expense.setAmount(dto.getAmount());
         expense.setExpenseDate(dto.getExpenseDate());

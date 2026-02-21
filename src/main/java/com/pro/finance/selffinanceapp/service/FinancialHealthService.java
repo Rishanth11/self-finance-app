@@ -5,6 +5,9 @@ import com.pro.finance.selffinanceapp.repository.ExpenseRepository;
 import com.pro.finance.selffinanceapp.repository.IncomeRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 @Service
 public class FinancialHealthService {
 
@@ -19,23 +22,34 @@ public class FinancialHealthService {
 
     public FinancialHealthDTO calculateHealthScore(Long userId) {
 
-        double income = incomeRepository.getTotalIncome(userId);
-        double expense = expenseRepository.getTotalExpense(userId);
+        BigDecimal income = incomeRepository.getTotalIncome(userId);
+        BigDecimal expense = expenseRepository.getTotalExpense(userId);
 
-        double savings = income - expense;
-        double score = income == 0 ? 0 : (savings / income) * 100;
+        if (income == null) income = BigDecimal.ZERO;
+        if (expense == null) expense = BigDecimal.ZERO;
+
+        // savings = income - expense
+        BigDecimal savings = income.subtract(expense);
+
+        BigDecimal score = BigDecimal.ZERO;
+
+        if (income.compareTo(BigDecimal.ZERO) > 0) {
+            score = savings
+                    .divide(income, 2, RoundingMode.HALF_UP)
+                    .multiply(BigDecimal.valueOf(100));
+        }
 
         String status;
-        if (score >= 80) status = "EXCELLENT";
-        else if (score >= 60) status = "GOOD";
-        else if (score >= 40) status = "AVERAGE";
+        if (score.compareTo(BigDecimal.valueOf(80)) >= 0) status = "EXCELLENT";
+        else if (score.compareTo(BigDecimal.valueOf(60)) >= 0) status = "GOOD";
+        else if (score.compareTo(BigDecimal.valueOf(40)) >= 0) status = "AVERAGE";
         else status = "POOR";
 
         return new FinancialHealthDTO(
                 income,
                 expense,
                 savings,
-                Math.round(score),
+                score.setScale(0, RoundingMode.HALF_UP).intValue(),
                 status
         );
     }

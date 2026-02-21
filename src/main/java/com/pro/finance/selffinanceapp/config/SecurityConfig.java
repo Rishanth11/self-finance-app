@@ -35,17 +35,19 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> userRepository.findByEmail(username)
-                .map(u -> {
-                    String authority = (u.getRole() == null) ? "ROLE_USER"
-                            : (u.getRole().name().startsWith("ROLE_") ? u.getRole().name() : "ROLE_" + u.getRole().name());
-                    return org.springframework.security.core.userdetails.User
-                            .withUsername(u.getEmail())
-                            .password(u.getPassword())
-                            .authorities(authority)
-                            .accountExpired(false).accountLocked(false)
-                            .credentialsExpired(false).disabled(false)
-                            .build();
-                }).orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+                .map(u -> org.springframework.security.core.userdetails.User
+                        .withUsername(u.getEmail())
+                        .password(u.getPassword())
+                        .authorities(u.getRole().name())
+                        .accountExpired(false)
+                        .accountLocked(false)
+                        .credentialsExpired(false)
+                        .disabled(false)
+                        .build()
+                )
+                .orElseThrow(() ->
+                        new UsernameNotFoundException("User not found: " + username)
+                );
     }
 
     @Bean

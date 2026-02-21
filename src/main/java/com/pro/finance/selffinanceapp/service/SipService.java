@@ -184,4 +184,27 @@ public class SipService {
         txnRepo.save(txn);
     }
 
+    public List<SipInvestment> getSipByUser(Long userId) {
+        return sipRepo.findByUserId(userId);
+    }
+
+    public void deleteSip(Long sipId) {
+        sipRepo.deleteById(sipId);
+    }
+
+    public void deactivateSip(Long sipId) {
+        SipInvestment sip = sipRepo.findById(sipId)
+                .orElseThrow(() -> new RuntimeException("SIP not found"));
+        sip.setActive(false);
+        sipRepo.save(sip);
+    }
+
+    public void activateSip(Long sipId) {
+        SipInvestment sip = sipRepo.findById(sipId)
+                .orElseThrow(() -> new RuntimeException("SIP not found"));
+        sip.setActive(true);
+        sipRepo.save(sip);
+    }
+
+
 }

@@ -1,70 +1,30 @@
 package com.pro.finance.selffinanceapp.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+
+@Data
 @Entity
-    @Table(name = "expense")
-    public class Expense {
+@Table(name = "expenses")
+public class Expense {
 
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-        private Long userId;
-        private String category;
-        private double amount;
-        private LocalDate expenseDate;
-        private String description;
+    private Long userId;
 
-    // getters & setters
+    @Column(nullable = false)
+    private String category;
 
-    public Long getId() {
-        return id;
-    }
+    @Column(nullable = false)
+    private BigDecimal amount;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @Column(nullable = false)
+    private LocalDate expenseDate;
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
-
-    public LocalDate getExpenseDate() {
-        return expenseDate;
-    }
-
-    public void setExpenseDate(LocalDate expenseDate) {
-        this.expenseDate = expenseDate;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    private String description;
 }
-

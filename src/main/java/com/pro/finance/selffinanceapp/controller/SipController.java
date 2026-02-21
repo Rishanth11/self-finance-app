@@ -38,5 +38,29 @@ public class SipController {
         return ResponseEntity.ok("SIP executed successfully");
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<?> getSipByUser(@PathVariable Long userId) {
+        return ResponseEntity.ok(sipService.getSipByUser(userId));
+    }
+
+    @DeleteMapping("/{sipId}")
+    public ResponseEntity<?> deleteSip(@PathVariable Long sipId) {
+        sipService.deleteSip(sipId);
+        return ResponseEntity.ok("SIP deleted successfully");
+    }
+
+    @PutMapping("/{sipId}/deactivate")
+    public ResponseEntity<?> deactivateSip(@PathVariable Long sipId) {
+        sipService.deactivateSip(sipId);
+        return ResponseEntity.ok("SIP deactivated successfully");
+    }
+
+    @PutMapping("/{sipId}/activate")
+    public ResponseEntity<?> activateSip(@PathVariable Long sipId) {
+        sipService.activateSip(sipId);
+        return ResponseEntity.ok("SIP activated successfully");
+    }
+
+
 }
 
