@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIP Investments</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 90%;
+            margin: auto;
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .box {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0px 2px 6px rgba(0,0,0,0.2);
+        }
+
+        input, select {
+            padding: 10px;
+            margin: 5px;
+            width: 220px;
+            border-radius: 6px;
+            border: 1px solid gray;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            color: white;
+            margin: 5px;
+        }
+
+        .add-btn { background: green; }
+        .execute-btn { background: orange; }
+        .delete-btn { background: red; }
+        .toggle-btn { background: purple; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0px 2px 6px rgba(0,0,0,0.2);
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background: #333;
+            color: white;
+        }
+
+        .portfolio-box {
+            display: none;
+            margin-top: 15px;
+        }
+
+        .portfolio-data {
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .chart-box {
+            display: none;
+            margin-top: 15px;
+        }
+
+        canvas {
+            max-width: 100%;
+        }
+
+        .live-status {
+            font-weight: bold;
+            margin-top: 10px;
+            color: green;
+        }
+
+        .summary {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .summary-card {
+            flex: 1;
+            min-width: 200px;
+            padding: 15px;
+            background: #fdfdfd;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>SIP Investments (Live Tracking)</h2>
+
+    <!-- SUMMARY BOX -->
+    <div class="box">
+        <h3>SIP Summary</h3>
+        <div class="summary">
+            <div class="summary-card">Total SIPs: <span id="totalSips">0</span></div>
+            <div class="summary-card">Active SIPs: <span id="activeSips">0</span></div>
+            <div class="summary-card">Total Monthly Amount: ₹ <span id="monthlyTotal">0</span></div>
+        </div>
+    </div>
+
+    <!-- ADD SIP FORM -->
+    <div class="box">
+        <h3>Add SIP</h3>
+
+        <input type="number" id="userId" placeholder="User ID" value="1">
+        <input type="text" id="fundName" placeholder="Fund Name">
+        <input type="text" id="fundCode" placeholder="Fund Code">
+        <input type="number" id="monthlyAmount" placeholder="Monthly Amount">
+        <input type="date" id="startDate">
+        <input type="number" id="sipDay" placeholder="SIP Day (1-31)">
+
+        <button class="add-btn" onclick="addSip()">Add SIP</button>
+    </div>
+
+    <!-- SIP DROPDOWN -->
+    <div class="box">
+        <h3>Select SIP</h3>
+        <select id="sipDropdown" onchange="selectSip()">
+            <option value="">-- Select SIP --</option>
+        </select>
+
+        <button class="execute-btn" onclick="executeSelectedSip()">Run SIP Now</button>
+        <button class="toggle-btn" onclick="toggleSipStatus()">Activate/Deactivate</button>
+        <button class="delete-btn" onclick="deleteSelectedSip()">Delete SIP</button>
+    </div>
+
+    <!-- SIP LIST -->
+    <table>
+        <thead>
+        <tr>
+            <th>Fund Name</th>
+            <th>Fund Code</th>
+            <th>Monthly Amount</th>
+            <th>Start Date</th>
+            <th>SIP Day</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+
+        <tbody id="sipTableBody"></tbody>
+    </table>
+
+    <!-- PORTFOLIO DETAILS -->
+    <div class="box portfolio-box" id="portfolioBox">
+        <h3>Portfolio Details</h3>
+        <div class="portfolio-data" id="portfolioData"></div>
+        <p class="live-status" id="liveStatus"></p>
+    </div>
+
+    <!-- CHART -->
+    <div class="box chart-box" id="chartBox">
+        <h3>SIP Growth Chart</h3>
+        <canvas id="sipChart"></canvas>
+    </div>
+</div>
+
+<script>
+    const API_URL = "http://localhost:8080/api/sip";
+
+    let sipChartInstance = null;
+    let selectedSipId = null;
+    let refreshInterval = null;
+
+    // Store SIP list
+    let sipList = [];
+
+    window.onload = function () {
+        loadSips();
+    };
+
+    async function loadSips() {
+        const userId = document.getElementById("userId").value;
+
+        try {
+            const response = await fetch(`${API_URL}/user/${userId}`);
+            sipList = await response.json();
+
+            let tableBody = "";
+            let dropdownOptions = `<option value="">-- Select SIP --</option>`;
+
+            let totalMonthly = 0;
+            let activeCount = 0;
+
+            sipList.forEach(sip => {
+                totalMonthly += sip.monthlyAmount;
+
+                if (sip.active) activeCount++;
+
+                tableBody += `
+                    <tr>
+                        <td>${sip.fundName}</td>
+                        <td>${sip.fundCode}</td>
+                        <td>₹ ${sip.monthlyAmount}</td>
+                        <td>${sip.startDate}</td>
+                        <td>${sip.sipDay}</td>
+                        <td>${sip.active ? "Active" : "Inactive"}</td>
+                    </tr>
+                `;
+
+                dropdownOptions += `
+                    <option value="${sip.id}">
+                        ${sip.fundName} (${sip.fundCode})
+                    </option>
+                `;
+            });
+
+            document.getElementById("sipTableBody").innerHTML = tableBody;
+            document.getElementById("sipDropdown").innerHTML = dropdownOptions;
+
+            // Summary values
+            document.getElementById("totalSips").innerText = sipList.length;
+            document.getElementById("activeSips").innerText = activeCount;
+            document.getElementById("monthlyTotal").innerText = totalMonthly.toFixed(2);
+
+        } catch (error) {
+            console.error("Error loading SIPs:", error);
+        }
+    }
+
+    async function addSip() {
+        const sipData = {
+            userId: document.getElementById("userId").value,
+            fundName: document.getElementById("fundName").value,
+            fundCode: document.getElementById("fundCode").value,
+            monthlyAmount: document.getElementById("monthlyAmount").value,
+            startDate: document.getElementById("startDate").value,
+            sipDay: document.getElementById("sipDay").value,
+            active: true
+        };
+
+        try {
+            await fetch(`${API_URL}/add`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(sipData)
+            });
+
+            alert("SIP added successfully!");
+            clearForm();
+            loadSips();
+
+        } catch (error) {
+            console.error("Error adding SIP:", error);
+        }
+    }
+
+    function selectSip() {
+        const sipId = document.getElementById("sipDropdown").value;
+
+        if (!sipId) {
+            selectedSipId = null;
+            document.getElementById("portfolioBox").style.display = "none";
+            document.getElementById("chartBox").style.display = "none";
+            return;
+        }
+
+        selectedSipId = sipId;
+        viewPortfolio(sipId);
+        viewChart(sipId);
+        startAutoRefresh();
+    }
+
+    async function viewPortfolio(sipId) {
+        try {
+            const response = await fetch(`${API_URL}/${sipId}/portfolio`);
+            const data = await response.json();
+
+            document.getElementById("portfolioBox").style.display = "block";
+
+            let returnsColor = data.returns >= 0 ? "green" : "red";
+
+            document.getElementById("portfolioData").innerHTML = `
+                <p><b>Total Invested:</b> ₹ ${data.totalInvested.toFixed(2)}</p>
+                <p><b>Current Value:</b> ₹ ${data.currentValue.toFixed(2)}</p>
+                <p><b>Returns:</b> <span style="color:${returnsColor}; font-weight:bold;">₹ ${data.returns.toFixed(2)}</span></p>
+                <p><b>XIRR:</b> ${data.xirr.toFixed(2)} %</p>
+                <p><b>NAV Available:</b> ${data.navAvailable ? "Yes" : "No"}</p>
+            `;
+
+        } catch (error) {
+            console.error("Error fetching portfolio:", error);
+        }
+    }
+
+    async function viewChart(sipId) {
+        try {
+            const response = await fetch(`${API_URL}/${sipId}/chart`);
+            const chartData = await response.json();
+
+            document.getElementById("chartBox").style.display = "block";
+
+            const labels = chartData.map(item =>
+                new Date(item.date).toLocaleDateString("en-IN", { month: "short", year: "numeric" })
+            );
+
+            const investedData = chartData.map(item => item.invested);
+            const valueData = chartData.map(item => item.value);
+            const profitData = chartData.map(item => item.value - item.invested);
+
+            const ctx = document.getElementById("sipChart").getContext("2d");
+
+            if (sipChartInstance) sipChartInstance.destroy();
+
+            sipChartInstance = new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: "Invested (₹)", data: investedData, borderWidth: 2, tension: 0.4 },
+                        { label: "Value (₹)", data: valueData, borderWidth: 2, tension: 0.4 },
+                        { label: "Profit/Loss (₹)", data: profitData, borderWidth: 2, tension: 0.4, borderDash: [5,5] }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ": ₹ " + context.raw.toFixed(2);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+        } catch (error) {
+            console.error("Error fetching chart:", error);
+        }
+    }
+
+    async function executeSelectedSip() {
+        if (!selectedSipId) {
+            alert("Select a SIP first!");
+            return;
+        }
+
+        try {
+            await fetch(`${API_URL}/${selectedSipId}/execute`, { method: "POST" });
+            alert("SIP executed successfully!");
+
+            viewPortfolio(selectedSipId);
+            viewChart(selectedSipId);
+
+        } catch (error) {
+            console.error("Error executing SIP:", error);
+        }
+    }
+
+    async function deleteSelectedSip() {
+        if (!selectedSipId) {
+            alert("Select a SIP first!");
+            return;
+        }
+
+        if (!confirm("Are you sure you want to delete this SIP?")) return;
+
+        try {
+            await fetch(`${API_URL}/${selectedSipId}`, { method: "DELETE" });
+
+            alert("SIP deleted successfully!");
+            selectedSipId = null;
+
+            document.getElementById("portfolioBox").style.display = "none";
+            document.getElementById("chartBox").style.display = "none";
+
+            loadSips();
+
+        } catch (error) {
+            console.error("Error deleting SIP:", error);
+        }
+    }
+
+    async function toggleSipStatus() {
+        if (!selectedSipId) {
+            alert("Select a SIP first!");
+            return;
+        }
+
+        // Find SIP from list
+        const sip = sipList.find(s => s.id == selectedSipId);
+
+        if (!sip) return;
+
+        const endpoint = sip.active ? "deactivate" : "activate";
+
+        try {
+            await fetch(`${API_URL}/${selectedSipId}/${endpoint}`, { method: "PUT" });
+
+            alert("SIP status updated!");
+            loadSips();
+
+        } catch (error) {
+            console.error("Error updating SIP status:", error);
+        }
+    }
+
+    function startAutoRefresh() {
+        if (refreshInterval) clearInterval(refreshInterval);
+
+        document.getElementById("liveStatus").innerText =
+            "Live tracking started (refresh every 10 seconds)...";
+
+        refreshInterval = setInterval(() => {
+            if (selectedSipId) {
+                viewPortfolio(selectedSipId);
+                viewChart(selectedSipId);
+            }
+        }, 10000);
+    }
+
+    function clearForm() {
+        document.getElementById("fundName").value = "";
+        document.getElementById("fundCode").value = "";
+        document.getElementById("monthlyAmount").value = "";
+        document.getElementById("startDate").value = "";
+        document.getElementById("sipDay").value = "";
+    }
+
+    window.onbeforeunload = function () {
+        if (refreshInterval) clearInterval(refreshInterval);
+    };
+</script>
+
+</body>
+</html>

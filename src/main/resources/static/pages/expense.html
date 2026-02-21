@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Expense | Personal Finance App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: system-ui, Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        h2 { margin-bottom: 15px; }
+
+        .card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        }
+
+        .summary {
+            font-size: 20px;
+            font-weight: 600;
+            color: #dc2626;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            margin-bottom: 12px;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+        }
+
+        button {
+            padding: 8px 14px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            margin-right: 6px;
+        }
+
+        .primary { background: #dc2626; color: white; }
+        .danger { background: #991b1b; color: white; }
+        .secondary { background: #9ca3af; color: white; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+
+        th { background: #f9fafb; }
+
+        .empty {
+            text-align: center;
+            padding: 20px;
+            color: #6b7280;
+        }
+
+        .chart-container {
+            height: 350px;
+        }
+
+        .chart-container canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+    </style>
+</head>
+
+<body onload="requireAuth(); loadExpenses();">
+
+<div class="container">
+
+    <h2>Expense</h2>
+
+    <!-- TOTAL -->
+    <div class="card summary">
+        Total Expense: <span id="totalExpense">₹0</span>
+    </div>
+
+    <!-- FORM -->
+    <div class="card">
+        <h3 id="formTitle">Add Expense</h3>
+
+        <input type="hidden" id="expenseId">
+
+        <select id="category">
+            <option>FOOD</option>
+            <option>TRAVEL</option>
+            <option>SHOPPING</option>
+            <option>EMI</option>
+            <option>ENTERTAINMENT</option>
+            <option>OTHER</option>
+        </select>
+
+        <input id="amount" type="number" step="0.01" placeholder="Amount">
+        <input id="expenseDate" type="date">
+        <input id="description" placeholder="Description (optional)">
+
+        <button class="primary" onclick="saveExpense()" id="saveBtn">Add Expense</button>
+        <button class="secondary" onclick="resetForm()" id="cancelBtn" style="display:none;">Cancel</button>
+    </div>
+
+    <!-- TABLE -->
+    <div class="card">
+        <h3>Your Expenses</h3>
+
+        <div id="emptyState" class="empty" style="display:none;">
+            No expense records found.
+        </div>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Date</th>
+                <th>Category</th>
+                <th>Amount</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody id="expenseTable"></tbody>
+        </table>
+    </div>
+
+    <!-- CHART -->
+    <div class="card">
+        <h3>Expense Breakdown</h3>
+        <div class="chart-container">
+            <canvas id="expenseChart"></canvas>
+        </div>
+    </div>
+
+</div>
+
+<script src="../js/guard.js"></script>
+<script src="../js/api.js"></script>
+
+<script>
+
+    let editingExpenseId = null;
+    let chartInstance;
+
+    function formatCurrency(amount) {
+        return new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR'
+        }).format(amount);
+    }
+
+    function saveExpense() {
+
+        const payload = {
+            category: document.getElementById("category").value,
+            amount: parseFloat(document.getElementById("amount").value),
+            expenseDate: document.getElementById("expenseDate").value,
+            description: document.getElementById("description").value
+        };
+
+        if (!payload.amount || payload.amount <= 0 || !payload.expenseDate) {
+            alert("Amount and Date are required");
+            return;
+        }
+
+        const method = editingExpenseId ? "PUT" : "POST";
+        const url = editingExpenseId
+            ? "/expenses/" + editingExpenseId
+            : "/expenses";
+
+        apiRequest(url, {
+            method: method,
+            body: JSON.stringify(payload)
+        }).then(res => {
+            if (res.ok) {
+                resetForm();
+                loadExpenses();
+            } else {
+                alert("Operation failed");
+            }
+        });
+    }
+
+    function loadExpenses() {
+
+        apiRequest("/expenses")
+            .then(res => res.json())
+            .then(data => {
+
+                const table = document.getElementById("expenseTable");
+                table.innerHTML = "";
+
+                let total = 0;
+                const categoryMap = {};
+
+                if (data.length === 0) {
+                    document.getElementById("emptyState").style.display = "block";
+                    document.getElementById("totalExpense").innerText = "₹0";
+                    renderChart({});
+                    return;
+                }
+
+                document.getElementById("emptyState").style.display = "none";
+
+                data.forEach(e => {
+
+                    total += parseFloat(e.amount);
+
+                    categoryMap[e.category] =
+                        (categoryMap[e.category] || 0) + parseFloat(e.amount);
+
+                    table.innerHTML += `
+                        <tr>
+                            <td>${e.expenseDate}</td>
+                            <td>${e.category}</td>
+                            <td>${formatCurrency(e.amount)}</td>
+                            <td>
+                                <button onclick='editExpense(${JSON.stringify(e)})'>Edit</button>
+                                <button class="danger" onclick="deleteExpense(${e.id})">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                document.getElementById("totalExpense").innerText =
+                    formatCurrency(total);
+
+                renderChart(categoryMap);
+            });
+    }
+
+    function renderChart(categoryMap) {
+
+        if (chartInstance) chartInstance.destroy();
+
+        chartInstance = new Chart(
+            document.getElementById("expenseChart"),
+            {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(categoryMap),
+                    datasets: [{
+                        data: Object.values(categoryMap)
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            }
+        );
+    }
+
+    function editExpense(e) {
+        editingExpenseId = e.id;
+        document.getElementById("category").value = e.category;
+        document.getElementById("amount").value = e.amount;
+        document.getElementById("expenseDate").value = e.expenseDate;
+        document.getElementById("description").value = e.description || "";
+        document.getElementById("formTitle").innerText = "Edit Expense";
+        document.getElementById("saveBtn").innerText = "Update Expense";
+        document.getElementById("cancelBtn").style.display = "inline-block";
+    }
+
+    function resetForm() {
+        editingExpenseId = null;
+        document.getElementById("category").value = "FOOD";
+        document.getElementById("amount").value = "";
+        document.getElementById("expenseDate").value = "";
+        document.getElementById("description").value = "";
+        document.getElementById("formTitle").innerText = "Add Expense";
+        document.getElementById("saveBtn").innerText = "Add Expense";
+        document.getElementById("cancelBtn").style.display = "none";
+    }
+
+    function deleteExpense(id) {
+        if (!confirm("Delete this expense?")) return;
+
+        apiRequest("/expenses/" + id, { method: "DELETE" })
+            .then(() => loadExpenses());
+    }
+
+</script>
+
+</body>
+</html>
