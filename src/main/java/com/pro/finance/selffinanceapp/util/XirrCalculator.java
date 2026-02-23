@@ -7,12 +7,26 @@ import java.util.List;
 public class XirrCalculator {
 
     public static double calculate(List<Double> amounts, List<LocalDate> dates) {
+
+        if (amounts.size() < 2) return 0;
+
         double guess = 0.1;
+
         for (int i = 0; i < 1000; i++) {
+
             double fValue = xnpv(guess, amounts, dates);
             double derivative = dxnpv(guess, amounts, dates);
-            guess = guess - fValue / derivative;
+
+            if (Math.abs(derivative) < 1e-10) break;
+
+            double newGuess = guess - fValue / derivative;
+
+            if (Math.abs(newGuess - guess) < 0.0001)
+                return newGuess * 100;
+
+            guess = newGuess;
         }
+
         return guess * 100;
     }
 

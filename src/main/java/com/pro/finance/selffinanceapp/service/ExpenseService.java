@@ -1,10 +1,14 @@
 package com.pro.finance.selffinanceapp.service;
 
+import com.pro.finance.selffinanceapp.dto.ExpenseDTO;
 import com.pro.finance.selffinanceapp.model.Expense;
 import com.pro.finance.selffinanceapp.repository.ExpenseRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -43,5 +47,13 @@ public class ExpenseService {
 
     public void deleteExpense(Long id) {
         repo.deleteById(id);
+    }
+
+    public List<Expense> getByDateRange(Long userId,
+                                        LocalDate start,
+                                        LocalDate end) {
+        return repo
+                .findByUserIdAndExpenseDateBetweenOrderByExpenseDateDesc(
+                        userId, start, end);
     }
 }

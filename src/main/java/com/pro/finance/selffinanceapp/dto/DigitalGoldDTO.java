@@ -1,5 +1,7 @@
 package com.pro.finance.selffinanceapp.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.time.LocalDate;
 
 public class DigitalGoldDTO {
@@ -24,6 +26,7 @@ public class DigitalGoldDTO {
         this.purchasePricePerGram = purchasePricePerGram;
     }
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     public LocalDate getPurchaseDate() {
         return purchaseDate;
     }

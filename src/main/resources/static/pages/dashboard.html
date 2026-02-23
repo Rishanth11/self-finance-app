@@ -2,123 +2,467 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard | Personal Finance App</title>
+    <title>Dashboard · Personal Finance Management System</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <style>
-        body {
-            font-family: system-ui, Arial, sans-serif;
-            background: #f4f6f8;
+        * {
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
-        h2 {
-            margin-bottom: 20px;
+        body {
+            background: #f8fafc;
+            padding: 32px 24px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            color: #1e293b;
         }
 
+        .container {
+            max-width: 1280px;
+            width: 100%;
+        }
+
+        /* header area */
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            background: linear-gradient(145deg, #2563eb, #1e3a8a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-header h1 i {
+            background: #ffffff;
+            padding: 10px 14px;
+            border-radius: 20px;
+            color: #2563eb;
+            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.15);
+            font-size: 1.6rem;
+            -webkit-text-fill-color: #2563eb;
+            border: 1px solid #e2e8f0;
+        }
+
+        .user-greeting {
+            background: white;
+            padding: 12px 24px;
+            border-radius: 60px;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #64748b;
+        }
+
+        .user-greeting i {
+            color: #2563eb;
+        }
+
+        .user-greeting strong {
+            color: #2563eb;
+            font-weight: 600;
+        }
+
+        /* summary cards row */
         .summary-row {
             display: flex;
             gap: 20px;
             flex-wrap: wrap;
+            margin-bottom: 32px;
         }
 
         .summary-card {
-            flex: 1;
-            min-width: 220px;
+            flex: 1 1 180px;
             background: white;
             padding: 20px;
-            border-radius: 10px;
-            border: 1px solid #e5e7eb;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+            border-radius: 24px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 20px 40px -14px rgba(0, 20, 40, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #2563eb, #7c3aed);
+        }
+
+        .summary-card.income::before {
+            background: linear-gradient(90deg, #16a34a, #22c55e);
+        }
+
+        .summary-card.expense::before {
+            background: linear-gradient(90deg, #b91c1c, #dc2626);
+        }
+
+        .summary-card.savings::before {
+            background: linear-gradient(90deg, #16a34a, #059669);
+        }
+
+        .summary-card.sip::before {
+            background: linear-gradient(90deg, #7c3aed, #a855f7);
+        }
+
+        .summary-card.gold::before {
+            background: linear-gradient(90deg, #d97706, #f59e0b);
         }
 
         .summary-card h3 {
-            margin: 0;
-            font-size: 14px;
-            color: #6b7280;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #64748b;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .summary-card h3 i {
+            font-size: 1rem;
         }
 
         .summary-card p {
-            margin: 8px 0 0;
-            font-size: 22px;
-            font-weight: 600;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #1e293b;
+            line-height: 1.2;
+            margin-bottom: 8px;
         }
 
-        .income { color: #16a34a; }
-        .expense { color: #dc2626; }
-        .savings { color: #2563eb; }
+        .summary-card .sub-text {
+            font-size: 0.75rem;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
 
+        /* card design */
         .card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid #e5e7eb;
-            margin-top: 30px;
+            background: #ffffff;
+            border-radius: 28px;
+            padding: 28px 30px;
+            margin-bottom: 32px;
+            box-shadow: 0 20px 40px -14px rgba(0, 20, 40, 0.1), 0 2px 8px rgba(0, 0, 0, 0.02);
+            border: 1px solid #e2e8f0;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .card-header i {
+            font-size: 1.5rem;
+            color: #2563eb;
+            background: #e0edff;
+            padding: 10px;
+            border-radius: 18px;
+        }
+
+        .card-header h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #0f172a;
         }
 
         .chart-container {
-            height: 350px;
+            height: 300px;
+            width: 100%;
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 24px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .chart-container canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        /* action buttons - centered */
+        .action-section {
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .action-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #64748b;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .action-label i {
+            color: #2563eb;
+        }
+
+        .action-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 16px;
         }
 
         .btn {
-            margin-top: 20px;
-            padding: 8px 14px;
+            padding: 14px 28px;
+            border-radius: 40px;
             border: none;
-            border-radius: 6px;
+            font-weight: 600;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
             cursor: pointer;
-            background: #2563eb;
-            color: white;
+            transition: all 0.2s ease;
+            background: white;
+            color: #334155;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+            min-width: 140px;
         }
 
-        .logout-btn {
-            background: #dc2626;
+        .btn i {
+            font-size: 1.1rem;
+        }
+
+        .btn-income {
+            background: #16a34a;
+            color: white;
+            border: none;
+            box-shadow: 0 8px 22px -6px #16a34acc;
+        }
+
+        .btn-income:hover {
+            background: #15803d;
+            transform: scale(1.05);
+        }
+
+        .btn-expense {
+            background: #b91c1c;
+            color: white;
+            border: none;
+            box-shadow: 0 8px 22px -6px #b91c1ccc;
+        }
+
+        .btn-expense:hover {
+            background: #991b1b;
+            transform: scale(1.05);
+        }
+
+        .btn-sip {
+            background: #7c3aed;
+            color: white;
+            border: none;
+            box-shadow: 0 8px 22px -6px #7c3aedcc;
+        }
+
+        .btn-sip:hover {
+            background: #6d28d9;
+            transform: scale(1.05);
+        }
+
+        .btn-gold {
+            background: #d97706;
+            color: white;
+            border: none;
+            box-shadow: 0 8px 22px -6px #d97706cc;
+        }
+
+        .btn-gold:hover {
+            background: #b45309;
+            transform: scale(1.05);
+        }
+
+        .btn-logout {
+            background: #b91c1c;
+            color: white;
+            border: none;
+            box-shadow: 0 8px 22px -6px #b91c1ccc;
+        }
+
+        .btn-logout:hover {
+            background: #991b1b;
+            transform: scale(1.05);
+        }
+
+        /* responsive */
+        @media (max-width: 768px) {
+            .summary-card p {
+                font-size: 1.4rem;
+            }
+            .btn {
+                padding: 12px 20px;
+                min-width: 120px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 20px 16px;
+            }
+            .page-header h1 {
+                font-size: 1.6rem;
+            }
+            .card {
+                padding: 20px;
+            }
         }
     </style>
 </head>
 
 <body onload="requireAuth(); loadDashboard();">
 
-<h2>Dashboard Overview</h2>
+<div class="container">
 
-<div class="summary-row">
-    <div class="summary-card">
-        <h3>Total Income</h3>
-        <p id="totalIncome" class="income">₹0</p>
+    <!-- HEADER with project name -->
+    <div class="page-header">
+        <h1><i class="fas fa-wallet"></i> Personal Finance Management System</h1>
+        <div class="user-greeting">
+            <i class="fas fa-user-circle"></i>
+            <span>Welcome, <strong id="userName">User</strong></span>
+        </div>
     </div>
 
-    <div class="summary-card">
-        <h3>Total Expense</h3>
-        <p id="totalExpense" class="expense">₹0</p>
+    <!-- SUMMARY CARDS -->
+    <div class="summary-row">
+        <div class="summary-card income">
+            <h3><i class="fas fa-circle-up" style="color: #16a34a;"></i> Total Income</h3>
+            <p id="totalIncome" style="color: #16a34a;">₹0</p>
+            <div class="sub-text">
+                <i class="fas fa-arrow-up" style="color: #16a34a;"></i> lifetime earnings
+            </div>
+        </div>
+
+        <div class="summary-card expense">
+            <h3><i class="fas fa-circle-down" style="color: #b91c1c;"></i> Total Expense</h3>
+            <p id="totalExpense" style="color: #b91c1c;">₹0</p>
+            <div class="sub-text">
+                <i class="fas fa-arrow-down" style="color: #b91c1c;"></i> lifetime spending
+            </div>
+        </div>
+
+        <div class="summary-card savings">
+            <h3><i class="fas fa-piggy-bank" style="color: #16a34a;"></i> Net Savings</h3>
+            <p id="netSavings" style="color: #16a34a;">₹0</p>
+            <div class="sub-text">
+                <i class="fas fa-chart-line" style="color: #16a34a;"></i> income - expenses
+            </div>
+        </div>
+
+        <div class="summary-card">
+            <h3><i class="fas fa-percent" style="color: #2563eb;"></i> Savings Rate</h3>
+            <p id="savingsPercent" style="color: #2563eb;">0%</p>
+            <div class="sub-text">
+                <i class="fas fa-pie-chart" style="color: #2563eb;"></i> of total income
+            </div>
+        </div>
+
+        <div class="summary-card sip">
+            <h3><i class="fas fa-chart-line" style="color: #7c3aed;"></i> SIP Portfolio</h3>
+            <p id="sipValue" style="color: #7c3aed;">₹0</p>
+            <div class="sub-text">
+                <i class="fas fa-robot" style="color: #7c3aed;"></i> current value
+            </div>
+        </div>
+
+        <div class="summary-card gold">
+            <h3><i class="fas fa-coins" style="color: #d97706;"></i> Digital Gold</h3>
+            <p id="goldValue" style="color: #d97706;">₹0</p>
+            <div class="sub-text">
+                <i class="fas fa-arrow-trend-up" style="color: #d97706;"></i> current value
+            </div>
+        </div>
     </div>
 
-    <div class="summary-card">
-        <h3>Net Savings</h3>
-        <p id="netSavings" class="savings">₹0</p>
+    <!-- CHART CARD -->
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-chart-bar"></i>
+            <h3>Income vs Expense Overview</h3>
+        </div>
+        <div class="chart-container">
+            <canvas id="summaryChart"></canvas>
+        </div>
     </div>
 
-    <div class="summary-card">
-        <h3>Savings %</h3>
-        <p id="savingsPercent">0%</p>
+    <!-- ACTION BUTTONS - Centered with Icons -->
+    <div class="action-section">
+        <div class="action-label">
+            <i class="fas fa-compass"></i> QUICK NAVIGATION
+        </div>
+        <div class="action-bar">
+            <button class="btn btn-income" onclick="goToIncome()">
+                <i class="fas fa-chart-line"></i> Income
+            </button>
+            <button class="btn btn-expense" onclick="goToExpense()">
+                <i class="fas fa-receipt"></i> Expense
+            </button>
+            <button class="btn btn-sip" onclick="goToSip()">
+                <i class="fas fa-robot"></i> SIP
+            </button>
+            <button class="btn btn-gold" onclick="goToGold()">
+                <i class="fas fa-coins"></i> Digital Gold
+            </button>
+            <button class="btn btn-logout" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+        <div style="margin-top: 16px; color: #94a3b8; font-size: 0.8rem;">
+            <i class="fas fa-shield-alt"></i> Secured · Personal Finance Management System v1.0
+        </div>
     </div>
+
 </div>
-
-<div class="card">
-    <h3>Income vs Expense</h3>
-    <div class="chart-container">
-        <canvas id="summaryChart"></canvas>
-    </div>
-</div>
-
-<button class="btn" onclick="goToIncome()">Income</button>
-<button class="btn" onclick="goToExpense()">Expense</button>
-<button class="btn logout-btn" onclick="logout()">Logout</button>
 
 <script src="../js/guard.js"></script>
 <script src="../js/api.js"></script>
-<script src="../js/auth.js"></script>
 
 <script>
 
@@ -127,63 +471,134 @@
     function formatCurrency(amount) {
         return new Intl.NumberFormat('en-IN', {
             style: 'currency',
-            currency: 'INR'
-        }).format(amount);
+            currency: 'INR',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        }).format(amount || 0);
     }
 
-    function loadDashboard() {
+    function getUserName() {
+        const token = localStorage.getItem("token");
+        if (!token) return "User";
+        try {
+            const payload = JSON.parse(atob(token.split(".")[1]));
+            return payload.name || payload.sub || "User";
+        } catch(e) {
+            return "User";
+        }
+    }
 
-        Promise.all([
-            apiRequest("/incomes").then(res => res.json()),
-            apiRequest("/expenses").then(res => res.json())
-        ]).then(([incomes, expenses]) => {
+    async function loadDashboard() {
+        document.getElementById("userName").innerText = getUserName();
 
-            let totalIncome = 0;
-            let totalExpense = 0;
+        try {
+            const [incomeRes, expenseRes, sipRes, goldRes] = await Promise.all([
+                apiRequest("/incomes"),
+                apiRequest("/expenses"),
+                apiRequest("/sip/all"),
+                apiRequest("/gold/summary")
+            ]);
 
-            incomes.forEach(i => totalIncome += parseFloat(i.amount));
-            expenses.forEach(e => totalExpense += parseFloat(e.amount));
+            const incomes = incomeRes.ok ? await incomeRes.json() : [];
+            const expenses = expenseRes.ok ? await expenseRes.json() : [];
+            const sips = sipRes.ok ? await sipRes.json() : [];
+            const goldSummary = goldRes.ok ? await goldRes.json() : null;
+
+            let totalIncome = 0, totalExpense = 0, totalSipValue = 0, totalGoldValue = 0;
+
+            incomes.forEach(i => totalIncome += parseFloat(i.amount) || 0);
+            expenses.forEach(e => totalExpense += parseFloat(e.amount) || 0);
+
+            // Calculate SIP portfolio value
+            for (const sip of sips) {
+                try {
+                    const portfolioRes = await apiRequest(`/sip/${sip.id}/portfolio`);
+                    if (portfolioRes.ok) {
+                        const p = await portfolioRes.json();
+                        totalSipValue += p.currentValue || 0;
+                    }
+                } catch(err) {
+                    console.log("SIP fetch error", err);
+                }
+            }
+
+            if (goldSummary) {
+                totalGoldValue = goldSummary.currentValue || 0;
+            }
 
             const netSavings = totalIncome - totalExpense;
-            const savingsPercent = totalIncome > 0
-                ? ((netSavings / totalIncome) * 100).toFixed(1)
-                : 0;
+            const savingsPercent = totalIncome > 0 ? ((netSavings / totalIncome) * 100).toFixed(1) : 0;
 
             document.getElementById("totalIncome").innerText = formatCurrency(totalIncome);
             document.getElementById("totalExpense").innerText = formatCurrency(totalExpense);
             document.getElementById("netSavings").innerText = formatCurrency(netSavings);
             document.getElementById("savingsPercent").innerText = savingsPercent + "%";
+            document.getElementById("sipValue").innerText = formatCurrency(totalSipValue);
+            document.getElementById("goldValue").innerText = formatCurrency(totalGoldValue);
 
             renderChart(totalIncome, totalExpense);
-        });
+
+        } catch(err) {
+            console.error("Dashboard load failed", err);
+        }
     }
 
     function renderChart(income, expense) {
-
         if (chartInstance) chartInstance.destroy();
 
-        chartInstance = new Chart(document.getElementById("summaryChart"), {
+        const ctx = document.getElementById("summaryChart").getContext('2d');
+
+        chartInstance = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: ['Income', 'Expense'],
                 datasets: [{
-                    label: 'Amount',
-                    data: [income, expense]
+                    label: 'Amount (₹)',
+                    data: [income, expense],
+                    backgroundColor: ['#16a34a', '#b91c1c'],
+                    borderRadius: 8,
+                    barPercentage: 0.6
                 }]
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return '₹' + context.parsed.y.toLocaleString('en-IN');
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '₹' + value;
+                            }
+                        }
+                    }
+                }
             }
         });
     }
 
-    function goToIncome() {
-        window.location.href = "/pages/income.html";
-    }
+    function goToIncome() { window.location.href = "/pages/income.html"; }
+    function goToExpense() { window.location.href = "/pages/expense.html"; }
+    function goToSip() { window.location.href = "/pages/sip.html"; }
+    function goToGold() { window.location.href = "/pages/digital-gold.html"; }
 
-    function goToExpense() {
-        window.location.href = "/pages/expense.html";
+    function logout() {
+        if (confirm("Are you sure you want to logout?")) {
+            localStorage.removeItem("token");
+            window.location.href = "/pages/login.html";
+        }
     }
 
 </script>

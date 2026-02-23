@@ -1,9 +1,9 @@
 package com.pro.finance.selffinanceapp.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Getter
@@ -18,18 +18,28 @@ public class SipInvestment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     private String fundName;
-
     private String fundCode;
 
-    private double monthlyAmount;
+    @Column(precision = 19, scale = 4)
+    private BigDecimal monthlyAmount;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
-
     private int sipDay;
-
     private boolean active = true;
+
+    @Column(precision = 5, scale = 2)
+    private BigDecimal inflationRate = BigDecimal.valueOf(6.0);
+
+    private String goalName;
+
+    @Column(precision = 19, scale = 4)
+    private BigDecimal targetAmount;
+
+    private LocalDate targetDate;
+
 }

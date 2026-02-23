@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface ExpenseRepository extends JpaRepository<Expense, Long> {
@@ -16,4 +17,10 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
         // ✅ GET EXPENSES BY USER ORDERED BY DATE DESC
         List<Expense> findByUserIdOrderByExpenseDateDesc(Long userId);
+
+        List<Expense> findByUserIdAndExpenseDateBetweenOrderByExpenseDateDesc(
+                Long userId,
+                LocalDate start,
+                LocalDate end
+        );
 }

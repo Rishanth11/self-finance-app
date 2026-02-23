@@ -6,6 +6,7 @@ import com.pro.finance.selffinanceapp.service.ExpenseService;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -81,5 +82,19 @@ public class ExpenseController {
         expense.setExpenseDate(dto.getExpenseDate());
         expense.setDescription(dto.getDescription());
         return expense;
+    }
+
+    @GetMapping("/filter")
+    public List<ExpenseDTO> getExpensesByMonth(
+            @RequestParam int year,
+            @RequestParam int month) {
+
+        LocalDate start = LocalDate.of(year, month, 1);
+        LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
+
+        return service.getByDateRange(USER_ID, start, end)
+                .stream()
+                .map(this::mapToDTO)
+                .toList();
     }
 }

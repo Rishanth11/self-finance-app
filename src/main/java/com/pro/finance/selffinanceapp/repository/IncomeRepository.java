@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface IncomeRepository extends JpaRepository<Income, Long> {
@@ -17,4 +18,10 @@ public interface IncomeRepository extends JpaRepository<Income, Long> {
     // 🔹 Get total income (used in FinancialHealthService)
     @Query("SELECT COALESCE(SUM(i.amount), 0) FROM Income i WHERE i.user.id = :userId")
     BigDecimal getTotalIncome(@Param("userId") Long userId);
+
+    List<Income> findByUserAndDateBetweenOrderByDateDesc(
+            User user,
+            LocalDate start,
+            LocalDate end
+    );
 }

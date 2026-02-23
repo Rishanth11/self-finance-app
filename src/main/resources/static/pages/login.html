@@ -2,145 +2,416 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login | Personal Finance App</title>
+    <title>Welcome back · Personal Finance</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont,
-                         "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
-            margin: 0;
-            height: 100vh;
-            background: #f4f6f8;
+            min-height: 100vh;
+            width: 100vw;
+            background: #f8fafc;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
+            padding: 16px;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        .login-card {
-            background: #ffffff;
+        /* subtle background pattern */
+        body::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle at 25px 25px, rgba(37, 99, 235, 0.03) 2px, transparent 2px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+
+        .login-container {
             width: 100%;
-            max-width: 360px;
-            padding: 32px;
-            border-radius: 6px;
-            border: 1px solid #e5e7eb;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            max-width: 440px;
+            z-index: 2;
+            margin: 0 auto;
+        }
+
+        /* brand header */
+        .brand {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .brand i {
+            font-size: 2.8rem;
+            color: #2563eb;
+            background: white;
+            padding: 18px;
+            border-radius: 28px;
+            box-shadow: 0 20px 35px -12px rgba(37,99,235,0.2);
+            margin-bottom: 16px;
+            display: inline-block;
+            border: 1px solid #e2e8f0;
+        }
+
+        .brand h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            background: linear-gradient(145deg, #2563eb, #1e3a8a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .brand p {
+            color: #64748b;
+            font-size: 0.95rem;
+            margin-top: 8px;
+        }
+
+        /* main card */
+        .login-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 28px;
+            padding: 32px 36px;
+            box-shadow: 0 20px 40px -14px rgba(0, 20, 40, 0.1), 0 2px 8px rgba(0, 0, 0, 0.02);
+            width: 100%;
         }
 
         .login-card h2 {
             text-align: center;
-            margin-bottom: 24px;
-            color: #111827;
-            font-size: 22px;
+            font-size: 1.9rem;
             font-weight: 600;
+            letter-spacing: -0.02em;
+            color: #0f172a;
+            margin-bottom: 8px;
         }
 
+        .sub-head {
+            text-align: center;
+            color: #64748b;
+            font-size: 0.95rem;
+            margin-bottom: 28px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 20px;
+        }
+
+        /* form group */
         .form-group {
-            margin-bottom: 14px;
+            margin-bottom: 22px;
+            position: relative;
         }
 
-        .form-group input {
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: #64748b;
+            margin-bottom: 6px;
+            margin-left: 12px;
+        }
+
+        .input-icon-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon-wrapper i {
+            position: absolute;
+            left: 18px;
+            color: #94a3b8;
+            font-size: 1rem;
+            pointer-events: none;
+            transition: color 0.2s;
+        }
+
+        .input-icon-wrapper input {
             width: 100%;
-            padding: 11px;
-            border-radius: 4px;
-            border: 1px solid #d1d5db;
-            font-size: 14px;
+            padding: 14px 20px 14px 52px;
+            background: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #1e293b;
+            transition: all 0.2s ease;
         }
 
-        .form-group input:focus {
+        .input-icon-wrapper input:focus {
             outline: none;
             border-color: #2563eb;
+            background: white;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.1);
         }
 
+        .input-icon-wrapper input:focus + i {
+            color: #2563eb;
+        }
+
+        /* password visibility toggle */
+        .toggle-password {
+            position: absolute;
+            right: 18px;
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 1rem;
+            z-index: 3;
+            padding: 8px;
+        }
+
+        .toggle-password:hover {
+            color: #2563eb;
+        }
+
+        /* helper row */
+        .helper-row {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 6px;
+            font-size: 0.8rem;
+        }
+
+        .helper-row a {
+            color: #64748b;
+            text-decoration: none;
+            border-bottom: 1px dashed #cbd5e1;
+            transition: 0.1s;
+        }
+
+        .helper-row a:hover {
+            color: #2563eb;
+            border-bottom-color: #2563eb;
+        }
+
+        /* login button */
         .login-btn {
             width: 100%;
-            padding: 11px;
+            padding: 14px 20px;
             background: #2563eb;
             color: white;
             border: none;
-            border-radius: 4px;
-            font-size: 15px;
-            font-weight: 500;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
             cursor: pointer;
+            transition: all 0.15s ease;
+            box-shadow: 0 8px 22px -6px #2563ebcc;
+            margin-top: 12px;
         }
 
         .login-btn:hover {
-            background: #1e40af;
+            background: #1d4ed8;
+            transform: scale(1.02);
         }
 
+        .login-btn i {
+            font-size: 1.1rem;
+        }
+
+        /* message area */
         .message {
             text-align: center;
-            margin-top: 12px;
-            font-size: 13px;
+            margin-top: 22px;
+            padding: 12px 20px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            background: #f8fafc;
+            color: #1e293b;
+            border: 1px solid #e2e8f0;
+            transition: all 0.1s;
+            word-break: break-word;
         }
 
+        .message:empty {
+            display: none;
+        }
+
+        /* register link */
         .register-link {
             text-align: center;
-            margin-top: 18px;
-            font-size: 13px;
-            color: #374151;
+            margin-top: 24px;
+            font-size: 0.95rem;
+            color: #64748b;
         }
 
         .register-link a {
             color: #2563eb;
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
+            margin-left: 6px;
+            border-bottom: 2px solid transparent;
+            transition: 0.1s;
+        }
+
+        .register-link a:hover {
+            border-bottom-color: #2563eb;
+        }
+
+        /* footer note */
+        .footer-note {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 0.8rem;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .footer-note i {
+            color: #2563eb;
+        }
+
+        /* responsive */
+        @media (max-width: 480px) {
+            .login-card {
+                border-radius: 24px;
+                padding: 24px 20px;
+            }
+            .brand i {
+                font-size: 2.4rem;
+                padding: 16px;
+                border-radius: 24px;
+            }
+            .brand h1 {
+                font-size: 1.6rem;
+            }
+            .login-card h2 {
+                font-size: 1.6rem;
+            }
         }
     </style>
 </head>
 
 <body>
 
-<div class="login-card">
-    <h2>Sign in</h2>
-
-    <div class="form-group">
-        <input id="email" type="email" placeholder="Email address">
+<div class="login-container">
+    <!-- brand header -->
+    <div class="brand">
+        <i class="fas fa-wallet"></i>
+        <h1>personal finance</h1>
+        <p>take control of your money</p>
     </div>
 
-    <div class="form-group">
-        <input id="password" type="password" placeholder="Password">
+    <!-- login card -->
+    <div class="login-card">
+        <h2>welcome back</h2>
+        <div class="sub-head">sign in to your account</div>
+
+        <!-- email field -->
+        <div class="form-group">
+            <label for="email">Email address</label>
+            <div class="input-icon-wrapper">
+                <i class="fas fa-envelope"></i>
+                <input type="email" id="email" placeholder="hello@domain.com" autocomplete="email">
+            </div>
+        </div>
+
+        <!-- password field with show/hide -->
+        <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-icon-wrapper">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+                <button type="button" class="toggle-password" onclick="togglePasswordVisibility()" tabindex="-1">
+                    <i class="fas fa-eye" id="toggleIcon"></i>
+                </button>
+            </div>
+            <div class="helper-row">
+                <a href="#" onclick="alert('Password reset feature coming soon'); return false;">forgot password?</a>
+            </div>
+        </div>
+
+        <!-- login button -->
+        <button class="login-btn" onclick="login()">
+            <i class="fas fa-sign-in-alt"></i> Sign in
+        </button>
+
+        <!-- dynamic message -->
+        <p id="msg" class="message"></p>
+
+        <!-- register link -->
+        <div class="register-link">
+            Don't have an account?
+            <a href="/pages/register.html">Create account →</a>
+        </div>
     </div>
 
-    <button class="login-btn" onclick="login()">Sign in</button>
-
-    <p id="msg" class="message"></p>
-
-    <div class="register-link">
-        Don’t have an account?
-        <a href="/pages/register.html">Create account</a>
+    <!-- footer note -->
+    <div class="footer-note">
+        <i class="fas fa-shield-alt"></i> 256-bit encrypted connection
     </div>
 </div>
 
 <script>
+    // toggle password visibility
+    function togglePasswordVisibility() {
+        const pwdInput = document.getElementById('password');
+        const icon = document.getElementById('toggleIcon');
+        if (pwdInput.type === 'password') {
+            pwdInput.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            pwdInput.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
+
     async function login() {
         const email = document.getElementById("email").value.trim();
         const password = document.getElementById("password").value.trim();
         const msg = document.getElementById("msg");
 
+        // reset message styles
         msg.innerText = "";
-        msg.style.color = "black";
+        msg.style.background = "#f8fafc";
+        msg.style.color = "#1e293b";
+        msg.style.border = "1px solid #e2e8f0";
 
         if (!email || !password) {
-            msg.style.color = "red";
-            msg.innerText = "Email and password are required";
+            msg.innerText = "⚠️ Email and password are required";
+            msg.style.background = "#fef2f2";
+            msg.style.color = "#b91c1c";
+            msg.style.border = "1px solid #fee2e2";
+            return;
+        }
+
+        // basic email format check
+        if (!email.includes('@') || !email.includes('.')) {
+            msg.innerText = "📧 Please enter a valid email address";
+            msg.style.background = "#fff7ed";
+            msg.style.color = "#b45309";
+            msg.style.border = "1px solid #fed7aa";
             return;
         }
 
         try {
             const response = await fetch("/api/auth/login", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    email: email,
-                    password: password
-                })
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password })
             });
 
             const data = await response.json();
@@ -149,12 +420,13 @@
                 const token = data.token;
                 localStorage.setItem("token", token);
 
-                // 🔑 Decode JWT payload
+                // decode JWT payload
                 const payload = JSON.parse(atob(token.split(".")[1]));
-                console.log("JWT payload:", payload); // <-- keep once for verification
 
-                msg.style.color = "green";
-                msg.innerText = "Login successful. Redirecting…";
+                msg.innerText = "✅ Login successful! Redirecting…";
+                msg.style.background = "#f0fdf4";
+                msg.style.color = "#166534";
+                msg.style.border = "1px solid #bbf7d0";
 
                 setTimeout(() => {
                     const roles =
@@ -167,20 +439,24 @@
                     } else {
                         window.location.href = "/pages/dashboard.html";
                     }
-                }, 800);
+                }, 1000);
 
             } else {
-                msg.style.color = "red";
-                msg.innerText = data.message || "Invalid credentials";
+                msg.innerText = data.message || "❌ Invalid email or password";
+                msg.style.background = "#fef2f2";
+                msg.style.color = "#b91c1c";
+                msg.style.border = "1px solid #fee2e2";
             }
 
         } catch (error) {
-            msg.style.color = "red";
-            msg.innerText = "Server error. Please try again later.";
+            msg.innerText = "🌐 Server error. Please check connection.";
+            msg.style.background = "#fef2f2";
+            msg.style.color = "#b91c1c";
+            msg.style.border = "1px solid #fee2e2";
+            console.error("Login error:", error);
         }
     }
 </script>
-
 
 </body>
 </html>

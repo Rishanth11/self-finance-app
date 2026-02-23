@@ -1,12 +1,13 @@
 package com.pro.finance.selffinanceapp.controller;
 
 import com.pro.finance.selffinanceapp.dto.DigitalGoldDTO;
+import com.pro.finance.selffinanceapp.dto.GoldHistoryDTO;
+import com.pro.finance.selffinanceapp.dto.GoldSummaryDTO;
 import com.pro.finance.selffinanceapp.model.DigitalGold;
-import com.pro.finance.selffinanceapp.model.User;
 import com.pro.finance.selffinanceapp.service.DigitalGoldService;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -21,18 +22,53 @@ public class DigitalGoldController {
 
     // ➕ Add Gold
     @PostMapping
-    public DigitalGold addGold(
-            @RequestBody DigitalGoldDTO dto,
-            @AuthenticationPrincipal User user) {
-
-        return service.addGold(dto, user);
+    public DigitalGold addGold(@RequestBody DigitalGoldDTO dto,
+                               Principal principal) {
+        return service.addGold(dto, principal.getName());
     }
 
-    // 🔄 Update Live Gold Value
-    @GetMapping("/update")
-    public List<DigitalGold> updateGold(
-            @AuthenticationPrincipal User user) {
+    // 📊 Summary
+    @GetMapping("/summary")
+    public GoldSummaryDTO getSummary(Principal principal) {
+        return service.getSummary(principal.getName());
+    }
 
-        return service.updateGoldValue(user.getId());
+    // 📋 Purchase History
+    @GetMapping
+    public List<GoldHistoryDTO> getAllGold(Principal principal) {
+        return service.getAllGold(principal.getName());
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteGold(@PathVariable Long id,
+                           Principal principal) {
+        service.deleteGold(id, principal.getName());
+    }
+
+    @PutMapping("/{id}")
+    public DigitalGold updateGold(@PathVariable Long id,
+                                  @RequestBody DigitalGoldDTO dto,
+                                  Principal principal) {
+        return service.updateGold(id, dto, principal.getName());
+    }
+
+    @GetMapping("/summary/filter")
+    public GoldSummaryDTO getFilteredSummary(
+            @RequestParam int year,
+            @RequestParam int month,
+            Principal principal) {
+
+        return service.getFilteredSummary(
+                principal.getName(), year, month);
+    }
+
+    @GetMapping("/filter")
+    public List<DigitalGold> getFilteredHistory(
+            @RequestParam int year,
+            @RequestParam int month,
+            Principal principal) {
+
+        return service.getFilteredHistory(
+                principal.getName(), year, month);
     }
 }

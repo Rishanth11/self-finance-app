@@ -2,170 +2,448 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Register | Personal Finance App</title>
+  <title>Join · Personal Finance</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     * {
-        box-sizing: border-box;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont,
-                     "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }
 
     body {
-        margin: 0;
-        height: 100vh;
-        background: #f4f6f8;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+      min-height: 100vh;
+      width: 100vw;
+      background: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      position: relative;
+      overflow-x: hidden;
     }
 
+    /* subtle background pattern */
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 25px 25px, rgba(37, 99, 235, 0.03) 2px, transparent 2px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    .register-container {
+      width: 100%;
+      max-width: 460px;
+      z-index: 2;
+      margin: 0 auto;
+    }
+
+    /* brand header */
+    .brand {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .brand i {
+      font-size: 2.8rem;
+      color: #2563eb;
+      background: white;
+      padding: 18px;
+      border-radius: 28px;
+      box-shadow: 0 20px 35px -12px rgba(37,99,235,0.2);
+      margin-bottom: 16px;
+      display: inline-block;
+      border: 1px solid #e2e8f0;
+    }
+
+    .brand h1 {
+      font-size: 2rem;
+      font-weight: 600;
+      background: linear-gradient(145deg, #2563eb, #1e3a8a);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    .brand p {
+      color: #64748b;
+      font-size: 0.95rem;
+      margin-top: 8px;
+    }
+
+    /* main card */
     .register-card {
-        background: #ffffff;
-        width: 100%;
-        max-width: 380px;
-        padding: 32px;
-        border-radius: 6px;
-        border: 1px solid #e5e7eb;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 28px;
+      padding: 32px 36px;
+      box-shadow: 0 20px 40px -14px rgba(0, 20, 40, 0.1), 0 2px 8px rgba(0, 0, 0, 0.02);
+      width: 100%;
     }
 
     .register-card h2 {
-        text-align: center;
-        margin-bottom: 24px;
-        color: #111827;
-        font-size: 22px;
-        font-weight: 600;
+      text-align: center;
+      font-size: 1.9rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: #0f172a;
+      margin-bottom: 8px;
     }
 
+    .sub-head {
+      text-align: center;
+      color: #64748b;
+      font-size: 0.95rem;
+      margin-bottom: 28px;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 20px;
+    }
+
+    /* form group */
     .form-group {
-        margin-bottom: 14px;
+      margin-bottom: 22px;
+      position: relative;
     }
 
-    .form-group input {
-        width: 100%;
-        padding: 11px;
-        border-radius: 4px;
-        border: 1px solid #d1d5db;
-        font-size: 14px;
+    .form-group label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: #64748b;
+      margin-bottom: 6px;
+      margin-left: 12px;
     }
 
-    .form-group input:focus {
-        outline: none;
-        border-color: #2563eb;
+    .input-icon-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
     }
 
+    .input-icon-wrapper i {
+      position: absolute;
+      left: 18px;
+      color: #94a3b8;
+      font-size: 1rem;
+      pointer-events: none;
+      transition: color 0.2s;
+    }
+
+    .input-icon-wrapper input {
+      width: 100%;
+      padding: 14px 20px 14px 52px;
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 20px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #1e293b;
+      transition: all 0.2s ease;
+    }
+
+    .input-icon-wrapper input:focus {
+      outline: none;
+      border-color: #2563eb;
+      background: white;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.1);
+    }
+
+    .input-icon-wrapper input:focus + i {
+      color: #2563eb;
+    }
+
+    /* password visibility toggle */
+    .toggle-password {
+      position: absolute;
+      right: 18px;
+      background: none;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 1rem;
+      z-index: 3;
+      padding: 8px;
+    }
+
+    .toggle-password:hover {
+      color: #2563eb;
+    }
+
+    .hint {
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-top: 6px;
+      margin-left: 18px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* register button */
     .register-btn {
-        width: 100%;
-        padding: 11px;
-        background: #2563eb;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        font-size: 15px;
-        font-weight: 500;
-        cursor: pointer;
+      width: 100%;
+      padding: 14px 20px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 40px;
+      font-size: 1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      box-shadow: 0 8px 22px -6px #2563ebcc;
+      margin-top: 12px;
     }
 
     .register-btn:hover {
-        background: #1e40af;
+      background: #1d4ed8;
+      transform: scale(1.02);
     }
 
+    .register-btn i {
+      font-size: 1.1rem;
+    }
+
+    /* message area */
     .message {
-        text-align: center;
-        margin-top: 12px;
-        font-size: 13px;
+      text-align: center;
+      margin-top: 22px;
+      padding: 12px 20px;
+      border-radius: 40px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      background: #f8fafc;
+      color: #1e293b;
+      border: 1px solid #e2e8f0;
+      transition: all 0.1s;
+      word-break: break-word;
     }
 
+    .message:empty {
+      display: none;
+    }
+
+    /* login link */
     .login-link {
-        text-align: center;
-        margin-top: 18px;
-        font-size: 13px;
-        color: #374151;
+      text-align: center;
+      margin-top: 24px;
+      font-size: 0.95rem;
+      color: #64748b;
     }
 
     .login-link a {
-        color: #2563eb;
-        text-decoration: none;
-        font-weight: 500;
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 600;
+      margin-left: 6px;
+      border-bottom: 2px solid transparent;
+      transition: 0.1s;
+    }
+
+    .login-link a:hover {
+      border-bottom-color: #2563eb;
+    }
+
+    /* footer note */
+    .footer-note {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 0.8rem;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .footer-note i {
+      color: #2563eb;
+    }
+
+    /* responsive */
+    @media (max-width: 480px) {
+      .register-card {
+        border-radius: 24px;
+        padding: 24px 20px;
+      }
+      .brand i {
+        font-size: 2.4rem;
+        padding: 16px;
+        border-radius: 24px;
+      }
+      .brand h1 {
+        font-size: 1.6rem;
+      }
+      .register-card h2 {
+        font-size: 1.6rem;
+      }
     }
   </style>
 </head>
 
 <body>
 
-<div class="register-card">
-  <h2>Create account</h2>
-
-  <div class="form-group">
-    <input id="name" placeholder="Full name">
+<div class="register-container">
+  <!-- brand header -->
+  <div class="brand">
+    <i class="fas fa-wallet"></i>
+    <h1>personal finance</h1>
+    <p>take control of your money</p>
   </div>
 
-  <div class="form-group">
-    <input id="email" type="email" placeholder="Email address">
+  <!-- register card -->
+  <div class="register-card">
+    <h2>get started</h2>
+    <div class="sub-head">create your free account</div>
+
+    <!-- name field -->
+    <div class="form-group">
+      <label for="name">Full name</label>
+      <div class="input-icon-wrapper">
+        <i class="fas fa-user"></i>
+        <input type="text" id="name" placeholder="John Carter" autocomplete="name">
+      </div>
+    </div>
+
+    <!-- email field -->
+    <div class="form-group">
+      <label for="email">Email address</label>
+      <div class="input-icon-wrapper">
+        <i class="fas fa-envelope"></i>
+        <input type="email" id="email" placeholder="hello@domain.com" autocomplete="email">
+      </div>
+    </div>
+
+    <!-- password field with show/hide -->
+    <div class="form-group">
+      <label for="password">Password</label>
+      <div class="input-icon-wrapper">
+        <i class="fas fa-lock"></i>
+        <input type="password" id="password" placeholder="••••••••" autocomplete="new-password">
+        <button type="button" class="toggle-password" onclick="togglePasswordVisibility()" tabindex="-1">
+          <i class="fas fa-eye" id="toggleIcon"></i>
+        </button>
+      </div>
+      <div class="hint"><i class="fas fa-info-circle"></i> at least 8 characters</div>
+    </div>
+
+    <!-- register button -->
+    <button class="register-btn" onclick="register()">
+      <i class="fas fa-user-plus"></i> Create account
+    </button>
+
+    <!-- dynamic message -->
+    <p id="msg" class="message"></p>
+
+    <!-- sign in link -->
+    <div class="login-link">
+      Already have an account?
+      <a href="/pages/login.html">Sign in →</a>
+    </div>
   </div>
 
-  <div class="form-group">
-    <input id="password" type="password" placeholder="Password">
-  </div>
-
-  <button class="register-btn" onclick="register()">Create account</button>
-
-  <p id="msg" class="message"></p>
-
-  <div class="login-link">
-    Already have an account?
-    <a href="/pages/login.html">Sign in</a>
+  <!-- tiny footer note -->
+  <div class="footer-note">
+    <i class="fas fa-shield-alt"></i> secured by 256-bit encryption
   </div>
 </div>
 
 <script>
+  // toggle password visibility
+  function togglePasswordVisibility() {
+      const pwdInput = document.getElementById('password');
+      const icon = document.getElementById('toggleIcon');
+      if (pwdInput.type === 'password') {
+          pwdInput.type = 'text';
+          icon.classList.remove('fa-eye');
+          icon.classList.add('fa-eye-slash');
+      } else {
+          pwdInput.type = 'password';
+          icon.classList.remove('fa-eye-slash');
+          icon.classList.add('fa-eye');
+      }
+  }
+
   async function register() {
       const name = document.getElementById("name").value.trim();
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value.trim();
       const msg = document.getElementById("msg");
 
+      // reset message styles
       msg.innerText = "";
-      msg.style.color = "black";
+      msg.style.background = "#f8fafc";
+      msg.style.color = "#1e293b";
+      msg.style.border = "1px solid #e2e8f0";
 
       if (!name || !email || !password) {
-          msg.style.color = "red";
-          msg.innerText = "All fields are required";
+          msg.innerText = "⚠️ All fields are required";
+          msg.style.background = "#fef2f2";
+          msg.style.color = "#b91c1c";
+          msg.style.border = "1px solid #fee2e2";
+          return;
+      }
+
+      if (password.length < 8) {
+          msg.innerText = "🔐 Password must be at least 8 characters";
+          msg.style.background = "#fff7ed";
+          msg.style.color = "#b45309";
+          msg.style.border = "1px solid #fed7aa";
+          return;
+      }
+
+      // basic email pattern
+      if (!email.includes('@') || !email.includes('.')) {
+          msg.innerText = "📧 Please enter a valid email address";
+          msg.style.background = "#fff7ed";
+          msg.style.color = "#b45309";
+          msg.style.border = "1px solid #fed7aa";
           return;
       }
 
       try {
           const response = await fetch("/api/auth/register", {
               method: "POST",
-              headers: {
-                  "Content-Type": "application/json"
-              },
-              body: JSON.stringify({
-                  name: name,
-                  email: email,
-                  password: password
-              })
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ name, email, password })
           });
 
           const data = await response.json();
 
           if (response.ok) {
-              msg.style.color = "green";
-              msg.innerText = "Registration successful. Redirecting to login…";
+              msg.innerText = "✅ Registration successful! Redirecting to login…";
+              msg.style.background = "#f0fdf4";
+              msg.style.color = "#166534";
+              msg.style.border = "1px solid #bbf7d0";
 
               setTimeout(() => {
                   window.location.href = "/pages/login.html";
-              }, 1200);
+              }, 1400);
           } else {
-              msg.style.color = "red";
-              msg.innerText = data.message || "Registration failed";
+              msg.innerText = data.message || "❌ Registration failed. Try again.";
+              msg.style.background = "#fef2f2";
+              msg.style.color = "#b91c1c";
+              msg.style.border = "1px solid #fee2e2";
           }
 
       } catch (error) {
-          msg.style.color = "red";
-          msg.innerText = "Server error. Please try again later.";
+          msg.innerText = "🌐 Server error. Please check connection.";
+          msg.style.background = "#fef2f2";
+          msg.style.color = "#b91c1c";
+          msg.style.border = "1px solid #fee2e2";
+          console.error("Registration fetch error:", error);
       }
   }
 </script>

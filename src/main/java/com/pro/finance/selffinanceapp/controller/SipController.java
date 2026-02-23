@@ -1,66 +1,132 @@
 package com.pro.finance.selffinanceapp.controller;
-import com.pro.finance.selffinanceapp.model.SipInvestment;
-import com.pro.finance.selffinanceapp.service.SipService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
+import com.pro.finance.selffinanceapp.dto.SipRequestDTO;
+import com.pro.finance.selffinanceapp.model.User;
+import com.pro.finance.selffinanceapp.service.SipService;
+import com.pro.finance.selffinanceapp.service.UserService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/sip")
+@PreAuthorize("hasRole('USER')")
 public class SipController {
 
     private final SipService sipService;
+    private final UserService userService;
 
-    public SipController(SipService sipService) {
+    public SipController(SipService sipService, UserService userService) {
         this.sipService = sipService;
+        this.userService = userService;
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<?> addSip(@RequestBody SipInvestment sip) {
-        return ResponseEntity.ok(sipService.saveSip(sip));
+    // ✅ CREATE SIP
+    @PostMapping
+    public ResponseEntity<?> addSip(@RequestBody SipRequestDTO dto,
+                                    Authentication authentication) {
+
+        String email = authentication.getName();
+        User user = userService.findByEmail(email);
+
+        return ResponseEntity.ok(
+                sipService.createSip(dto, user)
+        );
     }
 
+    // ✅ GET ALL SIPS
+    @GetMapping
+    public ResponseEntity<?> getAll(Authentication authentication) {
+
+        String email = authentication.getName();
+        User user = userService.findByEmail(email);
+
+        return ResponseEntity.ok(
+                sipService.getAllByUser(user)
+        );
+    }
+
+    // ✅ PORTFOLIO
     @GetMapping("/{sipId}/portfolio")
-    public ResponseEntity<?> portfolio(@PathVariable Long sipId) {
-        return ResponseEntity.ok(sipService.getPortfolio(sipId));
+    public ResponseEntity<?> portfolio(@PathVariable Long sipId,
+                                       Authentication authentication) {
+
+        String email = authentication.getName();
+        User user = userService.findByEmail(email);
+
+        return ResponseEntity.ok(
+                sipService.getPortfolio(sipId, user)
+        );
     }
 
+    // ✅ CHART
     @GetMapping("/{sipId}/chart")
-    public List<Map<String, Object>> sipChart(@PathVariable Long sipId) {
-        return sipService.getSipChart(sipId);
+    public ResponseEntity<?> sipChart(@PathVariable Long sipId,
+                                      Authentication authentication) {
+
+        String email = authentication.getName();
+        User user = userService.findByEmail(email);
+
+        return ResponseEntity.ok(
+                sipService.getSipChart(sipId, user)
+        );
     }
 
+    // ✅ EXECUTE SIP
     @PostMapping("/{sipId}/execute")
-    public ResponseEntity<?> runSipNow(@PathVariable Long sipId) {
-        sipService.executeSipNow(sipId);
-        return ResponseEntity.ok("SIP executed successfully");
+    public ResponseEntity<?> execute(@PathVariable Long sipId,
+                                     Authentication authentication) {
+
+        try {
+            String email = authentication.getName();
+            User user = userService.findByEmail(email);
+
+            sipService.executeSipNow(sipId, user);
+
+            return ResponseEntity.ok("SIP executed successfully");
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<?> getSipByUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(sipService.getSipByUser(userId));
-    }
-
+    // ✅ DELETE SIP
     @DeleteMapping("/{sipId}")
-    public ResponseEntity<?> deleteSip(@PathVariable Long sipId) {
-        sipService.deleteSip(sipId);
+    public ResponseEntity<?> delete(@PathVariable Long sipId,
+                                    Authentication authentication) {
+
+        String email = authentication.getName();
+        User user = userService.findByEmail(email);
+
+        sipService.deleteSip(sipId, user);
+
         return ResponseEntity.ok("SIP deleted successfully");
     }
 
+    // ✅ DEACTIVATE SIP
     @PutMapping("/{sipId}/deactivate")
-    public ResponseEntity<?> deactivateSip(@PathVariable Long sipId) {
-        sipService.deactivateSip(sipId);
-        return ResponseEntity.ok("SIP deactivated successfully");
+    public ResponseEntity<?> deactivate(@PathVariable Long sipId,
+                                        Authentication authentication) {
+
+        String email = authentication.getName();
+        User user = userService.findByEmail(email);
+
+        sipService.deactivateSip(sipId, user);
+
+        return ResponseEntity.ok("SIP deactivated");
     }
 
+    // ✅ ACTIVATE SIP
     @PutMapping("/{sipId}/activate")
-    public ResponseEntity<?> activateSip(@PathVariable Long sipId) {
-        sipService.activateSip(sipId);
-        return ResponseEntity.ok("SIP activated successfully");
+    public ResponseEntity<?> activate(@PathVariable Long sipId,
+                                      Authentication authentication) {
+
+        String email = authentication.getName();
+        User user = userService.findByEmail(email);
+
+        sipService.activateSip(sipId, user);
+
+        return ResponseEntity.ok("SIP activated");
     }
-
-
 }
-

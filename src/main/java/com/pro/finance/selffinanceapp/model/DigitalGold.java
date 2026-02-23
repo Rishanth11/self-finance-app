@@ -22,10 +22,6 @@ public class DigitalGold {
     private double purchasePricePerGram;
     private double totalInvested;
 
-    private double currentPricePerGram;
-    private double currentValue;
-    private double profitLoss;
-
     private LocalDate purchaseDate;
 
     @ManyToOne

@@ -8,6 +8,7 @@ import com.pro.finance.selffinanceapp.repository.IncomeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -92,5 +93,13 @@ public class IncomeServiceImpl implements IncomeService {
     @Override
     public void deleteById(Long id) {
         incomeRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Income> findByUserAndDateRange(User user,
+                                               LocalDate start,
+                                               LocalDate end) {
+        return incomeRepository
+                .findByUserAndDateBetweenOrderByDateDesc(user, start, end);
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -115,5 +116,35 @@ public class IncomeController {
                     return ResponseEntity.noContent().build();
                 })
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<IncomeDTO>> getIncomesByMonth(
+            @RequestParam int year,
+            @RequestParam int month,
+            Authentication authentication
+    ) {
+        String username = authentication.getName();
+        User user = userService.findByEmail(username);
+
+        LocalDate start = LocalDate.of(year, month, 1);
+        LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
+
+        List<IncomeDTO> out = incomeService
+                .findByUserAndDateRange(user, start, end)
+                .stream()
+                .map(i -> {
+                    IncomeDTO d = new IncomeDTO();
+                    d.setId(i.getId());
+                    d.setSource(i.getSource());
+                    d.setAmount(i.getAmount());
+                    d.setDate(i.getDate());
+                    d.setCategory(i.getCategory().name());
+                    d.setDescription(i.getDescription());
+                    return d;
+                })
+                .toList();
+
+        return ResponseEntity.ok(out);
     }
 }

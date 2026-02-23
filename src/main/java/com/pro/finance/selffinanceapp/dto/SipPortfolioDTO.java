@@ -1,18 +1,22 @@
 package com.pro.finance.selffinanceapp.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
+import java.math.BigDecimal;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class SipPortfolioDTO {
-    public double totalInvested;
-    public double currentValue;
-    public double returns;
-    public double xirr;
+
+    private BigDecimal totalInvested;
+    private BigDecimal currentValue;
+    private BigDecimal returns;
+    private BigDecimal xirr;
+    private BigDecimal realReturn;
+    private BigDecimal goalProgress;
     private boolean navAvailable;
+    private String goalName;
+    private BigDecimal targetAmount;
 }

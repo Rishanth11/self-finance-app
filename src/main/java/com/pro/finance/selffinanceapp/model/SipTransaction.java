@@ -1,11 +1,9 @@
 package com.pro.finance.selffinanceapp.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Getter
@@ -20,13 +18,18 @@ public class SipTransaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long sipId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sip_id", nullable = false)
+    private SipInvestment sip;
 
     private LocalDate investDate;
 
-    private double nav;
+    @Column(precision = 19, scale = 6)
+    private BigDecimal nav;
 
-    private double units;
+    @Column(precision = 19, scale = 6)
+    private BigDecimal units;
 
-    private double amount;
+    @Column(precision = 19, scale = 4)
+    private BigDecimal amount;
 }
