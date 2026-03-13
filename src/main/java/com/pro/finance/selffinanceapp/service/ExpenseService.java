@@ -1,11 +1,9 @@
 package com.pro.finance.selffinanceapp.service;
 
-import com.pro.finance.selffinanceapp.dto.ExpenseDTO;
 import com.pro.finance.selffinanceapp.model.Expense;
+import com.pro.finance.selffinanceapp.model.User;
 import com.pro.finance.selffinanceapp.repository.ExpenseRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -20,18 +18,22 @@ public class ExpenseService {
         this.repo = repo;
     }
 
+    // SAVE
     public Expense saveExpense(Expense expense) {
         return repo.save(expense);
     }
 
-    public List<Expense> getExpensesByUser(Long userId) {
-        return repo.findByUserIdOrderByExpenseDateDesc(userId);
+    // GET USER EXPENSES
+    public List<Expense> getExpensesByUser(User user) {
+        return repo.findByUserOrderByExpenseDateDesc(user);
     }
 
+    // TOTAL EXPENSE
     public BigDecimal getTotalExpense(Long userId) {
         return repo.getTotalExpense(userId);
     }
 
+    // UPDATE
     public Expense updateExpense(Long id, Expense updatedExpense) {
 
         Expense existing = repo.findById(id)
@@ -45,15 +47,17 @@ public class ExpenseService {
         return repo.save(existing);
     }
 
+    // DELETE
     public void deleteExpense(Long id) {
         repo.deleteById(id);
     }
 
-    public List<Expense> getByDateRange(Long userId,
+    // FILTER BY DATE RANGE
+    public List<Expense> getByDateRange(User user,
                                         LocalDate start,
                                         LocalDate end) {
-        return repo
-                .findByUserIdAndExpenseDateBetweenOrderByExpenseDateDesc(
-                        userId, start, end);
+
+        return repo.findByUserAndExpenseDateBetweenOrderByExpenseDateDesc(
+                user, start, end);
     }
 }
