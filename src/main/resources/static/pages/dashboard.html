@@ -2,586 +2,593 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard · Personal Finance Management System</title>
+    <title>Dashboard · Personal Finance</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --green:        #16a34a;
+            --green-light:  #22c55e;
+            --green-dim:    #dcfce7;
+            --green-border: #bbf7d0;
+            --slate-900:    #0f172a;
+            --slate-700:    #334155;
+            --slate-600:    #475569;
+            --slate-400:    #94a3b8;
+            --slate-200:    #e2e8f0;
+            --slate-100:    #f1f5f9;
+            --slate-50:     #f8fafc;
+            --white:        #ffffff;
+            --red:          #dc2626;
+            --red-dim:      #fef2f2;
         }
 
         body {
-            background: #f8fafc;
-            padding: 32px 24px;
+            background: #f5f7f5;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--slate-900);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            color: #1e293b;
+            padding: 36px 28px;
         }
 
-        .container {
-            max-width: 1280px;
-            width: 100%;
-        }
+        .page { max-width: 1180px; margin: 0 auto; }
 
-        /* header area */
-        .page-header {
+        /* ── TOP BAR ── */
+        .top-bar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 32px;
             flex-wrap: wrap;
             gap: 16px;
+            margin-bottom: 32px;
+            animation: fadeUp 0.4s ease both;
         }
 
-        .page-header h1 {
-            font-size: 2rem;
-            font-weight: 600;
-            background: linear-gradient(145deg, #2563eb, #1e3a8a);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.02em;
+        /* Logo + app name */
+        .brand {
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-        .page-header h1 i {
-            background: #ffffff;
-            padding: 10px 14px;
-            border-radius: 20px;
-            color: #2563eb;
-            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.15);
-            font-size: 1.6rem;
-            -webkit-text-fill-color: #2563eb;
-            border: 1px solid #e2e8f0;
+        .brand-logo {
+            height: 44px;
+            width: auto;
         }
 
-        .user-greeting {
-            background: white;
-            padding: 12px 24px;
-            border-radius: 60px;
-            font-weight: 500;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-            border: 1px solid #e2e8f0;
+        .brand-text h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--slate-900);
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .brand-text p {
+            font-size: 0.78rem;
+            color: var(--slate-400);
+            margin-top: 1px;
+        }
+
+        /* User greeting pill */
+        .greeting-pill {
             display: flex;
             align-items: center;
             gap: 10px;
-            color: #64748b;
+            background: var(--white);
+            border: 1.5px solid var(--slate-200);
+            border-radius: 40px;
+            padding: 10px 18px;
+            font-size: 0.875rem;
+            color: var(--slate-600);
         }
 
-        .user-greeting i {
-            color: #2563eb;
+        .greeting-pill i { color: var(--green); }
+        .greeting-pill strong { color: var(--slate-900); font-weight: 600; }
+
+        .logout-btn {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 10px 18px; border-radius: 10px; border: none;
+            font-family: 'DM Sans', sans-serif; font-size: 0.875rem;
+            font-weight: 500; cursor: pointer; background: var(--red-dim);
+            color: var(--red); transition: background 0.15s;
         }
 
-        .user-greeting strong {
-            color: #2563eb;
-            font-weight: 600;
+        .logout-btn:hover { background: var(--red); color: white; }
+
+        /* ── STAT CARDS ── */
+        .stat-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+            animation: fadeUp 0.4s 0.05s ease both;
         }
 
-        /* summary cards row */
-        .summary-row {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-bottom: 32px;
-        }
-
-        .summary-card {
-            flex: 1 1 180px;
-            background: white;
-            padding: 20px;
-            border-radius: 24px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 20px 40px -14px rgba(0, 20, 40, 0.1);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        .stat-card {
+            background: var(--white);
+            border: 1.5px solid var(--slate-200);
+            border-radius: 16px;
+            padding: 20px 22px;
             position: relative;
             overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .summary-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
         }
 
-        .summary-card::before {
+        /* top accent bar */
+        .stat-card::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #2563eb, #7c3aed);
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            border-radius: 16px 16px 0 0;
         }
 
-        .summary-card.income::before {
-            background: linear-gradient(90deg, #16a34a, #22c55e);
-        }
+        .stat-card.s-income::before  { background: var(--green); }
+        .stat-card.s-expense::before { background: var(--red); }
+        .stat-card.s-savings::before { background: #0ea5e9; }
+        .stat-card.s-rate::before    { background: #8b5cf6; }
+        .stat-card.s-sip::before     { background: #f59e0b; }
+        .stat-card.s-gold::before    { background: #d97706; }
 
-        .summary-card.expense::before {
-            background: linear-gradient(90deg, #b91c1c, #dc2626);
-        }
-
-        .summary-card.savings::before {
-            background: linear-gradient(90deg, #16a34a, #059669);
-        }
-
-        .summary-card.sip::before {
-            background: linear-gradient(90deg, #7c3aed, #a855f7);
-        }
-
-        .summary-card.gold::before {
-            background: linear-gradient(90deg, #d97706, #f59e0b);
-        }
-
-        .summary-card h3 {
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #64748b;
-            margin-bottom: 12px;
+        .stat-top {
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: space-between;
+            margin-bottom: 14px;
         }
 
-        .summary-card h3 i {
-            font-size: 1rem;
+        .stat-label {
+            font-size: 0.72rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--slate-400);
         }
 
-        .summary-card p {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: #1e293b;
-            line-height: 1.2;
-            margin-bottom: 8px;
+        .stat-icon {
+            width: 36px; height: 36px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.875rem; flex-shrink: 0;
         }
 
-        .summary-card .sub-text {
+        .stat-icon.green  { background: var(--green-dim);  color: var(--green); }
+        .stat-icon.red    { background: var(--red-dim);    color: var(--red); }
+        .stat-icon.blue   { background: #e0f2fe;           color: #0284c7; }
+        .stat-icon.purple { background: #ede9fe;           color: #7c3aed; }
+        .stat-icon.amber  { background: #fef3c7;           color: #d97706; }
+        .stat-icon.slate  { background: var(--slate-100);  color: var(--slate-600); }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--slate-900);
+            letter-spacing: -0.02em;
+            margin-bottom: 4px;
+        }
+
+        .stat-sub {
             font-size: 0.75rem;
-            color: #64748b;
+            color: var(--slate-400);
             display: flex;
             align-items: center;
             gap: 4px;
         }
 
-        /* card design */
+        /* ── CARD ── */
         .card {
-            background: #ffffff;
-            border-radius: 28px;
-            padding: 28px 30px;
-            margin-bottom: 32px;
-            box-shadow: 0 20px 40px -14px rgba(0, 20, 40, 0.1), 0 2px 8px rgba(0, 0, 0, 0.02);
-            border: 1px solid #e2e8f0;
+            background: var(--white);
+            border: 1.5px solid var(--slate-200);
+            border-radius: 20px;
+            padding: 24px 26px;
+            margin-bottom: 20px;
+            animation: fadeUp 0.4s 0.1s ease both;
         }
 
         .card-header {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 24px;
+            gap: 10px;
+            margin-bottom: 22px;
         }
 
-        .card-header i {
-            font-size: 1.5rem;
-            color: #2563eb;
-            background: #e0edff;
-            padding: 10px;
-            border-radius: 18px;
+        .card-header-icon {
+            width: 34px; height: 34px;
+            background: var(--green-dim); border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--green); font-size: 0.875rem;
         }
 
         .card-header h3 {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #0f172a;
-        }
-
-        .chart-container {
-            height: 300px;
-            width: 100%;
-            background: #f8fafc;
-            padding: 20px;
-            border-radius: 24px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .chart-container canvas {
-            width: 100% !important;
-            height: 100% !important;
-        }
-
-        /* action buttons - centered */
-        .action-section {
-            text-align: center;
-            margin-top: 16px;
-        }
-
-        .action-label {
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #64748b;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .action-label i {
-            color: #2563eb;
-        }
-
-        .action-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .btn {
-            padding: 14px 28px;
-            border-radius: 40px;
-            border: none;
-            font-weight: 600;
             font-size: 1rem;
-            display: inline-flex;
+            font-weight: 600;
+            color: var(--slate-900);
+        }
+
+        /* ── CHART ── */
+        .chart-box {
+            background: var(--slate-50);
+            border: 1.5px solid var(--slate-200);
+            border-radius: 14px;
+            padding: 20px;
+            height: 280px;
+            position: relative;
+        }
+
+        .chart-box canvas { width: 100% !important; height: 100% !important; }
+
+        /* ── NAV BUTTONS ── */
+        .nav-section {
+            animation: fadeUp 0.4s 0.15s ease both;
+        }
+
+        .nav-label {
+            font-size: 0.72rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--slate-400);
+            margin-bottom: 14px;
+            text-align: center;
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+        .nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 20px 16px;
+            border: 1.5px solid var(--slate-200);
+            border-radius: 16px;
+            background: var(--white);
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--slate-700);
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        }
+
+        .nav-btn-icon {
+            width: 44px; height: 44px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem;
+            transition: transform 0.2s;
+        }
+
+        .nav-btn:hover .nav-btn-icon { transform: scale(1.1); }
+
+        .nav-btn.income  .nav-btn-icon { background: var(--green-dim); color: var(--green); }
+        .nav-btn.expense .nav-btn-icon { background: var(--red-dim);   color: var(--red); }
+        .nav-btn.sip     .nav-btn-icon { background: #fef3c7;          color: #d97706; }
+        .nav-btn.gold    .nav-btn-icon { background: #fef3c7;          color: #d97706; }
+
+        .nav-btn.income:hover  { border-color: var(--green-border); background: var(--green-dim); color: var(--green); }
+        .nav-btn.expense:hover { border-color: #fecaca;             background: var(--red-dim);   color: var(--red); }
+        .nav-btn.sip:hover     { border-color: #fde68a;             background: #fef9c3;          color: #92400e; }
+        .nav-btn.gold:hover    { border-color: #fde68a;             background: #fef9c3;          color: #92400e; }
+
+        /* ── FOOTER NOTE ── */
+        .footer-note {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.75rem;
+            color: var(--slate-400);
+            display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            background: white;
-            color: #334155;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
-            min-width: 140px;
+            gap: 6px;
         }
 
-        .btn i {
-            font-size: 1.1rem;
+        .footer-note i { color: var(--green); }
+
+        /* ── ANIMATION ── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
-        .btn-income {
-            background: #16a34a;
-            color: white;
-            border: none;
-            box-shadow: 0 8px 22px -6px #16a34acc;
-        }
-
-        .btn-income:hover {
-            background: #15803d;
-            transform: scale(1.05);
-        }
-
-        .btn-expense {
-            background: #b91c1c;
-            color: white;
-            border: none;
-            box-shadow: 0 8px 22px -6px #b91c1ccc;
-        }
-
-        .btn-expense:hover {
-            background: #991b1b;
-            transform: scale(1.05);
-        }
-
-        .btn-sip {
-            background: #7c3aed;
-            color: white;
-            border: none;
-            box-shadow: 0 8px 22px -6px #7c3aedcc;
-        }
-
-        .btn-sip:hover {
-            background: #6d28d9;
-            transform: scale(1.05);
-        }
-
-        .btn-gold {
-            background: #d97706;
-            color: white;
-            border: none;
-            box-shadow: 0 8px 22px -6px #d97706cc;
-        }
-
-        .btn-gold:hover {
-            background: #b45309;
-            transform: scale(1.05);
-        }
-
-        .btn-logout {
-            background: #b91c1c;
-            color: white;
-            border: none;
-            box-shadow: 0 8px 22px -6px #b91c1ccc;
-        }
-
-        .btn-logout:hover {
-            background: #991b1b;
-            transform: scale(1.05);
-        }
-
-        /* responsive */
-        @media (max-width: 768px) {
-            .summary-card p {
-                font-size: 1.4rem;
-            }
-            .btn {
-                padding: 12px 20px;
-                min-width: 120px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            body {
-                padding: 20px 16px;
-            }
-            .page-header h1 {
-                font-size: 1.6rem;
-            }
-            .card {
-                padding: 20px;
-            }
+        @media (max-width: 600px) {
+            body { padding: 20px 16px; }
+            .top-bar { flex-direction: column; align-items: flex-start; }
+            .stat-value { font-size: 1.3rem; }
         }
     </style>
 </head>
+<body>
 
-<body onload="requireAuth(); loadDashboard();">
+<div class="page">
 
-<div class="container">
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <!-- Logo + App name -->
+        <div class="brand">
+            <img src="../images/FLUX360_logo.png" alt="FLUX360" class="brand-logo">
+            <div class="brand-text">
+                <h1>FLUX360</h1>
+                <p>Your complete wealth management platform.</p>
+            </div>
+        </div>
 
-    <!-- HEADER with project name -->
-    <div class="page-header">
-        <h1><i class="fas fa-wallet"></i> Personal Finance Management System</h1>
-        <div class="user-greeting">
-            <i class="fas fa-user-circle"></i>
-            <span>Welcome, <strong id="userName">User</strong></span>
+        <!-- Right: greeting + logout -->
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <div class="greeting-pill">
+                <i class="fas fa-user-circle"></i>
+                <span>Welcome, <strong id="userName">User</strong></span>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
         </div>
     </div>
 
-    <!-- SUMMARY CARDS -->
-    <div class="summary-row">
-        <div class="summary-card income">
-            <h3><i class="fas fa-circle-up" style="color: #16a34a;"></i> Total Income</h3>
-            <p id="totalIncome" style="color: #16a34a;">₹0</p>
-            <div class="sub-text">
-                <i class="fas fa-arrow-up" style="color: #16a34a;"></i> lifetime earnings
+    <!-- STAT CARDS -->
+    <div class="stat-row">
+        <div class="stat-card s-income">
+            <div class="stat-top">
+                <span class="stat-label">Total income</span>
+                <div class="stat-icon green"><i class="fas fa-arrow-trend-up"></i></div>
             </div>
+            <div class="stat-value" id="totalIncome">₹0</div>
+            <div class="stat-sub"><i class="fas fa-circle" style="font-size:0.5rem;color:var(--green)"></i> Lifetime earnings</div>
         </div>
 
-        <div class="summary-card expense">
-            <h3><i class="fas fa-circle-down" style="color: #b91c1c;"></i> Total Expense</h3>
-            <p id="totalExpense" style="color: #b91c1c;">₹0</p>
-            <div class="sub-text">
-                <i class="fas fa-arrow-down" style="color: #b91c1c;"></i> lifetime spending
+        <div class="stat-card s-expense">
+            <div class="stat-top">
+                <span class="stat-label">Total expense</span>
+                <div class="stat-icon red"><i class="fas fa-arrow-trend-down"></i></div>
             </div>
+            <div class="stat-value" id="totalExpense">₹0</div>
+            <div class="stat-sub"><i class="fas fa-circle" style="font-size:0.5rem;color:var(--red)"></i> Lifetime spending</div>
         </div>
 
-        <div class="summary-card savings">
-            <h3><i class="fas fa-piggy-bank" style="color: #16a34a;"></i> Net Savings</h3>
-            <p id="netSavings" style="color: #16a34a;">₹0</p>
-            <div class="sub-text">
-                <i class="fas fa-chart-line" style="color: #16a34a;"></i> income - expenses
+        <div class="stat-card s-savings">
+            <div class="stat-top">
+                <span class="stat-label">Net savings</span>
+                <div class="stat-icon blue"><i class="fas fa-piggy-bank"></i></div>
             </div>
+            <div class="stat-value" id="netSavings">₹0</div>
+            <div class="stat-sub"><i class="fas fa-circle" style="font-size:0.5rem;color:#0ea5e9"></i> Income − expenses</div>
         </div>
 
-        <div class="summary-card">
-            <h3><i class="fas fa-percent" style="color: #2563eb;"></i> Savings Rate</h3>
-            <p id="savingsPercent" style="color: #2563eb;">0%</p>
-            <div class="sub-text">
-                <i class="fas fa-pie-chart" style="color: #2563eb;"></i> of total income
+        <div class="stat-card s-rate">
+            <div class="stat-top">
+                <span class="stat-label">Savings rate</span>
+                <div class="stat-icon purple"><i class="fas fa-percent"></i></div>
             </div>
+            <div class="stat-value" id="savingsPercent">0%</div>
+            <div class="stat-sub"><i class="fas fa-circle" style="font-size:0.5rem;color:#8b5cf6"></i> Of total income</div>
         </div>
 
-        <div class="summary-card sip">
-            <h3><i class="fas fa-chart-line" style="color: #7c3aed;"></i> SIP Portfolio</h3>
-            <p id="sipValue" style="color: #7c3aed;">₹0</p>
-            <div class="sub-text">
-                <i class="fas fa-robot" style="color: #7c3aed;"></i> current value
+        <div class="stat-card s-sip">
+            <div class="stat-top">
+                <span class="stat-label">SIP portfolio</span>
+                <div class="stat-icon amber"><i class="fas fa-chart-line"></i></div>
             </div>
+            <div class="stat-value" id="sipValue">₹0</div>
+            <div class="stat-sub"><i class="fas fa-circle" style="font-size:0.5rem;color:#d97706"></i> Current value</div>
         </div>
 
-        <div class="summary-card gold">
-            <h3><i class="fas fa-coins" style="color: #d97706;"></i> Digital Gold</h3>
-            <p id="goldValue" style="color: #d97706;">₹0</p>
-            <div class="sub-text">
-                <i class="fas fa-arrow-trend-up" style="color: #d97706;"></i> current value
+        <div class="stat-card s-gold">
+            <div class="stat-top">
+                <span class="stat-label">Gold portfolio</span>
+                <div class="stat-icon amber"><i class="fas fa-coins"></i></div>
             </div>
+            <div class="stat-value" id="goldValue">₹0</div>
+            <div class="stat-sub"><i class="fas fa-circle" style="font-size:0.5rem;color:#d97706"></i> Current value</div>
         </div>
     </div>
 
     <!-- CHART CARD -->
     <div class="card">
         <div class="card-header">
-            <i class="fas fa-chart-bar"></i>
-            <h3>Income vs Expense Overview</h3>
+            <div class="card-header-icon"><i class="fas fa-chart-bar"></i></div>
+            <h3>Income vs Expense overview</h3>
         </div>
-        <div class="chart-container">
+        <div class="chart-box">
             <canvas id="summaryChart"></canvas>
         </div>
     </div>
 
-    <!-- ACTION BUTTONS - Centered with Icons -->
-    <div class="action-section">
-        <div class="action-label">
-            <i class="fas fa-compass"></i> QUICK NAVIGATION
+    <!-- NAVIGATION CARD -->
+    <div class="card nav-section">
+        <div class="card-header">
+            <div class="card-header-icon"><i class="fas fa-compass"></i></div>
+            <h3>Quick navigation</h3>
         </div>
-        <div class="action-bar">
-            <button class="btn btn-income" onclick="goToIncome()">
-                <i class="fas fa-chart-line"></i> Income
+        <div class="nav-grid">
+            <button class="nav-btn income" onclick="goToIncome()">
+                <div class="nav-btn-icon"><i class="fas fa-arrow-trend-up"></i></div>
+                Income
             </button>
-            <button class="btn btn-expense" onclick="goToExpense()">
-                <i class="fas fa-receipt"></i> Expense
+            <button class="nav-btn expense" onclick="goToExpense()">
+                <div class="nav-btn-icon"><i class="fas fa-receipt"></i></div>
+                Expense
             </button>
-            <button class="btn btn-sip" onclick="goToSip()">
-                <i class="fas fa-robot"></i> SIP
+            <button class="nav-btn sip" onclick="goToSip()">
+                <div class="nav-btn-icon"><i class="fas fa-chart-line"></i></div>
+                SIP
             </button>
-            <button class="btn btn-gold" onclick="goToGold()">
-                <i class="fas fa-coins"></i> Digital Gold
-            </button>
-            <button class="btn btn-logout" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i> Logout
+            <button class="nav-btn gold" onclick="goToGold()">
+                <div class="nav-btn-icon"><i class="fas fa-coins"></i></div>
+                Gold Tracker
             </button>
         </div>
-        <div style="margin-top: 16px; color: #94a3b8; font-size: 0.8rem;">
-            <i class="fas fa-shield-alt"></i> Secured · Personal Finance Management System v1.0
-        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer-note">
+        <i class="fas fa-shield-alt"></i>
+        Secured · FLUX360 Personal Finance v1.0
     </div>
 
 </div>
 
 <script src="../js/guard.js"></script>
 <script src="../js/api.js"></script>
-
 <script>
-
     let chartInstance;
 
-    function formatCurrency(amount) {
-        return new Intl.NumberFormat('en-IN', {
-            style: 'currency',
-            currency: 'INR',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0
-        }).format(amount || 0);
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof requireAuth === 'function') requireAuth();
+        loadDashboard();
+    });
+
+    function fmt(n) {
+        return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(n || 0);
     }
 
     function getUserName() {
-        const token = localStorage.getItem("token");
-        if (!token) return "User";
+        const token = localStorage.getItem('token');
+        if (!token) return 'User';
         try {
-            const payload = JSON.parse(atob(token.split(".")[1]));
-            return payload.name || payload.sub || "User";
-        } catch(e) {
-            return "User";
-        }
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            return payload.name || payload.sub || 'User';
+        } catch(e) { return 'User'; }
     }
 
     async function loadDashboard() {
-        document.getElementById("userName").innerText = getUserName();
+        document.getElementById('userName').textContent = getUserName();
 
         try {
             const [incomeRes, expenseRes, sipRes, goldRes] = await Promise.all([
-                apiRequest("/incomes"),
-                apiRequest("/expenses"),
-                apiRequest("/sip/all"),
-                apiRequest("/gold/summary")
+                apiRequest('/incomes'),
+                apiRequest('/expenses'),
+                apiRequest('/sip'),
+                apiRequest('/gold/summary')
             ]);
 
-            const incomes = incomeRes.ok ? await incomeRes.json() : [];
-            const expenses = expenseRes.ok ? await expenseRes.json() : [];
-            const sips = sipRes.ok ? await sipRes.json() : [];
-            const goldSummary = goldRes.ok ? await goldRes.json() : null;
+            const incomes     = incomeRes.ok  ? await incomeRes.json()  : [];
+            const expenses    = expenseRes.ok ? await expenseRes.json() : [];
+            const sips        = sipRes.ok     ? await sipRes.json()     : [];
+            const goldSummary = goldRes.ok    ? await goldRes.json()    : null;
 
-            let totalIncome = 0, totalExpense = 0, totalSipValue = 0, totalGoldValue = 0;
+            let totalIncome = 0, totalExpense = 0, totalSipValue = 0;
 
-            incomes.forEach(i => totalIncome += parseFloat(i.amount) || 0);
+            incomes.forEach(i  => totalIncome  += parseFloat(i.amount) || 0);
             expenses.forEach(e => totalExpense += parseFloat(e.amount) || 0);
 
-            // Calculate SIP portfolio value
+            // Fetch SIP portfolio value per SIP
             for (const sip of sips) {
                 try {
-                    const portfolioRes = await apiRequest(`/sip/${sip.id}/portfolio`);
-                    if (portfolioRes.ok) {
-                        const p = await portfolioRes.json();
-                        totalSipValue += p.currentValue || 0;
+                    const pRes = await apiRequest(`/sip/${sip.id}/portfolio`);
+                    if (pRes.ok) {
+                        const p = await pRes.json();
+                        if (p.navAvailable !== false) {
+                            totalSipValue += parseFloat(p.currentValue) || 0;
+                        }
                     }
-                } catch(err) {
-                    console.log("SIP fetch error", err);
-                }
+                } catch(e) { /* skip */ }
             }
 
-            if (goldSummary) {
-                totalGoldValue = goldSummary.currentValue || 0;
-            }
+            const totalGoldValue = goldSummary ? (parseFloat(goldSummary.currentValue) || 0) : 0;
+            const netSavings     = totalIncome - totalExpense;
+            const savingsRate    = totalIncome > 0 ? ((netSavings / totalIncome) * 100).toFixed(1) : '0.0';
 
-            const netSavings = totalIncome - totalExpense;
-            const savingsPercent = totalIncome > 0 ? ((netSavings / totalIncome) * 100).toFixed(1) : 0;
+            document.getElementById('totalIncome').textContent   = fmt(totalIncome);
+            document.getElementById('totalExpense').textContent  = fmt(totalExpense);
+            document.getElementById('netSavings').textContent    = fmt(netSavings);
+            document.getElementById('savingsPercent').textContent = savingsRate + '%';
+            document.getElementById('sipValue').textContent      = fmt(totalSipValue);
+            document.getElementById('goldValue').textContent     = fmt(totalGoldValue);
 
-            document.getElementById("totalIncome").innerText = formatCurrency(totalIncome);
-            document.getElementById("totalExpense").innerText = formatCurrency(totalExpense);
-            document.getElementById("netSavings").innerText = formatCurrency(netSavings);
-            document.getElementById("savingsPercent").innerText = savingsPercent + "%";
-            document.getElementById("sipValue").innerText = formatCurrency(totalSipValue);
-            document.getElementById("goldValue").innerText = formatCurrency(totalGoldValue);
+            // Colour net savings based on positive/negative
+            const savingsEl = document.getElementById('netSavings');
+            savingsEl.style.color = netSavings >= 0 ? 'var(--green)' : 'var(--red)';
 
-            renderChart(totalIncome, totalExpense);
+            renderChart(totalIncome, totalExpense, netSavings);
 
         } catch(err) {
-            console.error("Dashboard load failed", err);
+            console.error('Dashboard load failed:', err);
         }
     }
 
-    function renderChart(income, expense) {
+    function renderChart(income, expense, savings) {
         if (chartInstance) chartInstance.destroy();
 
-        const ctx = document.getElementById("summaryChart").getContext('2d');
+        const ctx = document.getElementById('summaryChart').getContext('2d');
+
+        // Gradients
+        const gradIncome = ctx.createLinearGradient(0, 0, 0, 240);
+        gradIncome.addColorStop(0, 'rgba(22, 163, 74, 0.9)');
+        gradIncome.addColorStop(1, 'rgba(22, 163, 74, 0.5)');
+
+        const gradExpense = ctx.createLinearGradient(0, 0, 0, 240);
+        gradExpense.addColorStop(0, 'rgba(220, 38, 38, 0.9)');
+        gradExpense.addColorStop(1, 'rgba(220, 38, 38, 0.5)');
+
+        const gradSavings = ctx.createLinearGradient(0, 0, 0, 240);
+        gradSavings.addColorStop(0, 'rgba(14, 165, 233, 0.9)');
+        gradSavings.addColorStop(1, 'rgba(14, 165, 233, 0.5)');
 
         chartInstance = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['Income', 'Expense'],
+                labels: ['Income', 'Expense', 'Net Savings'],
                 datasets: [{
-                    label: 'Amount (₹)',
-                    data: [income, expense],
-                    backgroundColor: ['#16a34a', '#b91c1c'],
-                    borderRadius: 8,
-                    barPercentage: 0.6
+                    data: [income, expense, Math.max(savings, 0)],
+                    backgroundColor: [gradIncome, gradExpense, gradSavings],
+                    borderRadius: 10,
+                    borderSkipped: false,
+                    barPercentage: 0.5,
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
                 plugins: {
-                    legend: {
-                        display: false
-                    },
+                    legend: { display: false },
                     tooltip: {
+                        backgroundColor: '#0f172a',
+                        titleColor: '#94a3b8',
+                        bodyColor: '#ffffff',
+                        padding: 12,
+                        cornerRadius: 10,
+                        titleFont: { family: 'DM Sans', size: 11 },
+                        bodyFont: { family: 'DM Sans', size: 13, weight: '600' },
                         callbacks: {
-                            label: function(context) {
-                                return '₹' + context.parsed.y.toLocaleString('en-IN');
-                            }
+                            label: ctx => '  ' + new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(ctx.parsed.y)
                         }
                     }
                 },
                 scales: {
+                    x: {
+                        grid: { display: false },
+                        border: { display: false },
+                        ticks: { color: '#94a3b8', font: { family: 'DM Sans', size: 12 } }
+                    },
                     y: {
-                        beginAtZero: true,
+                        grid: { color: '#f1f5f9' },
+                        border: { display: false },
                         ticks: {
-                            callback: function(value) {
-                                return '₹' + value;
-                            }
+                            color: '#94a3b8',
+                            font: { family: 'DM Sans', size: 11 },
+                            callback: v => '₹' + (v >= 100000 ? (v/100000).toFixed(1)+'L' : v >= 1000 ? (v/1000).toFixed(0)+'K' : v)
                         }
                     }
                 }
@@ -589,19 +596,17 @@
         });
     }
 
-    function goToIncome() { window.location.href = "/pages/income.html"; }
-    function goToExpense() { window.location.href = "/pages/expense.html"; }
-    function goToSip() { window.location.href = "/pages/sip.html"; }
-    function goToGold() { window.location.href = "/pages/digital-gold.html"; }
+    function goToIncome()  { window.location.href = '/pages/income.html'; }
+    function goToExpense() { window.location.href = '/pages/expense.html'; }
+    function goToSip()     { window.location.href = '/pages/sip.html'; }
+    function goToGold()    { window.location.href = '/pages/digital-gold.html'; }
 
     function logout() {
-        if (confirm("Are you sure you want to logout?")) {
-            localStorage.removeItem("token");
-            window.location.href = "/pages/login.html";
+        if (confirm('Are you sure you want to logout?')) {
+            localStorage.removeItem('token');
+            window.location.href = '/pages/login.html';
         }
     }
-
 </script>
-
 </body>
 </html>

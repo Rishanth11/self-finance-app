@@ -6,10 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface DigitalGoldRepository
-        extends JpaRepository<DigitalGold, Long> {
+public interface DigitalGoldRepository extends JpaRepository<DigitalGold, Long> {
 
-    List<DigitalGold> findByUserId(Long userId);
+    List<DigitalGold> findByUserIdOrderByPurchaseDateDesc(Long userId);
 
     List<DigitalGold> findByUserIdAndPurchaseDateBetween(
             Long userId,
@@ -17,4 +16,3 @@ public interface DigitalGoldRepository
             LocalDate end
     );
 }
-

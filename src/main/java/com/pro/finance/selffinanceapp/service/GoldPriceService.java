@@ -1,12 +1,10 @@
 package com.pro.finance.selffinanceapp.service;
 
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Map;
 
 @Service
@@ -14,38 +12,48 @@ public class GoldPriceService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    private final String API_KEY = "goldapi-147028smly4r6i0-io";
-
-    public double getLiveGoldPricePerGram() {
-
+    public BigDecimal getLiveGoldPricePerGram() {
         try {
+            // Step 1: Get gold price in USD per troy ounce
+            // Free, no API key, no quota limits
+            String goldUrl = "https://api.gold-api.com/price/XAU";
+            Map goldResponse = restTemplate.getForObject(goldUrl, Map.class);
 
-            String url = "https://www.goldapi.io/api/XAU/INR";
+            if (goldResponse == null || !goldResponse.containsKey("price")) {
+                System.out.println("Gold API returned empty response");
+                return null;
+            }
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("x-access-token", API_KEY);
+            BigDecimal priceUsdPerOz = new BigDecimal(goldResponse.get("price").toString());
+            System.out.println("Gold price (USD/oz): " + priceUsdPerOz);
 
-            HttpEntity<String> entity = new HttpEntity<>(headers);
+            // Step 2: Get live USD → INR exchange rate
+            // Free ECB data, no API key needed
+            String fxUrl = "https://api.frankfurter.app/latest?from=USD&to=INR";
+            Map fxResponse = restTemplate.getForObject(fxUrl, Map.class);
 
-            ResponseEntity<Map> response =
-                    restTemplate.exchange(
-                            url,
-                            HttpMethod.GET,
-                            entity,
-                            Map.class
-                    );
+            if (fxResponse == null || !fxResponse.containsKey("rates")) {
+                System.out.println("FX API returned empty response");
+                return null;
+            }
 
-            Object priceObj = response.getBody().get("price");
+            Map<String, Object> rates = (Map<String, Object>) fxResponse.get("rates");
+            BigDecimal usdToInr = new BigDecimal(rates.get("INR").toString());
+            System.out.println("USD to INR rate: " + usdToInr);
 
-            double pricePerOunce = Double.parseDouble(priceObj.toString());
+            // Step 3: Convert to ₹ per gram (1 troy oz = 31.1035 grams)
+            BigDecimal gramsPerOz = new BigDecimal("31.1035");
+            BigDecimal priceInrPerGram = priceUsdPerOz
+                    .multiply(usdToInr)
+                    .divide(gramsPerOz, 2, RoundingMode.HALF_UP);
 
-            return pricePerOunce / 31.1035; // ounce → gram
+            System.out.println("Live gold price (INR/gram): " + priceInrPerGram);
+            return priceInrPerGram;
 
         } catch (Exception e) {
-
-            // fallback value if API fails
-            return 6200.0;
-
+            System.out.println("Error fetching gold price: " + e.getMessage());
+            e.printStackTrace();
+            return null;
         }
     }
 }

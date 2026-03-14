@@ -4,548 +4,362 @@
     <meta charset="UTF-8">
     <title>SIP · Personal Finance</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Chart.js & Font Awesome for clean icons -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --accent:        #16a34a;
+            --accent-light:  #22c55e;
+            --accent-dim:    #dcfce7;
+            --accent-border: #bbf7d0;
+            --green:         #16a34a;
+            --green-dim:     #dcfce7;
+            --red:           #dc2626;
+            --red-dim:       #fef2f2;
+            --red-border:    #fee2e2;
+            --slate-900:     #0f172a;
+            --slate-700:     #334155;
+            --slate-600:     #475569;
+            --slate-400:     #94a3b8;
+            --slate-200:     #e2e8f0;
+            --slate-100:     #f1f5f9;
+            --slate-50:      #f8fafc;
+            --white:         #ffffff;
         }
 
         body {
-            background: #f8fafc;
-            padding: 32px 24px;
+            background: #f5f7f5;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--slate-900);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            color: #1e293b;
+            padding: 36px 28px;
         }
 
-        .container {
-            max-width: 1280px;
-            width: 100%;
-        }
+        .page { max-width: 1180px; margin: 0 auto; }
 
-        /* header area */
+        /* ── PAGE HEADER ── */
         .page-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 28px;
             flex-wrap: wrap;
             gap: 16px;
+            margin-bottom: 32px;
+            animation: fadeUp 0.4s ease both;
         }
 
-        .page-header h2 {
-            font-size: 2rem;
-            font-weight: 600;
-            background: linear-gradient(145deg, #2563eb, #1e3a8a);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.02em;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .page-title { display: flex; align-items: center; gap: 14px; }
+
+        .page-title-icon {
+            width: 44px; height: 44px;
+            background: var(--accent);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.1rem;
         }
 
-        .page-header h2 i {
-            background: #ffffff;
-            padding: 10px 14px;
-            border-radius: 20px;
-            color: #2563eb;
-            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.15);
-            font-size: 1.6rem;
-            -webkit-text-fill-color: #2563eb;
-        }
+        .page-title h1 { font-size: 1.5rem; font-weight: 600; color: var(--slate-900); letter-spacing: -0.02em; }
+        .page-title p  { font-size: 0.85rem; color: var(--slate-400); margin-top: 1px; }
 
-        .header-controls {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
+        .header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
-        .summary-tag {
-            background: white;
-            padding: 12px 24px;
-            border-radius: 60px;
-            font-weight: 500;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-            border: 1px solid #e2e8f0;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .total-pill {
+            background: var(--accent);
+            color: white; padding: 10px 20px; border-radius: 40px;
+            display: flex; align-items: center; gap: 10px; font-size: 0.875rem;
         }
+        .total-pill span { opacity: 0.8; }
+        .total-pill strong { font-size: 1.1rem; font-weight: 600; }
 
-        .summary-tag span {
-            color: #64748b;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .summary-tag strong {
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: #2563eb;
-        }
-
-        /* card design */
-        .card {
-            background: #ffffff;
-            border-radius: 28px;
-            padding: 28px 30px;
-            margin-bottom: 28px;
-            box-shadow: 0 20px 40px -14px rgba(0, 20, 40, 0.1), 0 2px 8px rgba(0, 0, 0, 0.02);
-            border: 1px solid #e2e8f0;
-            transition: all 0.2s ease;
-        }
-
-        .card-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 26px;
-        }
-
-        .card-header i {
-            font-size: 1.5rem;
-            color: #2563eb;
-            background: #e0edff;
-            padding: 10px;
-            border-radius: 18px;
-        }
-
-        .card-header h3 {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: #0f172a;
-        }
-
-        /* total summary card */
-        .total-summary {
-            background: linear-gradient(135deg, #1e2b4f, #15203a);
-            border: none;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 22px 32px;
-        }
-
-        .total-summary .label {
-            font-size: 1.1rem;
-            font-weight: 400;
-            opacity: 0.8;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .total-summary .value {
-            font-size: 2.8rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #bbd4ff, #ffffff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .total-summary i {
-            font-size: 2.5rem;
-            opacity: 0.2;
-            color: #fff;
-        }
-
-        /* form grid */
-        .form-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 18px;
-            align-items: flex-end;
-        }
-
-        .input-field {
-            flex: 1 1 160px;
-            min-width: 170px;
-        }
-
-        .input-field label {
-            display: block;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-            font-weight: 600;
-            color: #64748b;
-            margin-bottom: 6px;
-        }
-
-        .input-field input, .input-field select {
-            width: 100%;
-            padding: 12px 16px;
-            background: #f8fafc;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 20px;
-            font-size: 0.95rem;
-            transition: all 0.2s;
-            color: #1e293b;
-            font-weight: 500;
-        }
-
-        .input-field input:focus, .input-field select:focus {
-            outline: none;
-            border-color: #2563eb;
-            background: white;
-            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.1);
-        }
-
-        .input-field input::placeholder {
-            color: #94a3b8;
-            font-weight: 400;
-        }
-
-        .error-message {
-            color: #b91c1c;
-            background: #fef2f2;
-            border-radius: 40px;
-            padding: 8px 20px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            margin: 8px 0 0;
-            display: inline-block;
-            border: 1px solid #fee2e2;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-top: 16px;
-        }
-
-        .btn {
-            padding: 12px 28px;
-            border-radius: 40px;
-            border: none;
-            font-weight: 600;
-            font-size: 0.95rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            background: white;
-            color: #334155;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
-        }
-
-        .btn-primary {
-            background: #2563eb;
-            color: white;
-            border: none;
-            box-shadow: 0 8px 22px -6px #2563ebcc;
-        }
-
-        .btn-primary:hover {
-            background: #1d4ed8;
-            transform: scale(1.02);
-        }
-
-        .btn-secondary {
-            background: #f1f5f9;
-            border: 1px solid #e2e8f0;
-            color: #334155;
-        }
-
-        .btn-secondary:hover {
-            background: #e2e8f0;
-        }
-
-        .btn-success {
-            background: #16a34a;
-            color: white;
-            border: none;
-            box-shadow: 0 8px 22px -6px #16a34acc;
-        }
-
-        .btn-success:hover {
-            background: #15803d;
-            transform: scale(1.02);
-        }
-
-        .btn-danger {
-            background: #fef2f2;
-            color: #b91c1c;
-            border: 1px solid #fee2e2;
-        }
-
-        .btn-danger:hover {
-            background: #fee2e2;
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
-        /* table styles */
-        .table-wrapper {
-            overflow-x: auto;
-            border-radius: 22px;
-            background: #ffffff;
-            padding: 4px 0;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.95rem;
-        }
-
-        th {
-            text-align: left;
-            padding: 18px 16px 12px 20px;
-            font-weight: 600;
-            color: #475569;
-            background: #f8fafc;
-            border-bottom: 2px solid #e2e8f0;
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
-            font-size: 0.8rem;
-        }
-
-        td {
-            padding: 18px 16px 18px 20px;
-            border-bottom: 1px solid #e2e8f0;
-            color: #1e293b;
-            font-weight: 500;
-        }
-
-        td:first-child, th:first-child {
-            padding-left: 20px;
-        }
-
-        td:last-child, th:last-child {
-            padding-right: 20px;
-        }
-
-        .badge {
-            padding: 6px 16px;
-            border-radius: 40px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            display: inline-block;
-        }
-
-        .badge-active {
-            background: #e0f2e2;
-            color: #166534;
-        }
-
-        .badge-inactive {
-            background: #fee2e2;
-            color: #b91c1c;
-        }
-
-        .table-actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .table-actions button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 0.9rem;
-            padding: 6px 12px;
-            border-radius: 30px;
-            transition: all 0.1s;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .table-actions .view-btn {
-            color: #2563eb;
-            background: #e0edff;
-        }
-
-        .table-actions .view-btn:hover {
-            background: #2563eb;
-            color: white;
-        }
-
-        .table-actions .run-btn {
-            color: #16a34a;
-            background: #e0f2e2;
-        }
-
-        .table-actions .run-btn:hover:not(:disabled) {
-            background: #16a34a;
-            color: white;
-        }
-
-        .table-actions .run-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .table-actions .delete-btn {
-            color: #b91c1c;
-            background: #fef2f2;
-        }
-
-        .table-actions .delete-btn:hover {
-            background: #b91c1c;
-            color: white;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 50px 20px;
-            background: #f8fafc;
-            border-radius: 28px;
-            color: #64748b;
-            font-size: 1.1rem;
-            border: 2px dashed #e2e8f0;
-        }
-
-        .empty-state i {
-            font-size: 3.2rem;
-            margin-bottom: 16px;
-            color: #94a3b8;
-        }
-
-        /* portfolio section */
-        .portfolio-grid {
+        /* ── STAT ROW ── */
+        .stat-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
             margin-bottom: 24px;
+            animation: fadeUp 0.4s 0.05s ease both;
         }
 
         .stat-card {
-            background: #f8fafc;
-            padding: 20px;
-            border-radius: 24px;
-            border: 1px solid #e2e8f0;
+            background: var(--white);
+            border: 1.5px solid var(--slate-200);
+            border-radius: 16px;
+            padding: 20px 22px;
+            display: flex; align-items: center; gap: 16px;
         }
 
-        .stat-card .label {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-            color: #64748b;
+        .stat-icon {
+            width: 42px; height: 42px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; flex-shrink: 0;
+        }
+
+        .stat-icon.green  { background: var(--green-dim);   color: var(--green); }
+        .stat-icon.red    { background: var(--red-dim);     color: var(--red); }
+        .stat-icon.slate  { background: var(--slate-100);   color: var(--slate-600); }
+
+        .stat-info p { font-size: 0.75rem; color: var(--slate-400); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 3px; }
+        .stat-info strong { font-size: 1.3rem; font-weight: 600; color: var(--slate-900); letter-spacing: -0.02em; }
+        .stat-info strong.profit { color: var(--green); }
+        .stat-info strong.loss   { color: var(--red); }
+
+        /* ── CARD ── */
+        .card {
+            background: var(--white);
+            border: 1.5px solid var(--slate-200);
+            border-radius: 20px;
+            padding: 24px 26px;
+            margin-bottom: 20px;
+        }
+
+        .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 22px; }
+
+        .card-header-icon {
+            width: 34px; height: 34px;
+            background: var(--accent-dim); border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--accent); font-size: 0.875rem;
+        }
+
+        .card-header h3 { font-size: 1rem; font-weight: 600; color: var(--slate-900); }
+
+        /* ── FORM ── */
+        .form-grid { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; }
+
+        .field { flex: 1 1 160px; min-width: 150px; }
+        .field.wide { flex: 2 1 240px; }
+
+        .field label {
+            display: block; font-size: 0.72rem; font-weight: 500;
+            text-transform: uppercase; letter-spacing: 0.05em;
+            color: var(--slate-400); margin-bottom: 6px;
+        }
+
+        .field input, .field select {
+            width: 100%; padding: 11px 14px;
+            border: 1.5px solid var(--slate-200); border-radius: 10px;
+            background: var(--white); font-family: 'DM Sans', sans-serif;
+            font-size: 0.9rem; color: var(--slate-900);
+            transition: border-color 0.2s, box-shadow 0.2s; appearance: none;
+        }
+
+        .field input::placeholder { color: var(--slate-400); }
+
+        .field input:focus, .field select:focus {
+            outline: none; border-color: var(--accent-light);
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+        }
+
+        .form-actions { display: flex; gap: 10px; margin-top: 18px; align-items: center; }
+
+        .error-msg {
+            font-size: 0.82rem; color: var(--red);
+            background: var(--red-dim); border: 1px solid var(--red-border);
+            border-radius: 8px; padding: 8px 14px; margin-bottom: 16px; display: none;
+        }
+
+        /* ── BUTTONS ── */
+        .btn {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 10px 20px; border-radius: 10px; border: none;
+            font-family: 'DM Sans', sans-serif; font-size: 0.875rem;
+            font-weight: 500; cursor: pointer;
+            transition: background 0.15s, transform 0.12s, box-shadow 0.15s;
+        }
+
+        .btn-primary {
+            background: var(--accent); color: white;
+            box-shadow: 0 3px 10px rgba(22, 163, 74, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: #15803d;
+            transform: translateY(-1px);
+            box-shadow: 0 5px 14px rgba(22, 163, 74, 0.35);
+        }
+
+        .btn-ghost { background: var(--slate-100); color: var(--slate-600); }
+        .btn-ghost:hover { background: var(--slate-200); }
+
+        .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; }
+
+        /* ── TABLE ── */
+        .table-scroll { overflow-x: auto; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+        thead tr { border-bottom: 1.5px solid var(--slate-200); }
+
+        th {
+            text-align: left; padding: 10px 14px;
+            font-size: 0.7rem; font-weight: 500;
+            text-transform: uppercase; letter-spacing: 0.06em; color: var(--slate-400);
+        }
+
+        td {
+            padding: 14px 14px;
+            border-bottom: 1px solid var(--slate-100);
+            color: var(--slate-700); font-weight: 400;
+        }
+
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:hover td { background: var(--slate-50); }
+
+        .badge {
+            display: inline-block; padding: 4px 12px; border-radius: 40px;
+            font-size: 0.75rem; font-weight: 500;
+        }
+
+        .badge-active   { background: var(--green-dim); color: var(--green); }
+        .badge-inactive { background: var(--red-dim);   color: var(--red); }
+
+        .fund-name { font-weight: 500; color: var(--slate-900); font-size: 0.9rem; }
+        .fund-code { font-size: 0.76rem; color: var(--slate-400); margin-top: 2px; }
+        .amount-cell { font-weight: 600; color: var(--slate-900); font-size: 0.925rem; }
+
+        .row-actions { display: flex; gap: 6px; }
+
+        .icon-btn {
+            height: 30px; padding: 0 10px; border: none; border-radius: 8px;
+            cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
+            font-size: 0.76rem; font-weight: 500; font-family: 'DM Sans', sans-serif;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .icon-btn.view   { background: var(--accent-dim);  color: var(--accent); }
+        .icon-btn.view:hover { background: var(--accent); color: white; }
+        .icon-btn.run    { background: var(--green-dim);   color: var(--green); }
+        .icon-btn.run:hover:not(:disabled) { background: var(--green); color: white; }
+        .icon-btn.run:disabled { opacity: 0.4; cursor: not-allowed; }
+        .icon-btn.del    { background: var(--red-dim);     color: var(--red); }
+        .icon-btn.del:hover  { background: var(--red); color: white; }
+
+        /* ── EMPTY STATE ── */
+        .empty-state {
+            text-align: center; padding: 48px 20px; color: var(--slate-400); display: none;
+        }
+        .empty-state i { font-size: 2.5rem; margin-bottom: 12px; display: block; }
+        .empty-state p { font-size: 0.9rem; }
+
+        /* ── PORTFOLIO SECTION ── */
+        .section-label {
+            font-size: 0.72rem; font-weight: 500; text-transform: uppercase;
+            letter-spacing: 0.06em; color: var(--slate-400); margin-bottom: 14px;
+        }
+
+        /* ── PROGRESS BAR ── */
+        .progress-wrap { margin-top: 20px; }
+
+        .progress-meta {
+            display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
 
-        .stat-card .label i {
-            color: #2563eb;
+        .progress-meta span { font-size: 0.8rem; color: var(--slate-600); }
+        .progress-meta strong { font-size: 0.875rem; color: var(--slate-900); font-weight: 600; }
+
+        .progress-track {
+            background: var(--slate-100); border-radius: 40px;
+            overflow: hidden; height: 10px;
         }
 
-        .stat-card .value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #1e293b;
-        }
-
-        .stat-card .profit {
-            color: #16a34a;
-        }
-
-        .stat-card .loss {
-            color: #b91c1c;
-        }
-
-        /* progress bar */
-        .progress-container {
-            background: #e2e8f0;
-            border-radius: 40px;
-            overflow: hidden;
-            margin: 16px 0 8px;
-            height: 24px;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #2563eb, #7c3aed);
+        .progress-fill {
+            height: 100%; border-radius: 40px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-light));
+            transition: width 0.6s ease;
             width: 0%;
-            transition: width 0.5s ease;
-            border-radius: 40px;
         }
 
-        .progress-text {
-            font-size: 0.9rem;
-            color: #64748b;
-            margin-top: 4px;
-            text-align: right;
+        .progress-pct { font-size: 0.78rem; color: var(--slate-400); text-align: right; margin-top: 5px; }
+
+        /* ── CHART ── */
+        .chart-box {
+            background: var(--slate-50); border: 1.5px solid var(--slate-200);
+            border-radius: 14px; padding: 20px; height: 300px; margin-top: 22px; position: relative;
         }
 
-        hr {
-            margin: 24px 0;
-            border: 1px solid #e2e8f0;
+        .chart-box canvas { width: 100% !important; height: 100% !important; }
+
+        /* ── DIVIDER ── */
+        .divider {
+            height: 1px; background: var(--slate-200); margin: 22px 0;
         }
 
-        /* chart */
-        .chart-container {
-            height: 300px;
-            width: 100%;
-            background: #f8fafc;
-            padding: 20px;
-            border-radius: 24px;
-            border: 1px solid #e2e8f0;
-            margin-top: 20px;
+        /* ── ANIMATION ── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
-        .chart-container canvas {
-            width: 100% !important;
-            height: 100% !important;
-        }
+        .hidden { display: none !important; }
 
-        /* responsive */
-        @media (max-width: 768px) {
-            .portfolio-grid {
-                grid-template-columns: 1fr;
-            }
-            .stat-card .value {
-                font-size: 1.5rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            body {
-                padding: 20px 16px;
-            }
-            .page-header h2 {
-                font-size: 1.6rem;
-            }
-            .card {
-                padding: 20px;
-            }
+        @media (max-width: 600px) {
+            body { padding: 20px 16px; }
+            .page-header { flex-direction: column; align-items: flex-start; }
         }
     </style>
 </head>
-
 <body>
-<div class="container">
-    <!-- HEADER - matching income page exactly -->
+
+<div class="page">
+
+    <!-- HEADER -->
     <div class="page-header">
-        <h2><i class="fas fa-chart-line"></i> SIP Dashboard</h2>
-        <div class="header-controls">
-            <div class="summary-tag">
-                <span><i class="fas fa-robot"></i>Systematic Investment Plans</span>
+        <div class="page-title">
+            <div class="page-title-icon"><i class="fas fa-chart-line"></i></div>
+            <div>
+                <h1>SIP</h1>
+                <p>Systematic Investment Plans</p>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="total-pill">
+                <span>Monthly</span>
+                <strong id="totalMonthly">₹0</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- STAT ROW -->
+    <div class="stat-row">
+        <div class="stat-card">
+            <div class="stat-icon green"><i class="fas fa-layer-group"></i></div>
+            <div class="stat-info">
+                <p>Active SIPs</p>
+                <strong id="statActive">0</strong>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon green"><i class="fas fa-indian-rupee-sign"></i></div>
+            <div class="stat-info">
+                <p>Monthly invest</p>
+                <strong id="statMonthly">₹0</strong>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon green"><i class="fas fa-coins"></i></div>
+            <div class="stat-info">
+                <p>Total invested</p>
+                <strong id="statInvested">₹0</strong>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon green"><i class="fas fa-arrow-trend-up"></i></div>
+            <div class="stat-info">
+                <p>Current value</p>
+                <strong id="statValue">₹0</strong>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon slate"><i class="fas fa-percent"></i></div>
+            <div class="stat-info">
+                <p>XIRR</p>
+                <strong id="statXirr">—</strong>
             </div>
         </div>
     </div>
@@ -553,71 +367,76 @@
     <!-- ADD SIP CARD -->
     <div class="card">
         <div class="card-header">
-            <i class="fas fa-plus-circle"></i>
-            <h3>Add New SIP</h3>
+            <div class="card-header-icon"><i class="fas fa-plus"></i></div>
+            <h3>Add new SIP</h3>
         </div>
 
+        <div id="errorMsg" class="error-msg"></div>
+
         <div class="form-grid">
-            <div class="input-field">
-                <label>Fund Name *</label>
-                <input id="fundName" placeholder="e.g. HDFC Balanced">
+            <div class="field wide">
+                <label for="fundName">Fund name *</label>
+                <input id="fundName" placeholder="e.g. HDFC Balanced Advantage">
             </div>
-            <div class="input-field">
-                <label>Fund Code</label>
+            <div class="field">
+                <label for="fundCode">Fund code</label>
                 <input id="fundCode" placeholder="e.g. 119551">
             </div>
-            <div class="input-field">
-                <label>Monthly Amount (₹) *</label>
+            <div class="field">
+                <label for="monthlyAmount">Monthly amount (₹) *</label>
                 <input id="monthlyAmount" type="number" step="100" placeholder="5000">
             </div>
-            <div class="input-field">
-                <label>Start Date *</label>
+            <div class="field">
+                <label for="startDate">Start date *</label>
                 <input id="startDate" type="date">
             </div>
-            <div class="input-field">
-                <label>SIP Day (1-28) *</label>
+            <div class="field">
+                <label for="sipDay">SIP day (1–28) *</label>
                 <input id="sipDay" type="number" min="1" max="28" placeholder="5">
             </div>
-            <div class="input-field">
-                <label>Goal Name</label>
+            <div class="field">
+                <label for="goalName">Goal name</label>
                 <input id="goalName" placeholder="e.g. Retirement">
             </div>
-            <div class="input-field">
-                <label>Target Amount (₹)</label>
+            <div class="field">
+                <label for="targetAmount">Target amount (₹)</label>
                 <input id="targetAmount" type="number" step="10000" placeholder="1000000">
             </div>
-            <div class="input-field">
-                <label>Inflation Rate (%)</label>
+            <div class="field">
+                <label for="inflationRate">Inflation rate (%)</label>
                 <input id="inflationRate" type="number" step="0.1" value="6" placeholder="6">
             </div>
         </div>
 
-        <div class="action-buttons">
-            <button class="btn btn-primary" onclick="addSip()"><i class="fas fa-plus-circle"></i> Add SIP</button>
+        <div class="form-actions">
+            <button class="btn btn-primary" onclick="addSip()">
+                <i class="fas fa-plus"></i> Add SIP
+            </button>
         </div>
     </div>
 
     <!-- SIP LIST CARD -->
     <div class="card">
         <div class="card-header">
-            <i class="fas fa-table-list"></i>
+            <div class="card-header-icon"><i class="fas fa-table"></i></div>
             <h3>Your SIPs</h3>
         </div>
 
-        <div id="emptyState" class="empty-state" style="display: none;">
+        <div id="emptyState" class="empty-state">
             <i class="far fa-folder-open"></i>
-            <p>No SIPs added yet · start by adding one above</p>
+            <p>No SIPs added yet — start by adding one above.</p>
         </div>
 
-        <div class="table-wrapper">
-            <table>
+        <div class="table-scroll">
+            <table id="sipTableWrap">
                 <thead>
                 <tr>
                     <th>Fund</th>
-                    <th>Monthly Amount</th>
+                    <th>Monthly</th>
+                    <th>SIP Day</th>
                     <th>Status</th>
                     <th>Goal</th>
-                    <th>Actions</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody id="sipTable"></tbody>
@@ -625,316 +444,348 @@
         </div>
     </div>
 
-    <!-- PORTFOLIO CARD -->
-    <div class="card" id="portfolioCard" style="display: none;">
+    <!-- PORTFOLIO CARD (shown on view) -->
+    <div class="card" id="portfolioCard" style="display:none;">
         <div class="card-header">
-            <i class="fas fa-chart-pie"></i>
-            <h3>Portfolio Summary</h3>
+            <div class="card-header-icon"><i class="fas fa-chart-pie"></i></div>
+            <h3 id="portfolioTitle">Portfolio</h3>
         </div>
 
-        <div class="portfolio-grid">
+        <!-- Stats -->
+        <div class="stat-row" style="margin-bottom:0;">
             <div class="stat-card">
-                <div class="label"><i class="fas fa-coins"></i> Total Invested</div>
-                <div class="value" id="totalInvested">₹0</div>
+                <div class="stat-icon green"><i class="fas fa-coins"></i></div>
+                <div class="stat-info"><p>Invested</p><strong id="pInvested">₹0</strong></div>
             </div>
             <div class="stat-card">
-                <div class="label"><i class="fas fa-chart-line"></i> Current Value</div>
-                <div class="value" id="currentValue">₹0</div>
+                <div class="stat-icon green"><i class="fas fa-chart-line"></i></div>
+                <div class="stat-info"><p>Current value</p><strong id="pValue">₹0</strong></div>
             </div>
             <div class="stat-card">
-                <div class="label"><i class="fas fa-arrow-trend-up"></i> Returns</div>
-                <div class="value" id="returns">₹0</div>
+                <div class="stat-icon green"><i class="fas fa-arrow-trend-up"></i></div>
+                <div class="stat-info"><p>Returns</p><strong id="pReturns">₹0</strong></div>
             </div>
             <div class="stat-card">
-                <div class="label"><i class="fas fa-percent"></i> XIRR</div>
-                <div class="value" id="xirr">0.00%</div>
+                <div class="stat-icon slate"><i class="fas fa-percent"></i></div>
+                <div class="stat-info"><p>XIRR</p><strong id="pXirr">0.00%</strong></div>
             </div>
             <div class="stat-card">
-                <div class="label"><i class="fas fa-temperature-high"></i> Real Return</div>
-                <div class="value" id="realReturn">0.00%</div>
-            </div>
-        </div>
-
-        <hr>
-
-        <h4 style="margin-bottom: 16px; color: #0f172a;">🎯 Goal Tracking</h4>
-
-        <div class="portfolio-grid" style="grid-template-columns: repeat(2, 1fr);">
-            <div class="stat-card">
-                <div class="label"><i class="fas fa-flag"></i> Goal</div>
-                <div class="value" style="font-size: 1.4rem;" id="goalNameDisplay">-</div>
-            </div>
-            <div class="stat-card">
-                <div class="label"><i class="fas fa-bullseye"></i> Target</div>
-                <div class="value" style="font-size: 1.4rem;" id="targetAmountDisplay">₹0</div>
+                <div class="stat-icon slate"><i class="fas fa-temperature-half"></i></div>
+                <div class="stat-info"><p>Real return</p><strong id="pRealReturn">0.00%</strong></div>
             </div>
         </div>
 
-        <div class="progress-container">
-            <div id="goalProgressBar" class="progress-bar" style="width: 0%;"></div>
-        </div>
-        <div class="progress-text" id="goalProgressText">0% completed</div>
+        <!-- Goal tracking -->
+        <div class="divider"></div>
 
-        <div class="chart-container">
+        <div class="section-label">Goal tracking</div>
+
+        <div class="stat-row" style="grid-template-columns:1fr 1fr; margin-bottom:0;">
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="fas fa-flag"></i></div>
+                <div class="stat-info"><p>Goal</p><strong id="pGoalName" style="font-size:1rem;">—</strong></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon slate"><i class="fas fa-bullseye"></i></div>
+                <div class="stat-info"><p>Target</p><strong id="pTarget" style="font-size:1rem;">₹0</strong></div>
+            </div>
+        </div>
+
+        <div class="progress-wrap">
+            <div class="progress-meta">
+                <span>Progress</span>
+                <strong id="pProgressPct">0%</strong>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" id="pProgressBar"></div>
+            </div>
+        </div>
+
+        <!-- Chart -->
+        <div class="divider"></div>
+        <div class="section-label">Portfolio growth</div>
+        <div class="chart-box">
             <canvas id="sipChart"></canvas>
         </div>
     </div>
+
 </div>
 
 <script src="../js/guard.js"></script>
 <script src="../js/api.js"></script>
-
 <script>
-    let sipChartInstance;
-    let currentSipId = null;
+    let sipChartInstance = null;
+    let currentSipId    = null;
 
-    document.addEventListener("DOMContentLoaded", function() {
-        if (typeof requireAuth === "function") {
-            requireAuth();
-        }
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof requireAuth === 'function') requireAuth();
         loadSips();
     });
 
-    function formatCurrency(val) {
-        return new Intl.NumberFormat('en-IN', {
-            style: 'currency',
-            currency: 'INR',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0
-        }).format(val || 0);
+    function fmt(n) {
+        return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(n || 0);
     }
 
-    function formatNumber(val, decimals = 2) {
-        return parseFloat(val || 0).toFixed(decimals);
+    function setError(msg) {
+        const el = document.getElementById('errorMsg');
+        el.textContent = msg || '';
+        el.style.display = msg ? 'block' : 'none';
     }
 
     function addSip() {
-        const fundName = document.getElementById("fundName").value.trim();
-        const fundCode = document.getElementById("fundCode").value.trim();
-        const monthlyAmount = parseFloat(document.getElementById("monthlyAmount").value);
-        const startDate = document.getElementById("startDate").value;
-        const sipDay = parseInt(document.getElementById("sipDay").value);
-        const goalName = document.getElementById("goalName").value.trim();
-        const targetAmount = parseFloat(document.getElementById("targetAmount").value);
-        const inflationRate = parseFloat(document.getElementById("inflationRate").value) || 6;
+        const fundName      = document.getElementById('fundName').value.trim();
+        const fundCode      = document.getElementById('fundCode').value.trim();
+        const monthlyAmount = parseFloat(document.getElementById('monthlyAmount').value);
+        const startDate     = document.getElementById('startDate').value;
+        const sipDay        = parseInt(document.getElementById('sipDay').value);
+        const goalName      = document.getElementById('goalName').value.trim();
+        const targetAmount  = parseFloat(document.getElementById('targetAmount').value);
+        const inflationRate = parseFloat(document.getElementById('inflationRate').value) || 6;
 
-        if (!fundName || monthlyAmount <= 0 || sipDay < 1 || sipDay > 28 || !startDate) {
-            alert("Please fill all required fields with valid values");
-            return;
+        if (!fundName || !monthlyAmount || monthlyAmount <= 0 || !startDate || sipDay < 1 || sipDay > 28) {
+            return setError('Please fill all required fields with valid values.');
         }
+        setError(null);
 
-        const data = {
-            fundName,
-            fundCode,
-            monthlyAmount,
-            startDate,
-            sipDay,
-            goalName,
-            targetAmount: isNaN(targetAmount) ? null : targetAmount,
-            inflationRate
-        };
+        const payload = { fundName, fundCode, monthlyAmount, startDate, sipDay, goalName,
+            targetAmount: isNaN(targetAmount) ? null : targetAmount, inflationRate };
 
-        apiRequest("/sip", {
-            method: "POST",
-            body: JSON.stringify(data)
-        })
-        .then(res => {
+        apiRequest('/sip', { method: 'POST', body: JSON.stringify(payload) }).then(res => {
             if (res.ok) {
-                alert("SIP added successfully");
-                document.getElementById("fundName").value = "";
-                document.getElementById("fundCode").value = "";
-                document.getElementById("monthlyAmount").value = "";
-                document.getElementById("startDate").value = "";
-                document.getElementById("sipDay").value = "";
-                document.getElementById("goalName").value = "";
-                document.getElementById("targetAmount").value = "";
-                document.getElementById("inflationRate").value = "6";
+                ['fundName','fundCode','monthlyAmount','startDate','sipDay','goalName','targetAmount'].forEach(id => document.getElementById(id).value = '');
+                document.getElementById('inflationRate').value = '6';
                 loadSips();
-            } else {
-                alert("Failed to add SIP");
-            }
-        })
-        .catch(err => {
-            console.error("Error adding SIP:", err);
-            alert("Server error");
+            } else setError('Failed to add SIP. Please try again.');
         });
     }
 
     function loadSips() {
-        apiRequest("/sip")
-        .then(res => res.json())
-        .then(data => {
-            const table = document.getElementById("sipTable");
-            table.innerHTML = "";
+        apiRequest('/sip').then(r => r.json()).then(data => {
+            const tbody  = document.getElementById('sipTable');
+            const tableW = document.getElementById('sipTableWrap');
+            const empty  = document.getElementById('emptyState');
+            tbody.innerHTML = '';
 
             if (!data || data.length === 0) {
-                document.getElementById("emptyState").style.display = "block";
-                document.getElementById("portfolioCard").style.display = "none";
+                empty.style.display  = 'block';
+                tableW.style.display = 'none';
+                updateHeaderStats([]);
                 return;
             }
 
-            document.getElementById("emptyState").style.display = "none";
+            empty.style.display  = 'none';
+            tableW.style.display = '';
 
             data.forEach(sip => {
-                const statusClass = sip.active ? "badge-active" : "badge-inactive";
-                const statusText = sip.active ? "Active" : "Inactive";
-
-                table.innerHTML += `
-                    <tr>
-                        <td><strong>${sip.fundName}</strong>${sip.fundCode ? `<br><small style="color:#64748b;">${sip.fundCode}</small>` : ''}</td>
-                        <td>${formatCurrency(sip.monthlyAmount)}</td>
-                        <td><span class="badge ${statusClass}">${statusText}</span></td>
-                        <td>${sip.goalName || "-"}</td>
-                        <td>
-                            <div class="table-actions">
-                                <button class="view-btn" onclick="viewPortfolio(${sip.id})">
-                                    <i class="fas fa-chart-simple"></i> View
-                                </button>
-                                <button class="run-btn" onclick="executeSip(${sip.id})" ${sip.active ? "" : "disabled"}>
-                                    <i class="fas fa-play"></i> Run
-                                </button>
-                                <button class="delete-btn" onclick="deleteSip(${sip.id})">
-                                    <i class="fas fa-trash"></i> Delete
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
+                const statusClass = sip.active ? 'badge-active' : 'badge-inactive';
+                const statusText  = sip.active ? 'Active' : 'Inactive';
+                tbody.innerHTML += `
+          <tr>
+            <td>
+              <div class="fund-name">${sip.fundName}</div>
+              ${sip.fundCode ? `<div class="fund-code">${sip.fundCode}</div>` : ''}
+            </td>
+            <td class="amount-cell">${fmt(sip.monthlyAmount)}</td>
+            <td style="color:var(--slate-400)">Day ${sip.sipDay || '—'}</td>
+            <td><span class="badge ${statusClass}">${statusText}</span></td>
+            <td style="color:var(--slate-600);font-size:0.85rem">${sip.goalName || '—'}</td>
+            <td>
+              <div class="row-actions">
+                <button class="icon-btn view" onclick="viewPortfolio(${sip.id}, '${sip.fundName.replace(/'/g,"\\'")}')">
+                  <i class="fas fa-chart-simple"></i> View
+                </button>
+                <button class="icon-btn run" onclick="executeSip(${sip.id})" ${sip.active ? '' : 'disabled'}>
+                  <i class="fas fa-play"></i> Run
+                </button>
+                <button class="icon-btn ${sip.active ? 'del' : 'run'}" onclick="toggleSip(${sip.id}, ${sip.active})">
+                  <i class="fas fa-${sip.active ? 'pause' : 'circle-play'}"></i> ${sip.active ? 'Deactivate' : 'Activate'}
+                </button>
+                <button class="icon-btn del" onclick="deleteSip(${sip.id})">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>`;
             });
-        })
-        .catch(err => {
-            console.error("Error loading SIPs:", err);
-        });
+
+            updateHeaderStats(data);
+        }).catch(err => console.error('Error loading SIPs:', err));
     }
 
-    function viewPortfolio(id) {
+    function updateHeaderStats(data) {
+        const active   = data.filter(s => s.active).length;
+        const monthly  = data.filter(s => s.active).reduce((a, s) => a + (parseFloat(s.monthlyAmount) || 0), 0);
+        document.getElementById('totalMonthly').textContent = fmt(monthly);
+        document.getElementById('statActive').textContent   = active;
+        document.getElementById('statMonthly').textContent  = fmt(monthly);
+        // invested/value/xirr would need portfolio data; show — until viewed
+    }
+
+    function viewPortfolio(id, name) {
         currentSipId = id;
-        document.getElementById("portfolioCard").style.display = "block";
+        document.getElementById('portfolioTitle').textContent = name;
+        const card = document.getElementById('portfolioCard');
+        card.style.display = 'block';
+        setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
 
-        // Scroll to portfolio section
-        document.getElementById("portfolioCard").scrollIntoView({ behavior: "smooth", block: "start" });
+        // Portfolio data
+        apiRequest(`/sip/${id}/portfolio`).then(r => r.json()).then(d => {
+            document.getElementById('pInvested').textContent   = fmt(d.totalInvested);
+            document.getElementById('pXirr').textContent       = parseFloat(d.xirr || 0).toFixed(2) + '%';
+            document.getElementById('pRealReturn').textContent = parseFloat(d.realReturn || 0).toFixed(2) + '%';
 
-        apiRequest(`/sip/${id}/portfolio`)
-        .then(res => res.json())
-        .then(data => {
-            document.getElementById("totalInvested").innerText = formatCurrency(data.totalInvested);
-            document.getElementById("currentValue").innerText = formatCurrency(data.currentValue);
+            // FIX 1: Check navAvailable flag from backend
+            if (d.navAvailable === false) {
+                document.getElementById('pValue').textContent   = 'NAV unavailable';
+                document.getElementById('pReturns').textContent = '—';
+                document.getElementById('pXirr').textContent    = '—';
+                document.getElementById('statValue').textContent = 'NAV unavailable';
+                document.getElementById('statXirr').textContent  = '—';
+            } else {
+                document.getElementById('pValue').textContent      = fmt(d.currentValue);
+                document.getElementById('statValue').textContent   = fmt(d.currentValue);
+                document.getElementById('statXirr').textContent    = parseFloat(d.xirr || 0).toFixed(2) + '%';
 
-            const returnsEl = document.getElementById("returns");
-            returnsEl.innerText = formatCurrency(data.returns);
-            returnsEl.className = "value " + (data.returns >= 0 ? "profit" : "loss");
+                const ret = parseFloat(d.returns || 0);
+                const retEl = document.getElementById('pReturns');
+                retEl.textContent = fmt(ret);
+                retEl.className = ret >= 0 ? 'profit' : 'loss';
+            }
 
-            document.getElementById("xirr").innerText = formatNumber(data.xirr) + "%";
-            document.getElementById("realReturn").innerText = formatNumber(data.realReturn) + "%";
+            // update global stats
+            document.getElementById('statInvested').textContent = fmt(d.totalInvested);
 
-            document.getElementById("goalNameDisplay").innerText = data.goalName || "-";
-            document.getElementById("targetAmountDisplay").innerText = formatCurrency(data.targetAmount);
+            // Goal
+            document.getElementById('pGoalName').textContent = d.goalName || '—';
+            document.getElementById('pTarget').textContent   = fmt(d.targetAmount);
+            const pct = Math.min(d.goalProgress || 0, 100);
+            document.getElementById('pProgressBar').style.width = pct + '%';
+            document.getElementById('pProgressPct').textContent = pct.toFixed(1) + '%';
+        }).catch(err => console.error('Portfolio error:', err));
 
-            const progress = data.goalProgress || 0;
-            document.getElementById("goalProgressBar").style.width = progress + "%";
-            document.getElementById("goalProgressText").innerText = progress.toFixed(2) + "% completed";
-        })
-        .catch(err => {
-            console.error("Error loading portfolio:", err);
-        });
+        // Chart
+        apiRequest(`/sip/${id}/chart`).then(r => r.json()).then(chartData => {
+            renderSipChart(chartData);
+        }).catch(err => console.error('Chart error:', err));
+    }
 
-        apiRequest(`/sip/${id}/chart`)
-        .then(res => res.json())
-        .then(chartData => {
-            if (sipChartInstance) sipChartInstance.destroy();
+    function renderSipChart(chartData) {
+        if (sipChartInstance) sipChartInstance.destroy();
 
-            const ctx = document.getElementById("sipChart").getContext('2d');
+        const ctx = document.getElementById('sipChart').getContext('2d');
+        const labels = chartData.map(x => x.date);
+        const values = chartData.map(x => x.value);
 
-            sipChartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: chartData.map(x => x.date),
-                    datasets: [{
-                        label: "Portfolio Value (₹)",
-                        data: chartData.map(x => x.value),
-                        borderColor: "#2563eb",
-                        backgroundColor: "rgba(37, 99, 235, 0.1)",
-                        fill: true,
-                        tension: 0.3,
-                        pointRadius: 3,
-                        pointHoverRadius: 5
-                    }]
+        // Gradient fill
+        const gradient = ctx.createLinearGradient(0, 0, 0, 260);
+        gradient.addColorStop(0,   'rgba(22, 163, 74, 0.18)');
+        gradient.addColorStop(1,   'rgba(22, 163, 74, 0)');
+
+        sipChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Portfolio Value',
+                    data: values,
+                    borderColor: '#16a34a',
+                    borderWidth: 2.5,
+                    backgroundColor: gradient,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    pointHoverRadius: 5,
+                    pointHoverBackgroundColor: '#16a34a',
+                    pointHoverBorderColor: '#fff',
+                    pointHoverBorderWidth: 2,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#0f172a',
+                        titleColor: '#94a3b8',
+                        bodyColor: '#ffffff',
+                        padding: 12,
+                        cornerRadius: 10,
+                        titleFont: { family: 'DM Sans', size: 11 },
+                        bodyFont: { family: 'DM Sans', size: 13, weight: '600' },
+                        callbacks: {
+                            label: ctx => '  ' + new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(ctx.parsed.y)
+                        }
+                    }
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return '₹' + context.parsed.y.toLocaleString('en-IN');
-                                }
-                            }
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        border: { display: false },
+                        ticks: {
+                            color: '#94a3b8',
+                            font: { family: 'DM Sans', size: 11 },
+                            maxTicksLimit: 8,
                         }
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return '₹' + value;
-                                }
-                            }
+                    y: {
+                        grid: { color: '#f1f5f9' },
+                        border: { display: false },
+                        ticks: {
+                            color: '#94a3b8',
+                            font: { family: 'DM Sans', size: 11 },
+                            callback: v => '₹' + (v >= 100000 ? (v/100000).toFixed(1) + 'L' : v >= 1000 ? (v/1000).toFixed(0) + 'K' : v)
                         }
                     }
                 }
-            });
-        })
-        .catch(err => {
-            console.error("Error loading chart:", err);
+            }
         });
     }
 
     function executeSip(id) {
-        if (!confirm("Execute this SIP now?")) return;
-
-        apiRequest(`/sip/${id}/execute`, { method: "POST" })
-            .then(res => {
-                if (res.ok) {
-                    alert("SIP executed successfully");
-                    loadSips();
-                    if (currentSipId === id) {
-                        viewPortfolio(id);
-                    }
-                } else {
-                    alert("Failed to execute SIP");
-                }
-            })
-            .catch(err => {
-                console.error("Error executing SIP:", err);
-                alert("Server error");
-            });
+        if (!confirm('Execute this SIP now?')) return;
+        apiRequest(`/sip/${id}/execute`, { method: 'POST' }).then(res => {
+            if (res.ok) {
+                loadSips();
+                if (currentSipId === id) viewPortfolio(id, document.getElementById('portfolioTitle').textContent);
+            } else {
+                // FIX 2: backend returns plain text, not JSON
+                res.text().then(msg => alert(msg || 'Failed to execute SIP.'));
+            }
+        });
     }
 
     function deleteSip(id) {
-        if (!confirm("Are you sure you want to delete this SIP?")) return;
-
-        apiRequest(`/sip/${id}`, { method: "DELETE" })
-            .then(res => {
-                if (res.ok) {
-                    if (currentSipId === id) {
-                        document.getElementById("portfolioCard").style.display = "none";
-                        currentSipId = null;
-                    }
-                    loadSips();
-                } else {
-                    alert("Failed to delete SIP");
+        if (!confirm('Delete this SIP?')) return;
+        apiRequest(`/sip/${id}`, { method: 'DELETE' }).then(res => {
+            if (res.ok) {
+                if (currentSipId === id) {
+                    document.getElementById('portfolioCard').style.display = 'none';
+                    currentSipId = null;
                 }
-            })
-            .catch(err => {
-                console.error("Error deleting SIP:", err);
-                alert("Server error");
-            });
+                loadSips();
+            } else {
+                alert('Failed to delete SIP. Please try again.');
+            }
+        });
+    }
+
+    // FIX 3: Activate / Deactivate toggle — calls backend PUT endpoints
+    function toggleSip(id, isActive) {
+        const action  = isActive ? 'deactivate' : 'activate';
+        const label   = isActive ? 'Deactivate' : 'Activate';
+        if (!confirm(`${label} this SIP?`)) return;
+        apiRequest(`/sip/${id}/${action}`, { method: 'PUT' }).then(res => {
+            if (res.ok) {
+                loadSips();
+                // if portfolio is open for this SIP, refresh it
+                if (currentSipId === id) viewPortfolio(id, document.getElementById('portfolioTitle').textContent);
+            } else {
+                res.text().then(msg => alert(msg || `Failed to ${action} SIP.`));
+            }
+        });
     }
 </script>
-
 </body>
 </html>

@@ -1,32 +1,40 @@
 package com.pro.finance.selffinanceapp.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class DigitalGoldDTO {
 
-    private double gramsPurchased;
-    private double purchasePricePerGram;
+    @Positive
+    private BigDecimal gramsPurchased;
+
+    @Positive
+    private BigDecimal purchasePricePerGram;
+
+    @NotNull
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate purchaseDate;
 
-    public double getGramsPurchased() {
+    public BigDecimal getGramsPurchased() {
         return gramsPurchased;
     }
 
-    public void setGramsPurchased(double gramsPurchased) {
+    public void setGramsPurchased(BigDecimal gramsPurchased) {
         this.gramsPurchased = gramsPurchased;
     }
 
-    public double getPurchasePricePerGram() {
+    public BigDecimal getPurchasePricePerGram() {
         return purchasePricePerGram;
     }
 
-    public void setPurchasePricePerGram(double purchasePricePerGram) {
+    public void setPurchasePricePerGram(BigDecimal purchasePricePerGram) {
         this.purchasePricePerGram = purchasePricePerGram;
     }
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
     public LocalDate getPurchaseDate() {
         return purchaseDate;
     }

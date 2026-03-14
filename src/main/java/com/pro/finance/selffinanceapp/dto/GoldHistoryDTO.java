@@ -1,19 +1,22 @@
 package com.pro.finance.selffinanceapp.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import lombok.*;
+import java.math.BigDecimal;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
 public class GoldHistoryDTO {
+
     private Long id;
     private String purchaseDate;
-    private double gramsPurchased;
-    private double purchasePricePerGram;
-    private double totalInvested;
-    private double currentValue;
-    private double profit;
+    private BigDecimal gramsPurchased;
+    private BigDecimal purchasePricePerGram;
+    private BigDecimal totalInvested;
+    private BigDecimal currentValue;
+    private BigDecimal profit;
+
 }

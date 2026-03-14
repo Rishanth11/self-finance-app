@@ -4,592 +4,421 @@
     <meta charset="UTF-8">
     <title>Digital Gold · Personal Finance</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Chart.js & Font Awesome for clean icons -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --green:        #16a34a;
+            --green-light:  #22c55e;
+            --green-dim:    #dcfce7;
+            --green-border: #bbf7d0;
+            --slate-900:    #0f172a;
+            --slate-700:    #334155;
+            --slate-600:    #475569;
+            --slate-400:    #94a3b8;
+            --slate-200:    #e2e8f0;
+            --slate-100:    #f1f5f9;
+            --slate-50:     #f8fafc;
+            --white:        #ffffff;
+            --red:          #dc2626;
+            --red-dim:      #fef2f2;
+            --red-border:   #fee2e2;
         }
 
         body {
-            background: #f8fafc;
-            padding: 32px 24px;
+            background: #f5f7f5;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--slate-900);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            color: #1e293b;
+            padding: 36px 28px;
         }
 
-        .container {
-            max-width: 1280px;
-            width: 100%;
-        }
+        .page { max-width: 1180px; margin: 0 auto; }
 
-        /* header area */
+        /* ── PAGE HEADER ── */
         .page-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 28px;
-            flex-wrap: wrap;
-            gap: 16px;
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 16px; margin-bottom: 32px;
+            animation: fadeUp 0.4s ease both;
         }
 
-        .page-header h2 {
-            font-size: 2rem;
-            font-weight: 600;
-            background: linear-gradient(145deg, #b45309, #92400e);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.02em;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .page-title { display: flex; align-items: center; gap: 14px; }
+
+        .page-title-icon {
+            width: 44px; height: 44px; background: var(--green);
+            border-radius: 12px; display: flex; align-items: center;
+            justify-content: center; color: white; font-size: 1.1rem;
         }
 
-        .page-header h2 i {
-            background: #ffffff;
-            padding: 10px 14px;
-            border-radius: 20px;
-            color: #b45309;
-            box-shadow: 0 8px 18px rgba(180, 83, 9, 0.15);
-            font-size: 1.6rem;
-            -webkit-text-fill-color: #b45309;
-            border: 1px solid #e2e8f0;
-        }
+        .page-title h1 { font-size: 1.5rem; font-weight: 600; color: var(--slate-900); letter-spacing: -0.02em; }
+        .page-title p  { font-size: 0.85rem; color: var(--slate-400); margin-top: 1px; }
 
-        .header-controls {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
+        .header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
-        .summary-tag {
-            background: white;
-            padding: 12px 24px;
-            border-radius: 60px;
-            font-weight: 500;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-            border: 1px solid #e2e8f0;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .total-pill {
+            background: var(--green); color: white; padding: 10px 20px;
+            border-radius: 40px; display: flex; align-items: center;
+            gap: 10px; font-size: 0.875rem;
         }
+        .total-pill span { opacity: 0.8; }
+        .total-pill strong { font-size: 1.1rem; font-weight: 600; }
 
-        .summary-tag span {
-            color: #64748b;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+        .month-filter {
+            display: flex; align-items: center; gap: 8px;
+            background: var(--white); border: 1.5px solid var(--slate-200);
+            border-radius: 40px; padding: 8px 16px;
         }
-
-        .summary-tag strong {
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: #b45309;
+        .month-filter i { color: var(--slate-400); font-size: 0.85rem; }
+        .month-filter input[type="month"] {
+            border: none; outline: none; font-family: 'DM Sans', sans-serif;
+            font-size: 0.875rem; color: var(--slate-700); background: transparent;
         }
-
-        .filter-control {
-            background: white;
-            padding: 8px 16px;
-            border-radius: 60px;
-            border: 1px solid #e2e8f0;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .month-filter button {
+            border: none; background: none; font-family: 'DM Sans', sans-serif;
+            font-size: 0.8rem; font-weight: 500; color: var(--green);
+            cursor: pointer; padding: 2px 6px; border-radius: 20px; transition: background 0.15s;
         }
+        .month-filter button:hover { background: var(--green-dim); }
 
-        .filter-control input {
-            border: none;
-            outline: none;
-            padding: 4px 0;
-            font-size: 0.95rem;
-            color: #1e293b;
-        }
-
-        .filter-control button {
-            border: none;
-            background: none;
-            color: #b45309;
-            cursor: pointer;
-            font-weight: 500;
-            padding: 4px 8px;
-            border-radius: 20px;
-        }
-
-        .filter-control button:hover {
-            background: #fff7ed;
-        }
-
-        /* card design */
-        .card {
-            background: #ffffff;
-            border-radius: 28px;
-            padding: 28px 30px;
-            margin-bottom: 28px;
-            box-shadow: 0 20px 40px -14px rgba(0, 20, 40, 0.1), 0 2px 8px rgba(0, 0, 0, 0.02);
-            border: 1px solid #e2e8f0;
-            transition: all 0.2s ease;
-        }
-
-        .card-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 26px;
-        }
-
-        .card-header i {
-            font-size: 1.5rem;
-            color: #b45309;
-            background: #fff7ed;
-            padding: 10px;
-            border-radius: 18px;
-        }
-
-        .card-header h3 {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: #0f172a;
-        }
-
-        /* total summary card */
-        .total-summary {
-            background: linear-gradient(135deg, #78350f, #92400e);
-            border: none;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 22px 32px;
-        }
-
-        .total-summary .label {
-            font-size: 1.1rem;
-            font-weight: 400;
-            opacity: 0.8;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .total-summary .value {
-            font-size: 2.8rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #fde68a, #ffffff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .total-summary i {
-            font-size: 2.5rem;
-            opacity: 0.2;
-            color: #fff;
-        }
-
-        /* form grid */
-        .form-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 18px;
-            align-items: flex-end;
-        }
-
-        .input-field {
-            flex: 1 1 160px;
-            min-width: 170px;
-        }
-
-        .input-field label {
-            display: block;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-            font-weight: 600;
-            color: #64748b;
-            margin-bottom: 6px;
-        }
-
-        .input-field input {
-            width: 100%;
-            padding: 12px 16px;
-            background: #f8fafc;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 20px;
-            font-size: 0.95rem;
-            transition: all 0.2s;
-            color: #1e293b;
-            font-weight: 500;
-        }
-
-        .input-field input:focus {
-            outline: none;
-            border-color: #b45309;
-            background: white;
-            box-shadow: 0 4px 14px rgba(180, 83, 9, 0.1);
-        }
-
-        .input-field input::placeholder {
-            color: #94a3b8;
-            font-weight: 400;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-top: 16px;
-        }
-
-        .btn {
-            padding: 12px 28px;
-            border-radius: 40px;
-            border: none;
-            font-weight: 600;
-            font-size: 0.95rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            background: white;
-            color: #334155;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
-        }
-
-        .btn-primary {
-            background: #b45309;
-            color: white;
-            border: none;
-            box-shadow: 0 8px 22px -6px #b45309cc;
-        }
-
-        .btn-primary:hover {
-            background: #92400e;
-            transform: scale(1.02);
-        }
-
-        .btn-secondary {
-            background: #f1f5f9;
-            border: 1px solid #e2e8f0;
-            color: #334155;
-        }
-
-        .btn-secondary:hover {
-            background: #e2e8f0;
-        }
-
-        .btn-danger {
-            background: #fef2f2;
-            color: #b91c1c;
-            border: 1px solid #fee2e2;
-        }
-
-        .btn-danger:hover {
-            background: #fee2e2;
-        }
-
-        /* table styles */
-        .table-wrapper {
-            overflow-x: auto;
-            border-radius: 22px;
-            background: #ffffff;
-            padding: 4px 0;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.95rem;
-        }
-
-        th {
-            text-align: left;
-            padding: 18px 16px 12px 20px;
-            font-weight: 600;
-            color: #475569;
-            background: #f8fafc;
-            border-bottom: 2px solid #e2e8f0;
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
-            font-size: 0.8rem;
-        }
-
-        td {
-            padding: 18px 16px 18px 20px;
-            border-bottom: 1px solid #e2e8f0;
-            color: #1e293b;
-            font-weight: 500;
-        }
-
-        td:first-child, th:first-child {
-            padding-left: 20px;
-        }
-
-        td:last-child, th:last-child {
-            padding-right: 20px;
-        }
-
-        .badge {
-            padding: 6px 16px;
-            border-radius: 40px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            display: inline-block;
-        }
-
-        .badge-profit {
-            background: #e0f2e2;
-            color: #166534;
-        }
-
-        .badge-loss {
-            background: #fee2e2;
-            color: #b91c1c;
-        }
-
-        .table-actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .table-actions button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 0.9rem;
-            padding: 6px 12px;
-            border-radius: 30px;
-            transition: all 0.1s;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .table-actions .edit-btn {
-            color: #b45309;
-            background: #fff7ed;
-        }
-
-        .table-actions .edit-btn:hover {
-            background: #b45309;
-            color: white;
-        }
-
-        .table-actions .delete-btn {
-            color: #b91c1c;
-            background: #fef2f2;
-        }
-
-        .table-actions .delete-btn:hover {
-            background: #b91c1c;
-            color: white;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 50px 20px;
-            background: #f8fafc;
-            border-radius: 28px;
-            color: #64748b;
-            font-size: 1.1rem;
-            border: 2px dashed #e2e8f0;
-        }
-
-        .empty-state i {
-            font-size: 3.2rem;
-            margin-bottom: 16px;
-            color: #94a3b8;
-        }
-
-        /* portfolio stats grid */
-        .stats-grid {
+        /* ── STAT ROW ── */
+        .stat-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 20px;
-            margin-top: 10px;
+            gap: 16px; margin-bottom: 24px;
+            animation: fadeUp 0.4s 0.05s ease both;
         }
 
         .stat-card {
-            background: #f8fafc;
-            padding: 20px;
-            border-radius: 24px;
-            border: 1px solid #e2e8f0;
+            background: var(--white); border: 1.5px solid var(--slate-200);
+            border-radius: 16px; padding: 20px 22px;
+            display: flex; align-items: center; gap: 16px;
         }
 
-        .stat-card .label {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-            color: #64748b;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+        .stat-icon {
+            width: 42px; height: 42px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; flex-shrink: 0;
+        }
+        .stat-icon.green { background: var(--green-dim); color: var(--green); }
+        .stat-icon.slate { background: var(--slate-100); color: var(--slate-600); }
+        .stat-icon.red   { background: var(--red-dim);   color: var(--red); }
+
+        .stat-info p {
+            font-size: 0.75rem; color: var(--slate-400);
+            text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 3px;
+        }
+        .stat-info strong {
+            font-size: 1.3rem; font-weight: 600; color: var(--slate-900); letter-spacing: -0.02em;
+        }
+        .stat-info strong.profit { color: var(--green); }
+        .stat-info strong.loss   { color: var(--red); }
+
+        /* ── CARD ── */
+        .card {
+            background: var(--white); border: 1.5px solid var(--slate-200);
+            border-radius: 20px; padding: 24px 26px; margin-bottom: 20px;
         }
 
-        .stat-card .label i {
-            color: #b45309;
+        .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 22px; }
+
+        .card-header-icon {
+            width: 34px; height: 34px; background: var(--green-dim);
+            border-radius: 10px; display: flex; align-items: center;
+            justify-content: center; color: var(--green); font-size: 0.875rem;
         }
 
-        .stat-card .value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #1e293b;
+        .card-header h3 { font-size: 1rem; font-weight: 600; color: var(--slate-900); }
+
+        /* ── FORM ── */
+        .form-grid { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; }
+
+        .field { flex: 1 1 160px; min-width: 150px; }
+
+        .field label {
+            display: block; font-size: 0.72rem; font-weight: 500;
+            text-transform: uppercase; letter-spacing: 0.05em;
+            color: var(--slate-400); margin-bottom: 6px;
         }
 
-        .stat-card .profit {
-            color: #16a34a;
+        .field input {
+            width: 100%; padding: 11px 14px;
+            border: 1.5px solid var(--slate-200); border-radius: 10px;
+            background: var(--white); font-family: 'DM Sans', sans-serif;
+            font-size: 0.9rem; color: var(--slate-900);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .field input::placeholder { color: var(--slate-400); }
+        .field input:focus {
+            outline: none; border-color: var(--green-light);
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
         }
 
-        .stat-card .loss {
-            color: #b91c1c;
+        .form-actions { display: flex; gap: 10px; margin-top: 18px; }
+
+        .error-msg {
+            font-size: 0.82rem; color: var(--red);
+            background: var(--red-dim); border: 1px solid var(--red-border);
+            border-radius: 8px; padding: 8px 14px; margin-bottom: 16px; display: none;
         }
 
-        /* chart container */
-        .chart-container {
-            height: 300px;
-            width: 100%;
-            background: #f8fafc;
-            padding: 20px;
-            border-radius: 24px;
-            border: 1px solid #e2e8f0;
-            margin-top: 10px;
+        /* ── BUTTONS ── */
+        .btn {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 10px 20px; border-radius: 10px; border: none;
+            font-family: 'DM Sans', sans-serif; font-size: 0.875rem;
+            font-weight: 500; cursor: pointer;
+            transition: background 0.15s, transform 0.12s, box-shadow 0.15s;
+        }
+        .btn-primary {
+            background: var(--green); color: white;
+            box-shadow: 0 3px 10px rgba(22, 163, 74, 0.3);
+        }
+        .btn-primary:hover {
+            background: #15803d; transform: translateY(-1px);
+            box-shadow: 0 5px 14px rgba(22, 163, 74, 0.35);
+        }
+        .btn-ghost { background: var(--slate-100); color: var(--slate-600); }
+        .btn-ghost:hover { background: var(--slate-200); }
+
+        /* ── TABLE ── */
+        .table-scroll { overflow-x: auto; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+        thead tr { border-bottom: 1.5px solid var(--slate-200); }
+
+        th {
+            text-align: left; padding: 10px 14px; font-size: 0.7rem;
+            font-weight: 500; text-transform: uppercase;
+            letter-spacing: 0.06em; color: var(--slate-400);
+        }
+        td {
+            padding: 14px 14px; border-bottom: 1px solid var(--slate-100);
+            color: var(--slate-700); font-weight: 400;
+        }
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:hover td { background: var(--slate-50); }
+
+        .badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 12px; border-radius: 40px;
+            font-size: 0.75rem; font-weight: 500;
+        }
+        .badge-profit { background: var(--green-dim); color: var(--green); }
+        .badge-loss   { background: var(--red-dim);   color: var(--red); }
+
+        .amount-cell { font-weight: 600; color: var(--slate-900); font-size: 0.925rem; }
+        .grams-cell  { font-weight: 500; color: var(--slate-900); }
+
+        .row-actions { display: flex; gap: 6px; }
+
+        .icon-btn {
+            width: 30px; height: 30px; border: none; border-radius: 8px;
+            cursor: pointer; display: flex; align-items: center;
+            justify-content: center; font-size: 0.8rem;
+            transition: background 0.15s, color 0.15s;
+        }
+        .icon-btn.edit { background: var(--green-dim); color: var(--green); }
+        .icon-btn.edit:hover { background: var(--green); color: white; }
+        .icon-btn.del  { background: var(--red-dim);   color: var(--red); }
+        .icon-btn.del:hover  { background: var(--red);   color: white; }
+
+        /* ── EMPTY STATE ── */
+        .empty-state {
+            text-align: center; padding: 48px 20px;
+            color: var(--slate-400); display: none;
+        }
+        .empty-state i { font-size: 2.5rem; margin-bottom: 12px; display: block; }
+        .empty-state p { font-size: 0.9rem; }
+
+        /* ── CHART ── */
+        .chart-box {
+            background: var(--slate-50); border: 1.5px solid var(--slate-200);
+            border-radius: 14px; padding: 20px; height: 280px;
+            margin-top: 22px; position: relative;
+        }
+        .chart-box canvas { width: 100% !important; height: 100% !important; }
+
+        .divider { height: 1px; background: var(--slate-200); margin: 22px 0; }
+
+        /* ── LIVE PRICE ROW ── */
+        .live-price-row {
+            display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+            background: var(--green-dim); border: 1.5px solid var(--green-border);
+            border-radius: 14px; padding: 14px 18px;
         }
 
-        .chart-container canvas {
-            width: 100% !important;
-            height: 100% !important;
+        .live-price-label {
+            display: flex; align-items: center; gap: 7px;
+            font-size: 0.85rem; font-weight: 500; color: var(--green);
+            flex-shrink: 0;
         }
 
-        hr {
-            margin: 24px 0;
-            border: 1px solid #e2e8f0;
+        .live-price-label i { font-size: 0.8rem; }
+
+        .live-price-input-wrap {
+            display: flex; align-items: center;
+            background: var(--white); border: 1.5px solid var(--green-border);
+            border-radius: 10px; overflow: hidden; flex: 1; min-width: 160px;
         }
 
-        /* responsive */
-        @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            .stat-card .value {
-                font-size: 1.5rem;
-            }
+        .live-price-prefix {
+            padding: 0 10px; font-size: 0.9rem;
+            color: var(--slate-400); background: var(--slate-50);
+            border-right: 1.5px solid var(--slate-200);
+            height: 100%; display: flex; align-items: center;
         }
 
-        @media (max-width: 480px) {
-            body {
-                padding: 20px 16px;
-            }
-            .page-header h2 {
-                font-size: 1.6rem;
-            }
-            .card {
-                padding: 20px;
-            }
+        .live-price-input-wrap input {
+            border: none; outline: none; padding: 9px 12px;
+            font-family: 'DM Sans', sans-serif; font-size: 0.925rem;
+            font-weight: 600; color: var(--slate-900);
+            background: transparent; width: 100%;
+        }
+
+        .live-price-input-wrap input::placeholder { color: var(--slate-400); font-weight: 400; }
+
+        .btn-sm { padding: 9px 14px; font-size: 0.8rem; }
+
+        .live-status {
+            font-size: 0.78rem; color: var(--slate-400);
+            margin-top: 6px; display: none;
+        }
+
+        .live-status.success { color: var(--green); display: block; }
+        .live-status.error   { color: var(--red);   display: block; }
+
+        .section-label {
+            font-size: 0.72rem; font-weight: 500; text-transform: uppercase;
+            letter-spacing: 0.06em; color: var(--slate-400); margin-bottom: 14px;
+        }
+
+        /* ── ANIMATION ── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 20px 16px; }
+            .page-header { flex-direction: column; align-items: flex-start; }
         }
     </style>
 </head>
+<body>
 
-<body onload="requireAuth(); loadGold();">
+<div class="page">
 
-<div class="container">
-    <!-- HEADER - exactly like income page -->
+    <!-- HEADER -->
     <div class="page-header">
-        <h2><i class="fas fa-coins"></i> Digital Gold</h2>
-        <div class="header-controls">
-            <div class="summary-tag">
-                <span><i class="fas fa-weight-hanging"></i>Total Grams</span>
+        <div class="page-title">
+            <div class="page-title-icon"><i class="fas fa-coins"></i></div>
+            <div>
+                <h1>Digital Gold</h1>
+                <p>Track your gold investments</p>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="total-pill">
+                <span>Total</span>
                 <strong id="totalGramsHeader">0g</strong>
             </div>
-            <div class="filter-control">
-                <i class="far fa-calendar" style="color: #64748b;"></i>
+            <div class="month-filter">
+                <i class="far fa-calendar"></i>
                 <input type="month" id="monthFilter" onchange="loadGold()">
                 <button onclick="clearFilter()">All</button>
             </div>
         </div>
     </div>
 
-    <!-- SUMMARY CARD - like Total Earnings in income page -->
-    <div class="card total-summary">
-        <div class="label">
-            <i class="fas fa-circle-up"></i> Portfolio Value
+    <!-- STAT ROW -->
+    <div class="stat-row">
+        <div class="stat-card">
+            <div class="stat-icon green"><i class="fas fa-weight-hanging"></i></div>
+            <div class="stat-info"><p>Total grams</p><strong id="statGrams">0g</strong></div>
         </div>
-        <div class="value" id="currentValueSummary">₹0</div>
-        <i class="fas fa-coins"></i>
+        <div class="stat-card">
+            <div class="stat-icon slate"><i class="fas fa-indian-rupee-sign"></i></div>
+            <div class="stat-info"><p>Total invested</p><strong id="statInvested">₹0</strong></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon slate"><i class="fas fa-chart-line"></i></div>
+            <div class="stat-info"><p>Live price/g</p><strong id="statLivePrice">₹0</strong></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon green"><i class="fas fa-wallet"></i></div>
+            <div class="stat-info"><p>Current value</p><strong id="statCurrentValue">₹0</strong></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon green"><i class="fas fa-arrow-trend-up"></i></div>
+            <div class="stat-info"><p>Profit / Loss</p><strong id="statProfitLoss">₹0</strong></div>
+        </div>
     </div>
 
-    <!-- ADD PURCHASE CARD - with grid layout like income page -->
+    <!-- ADD PURCHASE CARD -->
     <div class="card">
         <div class="card-header">
-            <i class="fas fa-plus-circle"></i>
-            <h3>➕ Add Purchase</h3>
+            <div class="card-header-icon"><i class="fas fa-plus"></i></div>
+            <h3>Add purchase</h3>
         </div>
 
+        <div id="errorMsg" class="error-msg"></div>
+
         <div class="form-grid">
-            <div class="input-field">
-                <label>Grams *</label>
+            <div class="field">
+                <label for="grams">Grams *</label>
                 <input type="number" id="grams" placeholder="e.g. 10.5" min="0" step="0.01">
             </div>
-            <div class="input-field">
-                <label>Price per Gram (₹) *</label>
+            <div class="field">
+                <label for="price">Price per gram (₹) *</label>
                 <input type="number" id="price" placeholder="e.g. 6500" min="0" step="0.01">
             </div>
-            <div class="input-field">
-                <label>Purchase Date *</label>
+            <div class="field">
+                <label for="date">Purchase date *</label>
                 <input type="date" id="date">
             </div>
         </div>
 
-        <div class="action-buttons">
-            <button class="btn btn-primary" onclick="addGold()"><i class="fas fa-plus-circle"></i> Add Gold</button>
+        <div class="form-actions">
+            <button class="btn btn-primary" onclick="addGold()">
+                <i class="fas fa-plus"></i> Add gold
+            </button>
         </div>
     </div>
 
-    <!-- PORTFOLIO SUMMARY CARD -->
+    <!-- PORTFOLIO CARD -->
     <div class="card">
         <div class="card-header">
-            <i class="fas fa-chart-pie"></i>
-            <h3>Portfolio Summary</h3>
+            <div class="card-header-icon"><i class="fas fa-chart-pie"></i></div>
+            <h3>Portfolio overview</h3>
         </div>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="label"><i class="fas fa-weight-hanging"></i> Total Grams</div>
-                <div class="value" id="totalGrams">0g</div>
+        <!-- Live price input -->
+        <div class="live-price-row">
+            <div class="live-price-label">
+                <i class="fas fa-bolt"></i>
+                Current gold price per gram
             </div>
-            <div class="stat-card">
-                <div class="label"><i class="fas fa-coins"></i> Total Invested</div>
-                <div class="value" id="totalInvested">₹0</div>
+            <div class="live-price-input-wrap">
+                <span class="live-price-prefix">₹</span>
+                <input type="number" id="livePriceInput" placeholder="Enter today's price" step="1" min="0" oninput="recalculate()">
             </div>
-            <div class="stat-card">
-                <div class="label"><i class="fas fa-chart-line"></i> Live Price</div>
-                <div class="value" id="livePrice">₹0</div>
-            </div>
-            <div class="stat-card">
-                <div class="label"><i class="fas fa-wallet"></i> Current Value</div>
-                <div class="value" id="currentValue">₹0</div>
-            </div>
-            <div class="stat-card">
-                <div class="label"><i class="fas fa-arrow-trend-up"></i> Profit/Loss</div>
-                <div class="value" id="profitLoss">₹0</div>
-            </div>
+            <button class="btn btn-primary btn-sm" onclick="fetchLivePrice()">
+                <i class="fas fa-rotate"></i> Refresh
+            </button>
         </div>
 
-        <hr>
+        <div id="livePriceStatus" class="live-status"></div>
 
-        <div class="chart-container">
+        <div class="divider"></div>
+        <div class="section-label">Invested vs current value</div>
+
+        <div class="chart-box">
             <canvas id="goldChart"></canvas>
         </div>
     </div>
@@ -597,268 +426,321 @@
     <!-- PURCHASE HISTORY CARD -->
     <div class="card">
         <div class="card-header">
-            <i class="fas fa-table-list"></i>
-            <h3>Purchase History</h3>
+            <div class="card-header-icon"><i class="fas fa-table"></i></div>
+            <h3>Purchase history</h3>
         </div>
 
-        <div id="emptyState" class="empty-state" style="display: none;">
+        <div id="emptyState" class="empty-state">
             <i class="far fa-folder-open"></i>
-            <p>No purchases yet · add your first gold purchase above</p>
+            <p>No purchases yet — add your first gold purchase above.</p>
         </div>
 
-        <div class="table-wrapper">
-            <table id="goldTable">
+        <div class="table-scroll">
+            <table id="goldTableWrap">
                 <thead>
                 <tr>
                     <th>Date</th>
                     <th>Grams</th>
-                    <th>Price/Gram</th>
-                    <th>Total Invested</th>
-                    <th>Current Value</th>
-                    <th>Profit</th>
-                    <th>Actions</th>
+                    <th>Price / g</th>
+                    <th>Invested</th>
+                    <th>Current value</th>
+                    <th>P&amp;L</th>
+                    <th></th>
                 </tr>
                 </thead>
-                <tbody></tbody>
+                <tbody id="goldTableBody"></tbody>
             </table>
         </div>
-    </div>
-
-    <!-- BACK BUTTON -->
-    <div style="display: flex; justify-content: flex-end;">
-        <button class="btn btn-secondary" onclick="window.location.href='/pages/dashboard.html'">
-            <i class="fas fa-arrow-left"></i> Back to Dashboard
-        </button>
     </div>
 
 </div>
 
 <script src="../js/guard.js"></script>
 <script src="../js/api.js"></script>
-
 <script>
     let chart;
+    let allPurchases  = [];
+    let currentLivePrice = 0;
 
-    function formatCurrency(val) {
-        return new Intl.NumberFormat('en-IN', {
-            style: 'currency',
-            currency: 'INR',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0
-        }).format(val || 0);
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof requireAuth === 'function') requireAuth();
+        loadGold();
+        fetchLivePrice(); // auto-fetch real price on load
+    });
+
+    function fmt(n) {
+        return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(n || 0);
     }
 
-    function formatGrams(val) {
-        return parseFloat(val || 0).toFixed(2) + 'g';
+    function fmtG(n) { return parseFloat(n || 0).toFixed(2) + 'g'; }
+
+    function setError(msg) {
+        const el = document.getElementById('errorMsg');
+        el.textContent = msg || '';
+        el.style.display = msg ? 'block' : 'none';
+    }
+
+    function setLiveStatus(msg, type) {
+        const el = document.getElementById('livePriceStatus');
+        el.textContent = msg;
+        el.className = 'live-status ' + (type || '');
     }
 
     function clearFilter() {
-        document.getElementById("monthFilter").value = "";
+        document.getElementById('monthFilter').value = '';
         loadGold();
     }
 
-    async function loadGold() {
-        const monthValue = document.getElementById("monthFilter").value;
-        let url = "/gold/summary";
+    /* ── FETCH REAL LIVE GOLD PRICE (gold-api.com, no key, CORS enabled) ── */
+    async function fetchLivePrice() {
+        setLiveStatus('Fetching live gold price…', '');
+        try {
+            // Step 1: Get gold price in USD per troy ounce (free, no key, CORS enabled)
+            const goldRes = await fetch('https://api.gold-api.com/price/XAU');
+            const goldData = await goldRes.json();
+            const priceUsdPerOz = parseFloat(goldData.price);
 
-        if (monthValue) {
-            const [year, month] = monthValue.split("-");
-            url = `/gold/summary/filter?year=${year}&month=${month}`;
+            if (!priceUsdPerOz || priceUsdPerOz <= 0) throw new Error('Invalid gold price');
+
+            // Step 2: Get USD → INR exchange rate (free, no key)
+            const fxRes  = await fetch('https://api.frankfurter.app/latest?from=USD&to=INR');
+            const fxData = await fxRes.json();
+            const usdToInr = parseFloat(fxData.rates.INR);
+
+            if (!usdToInr || usdToInr <= 0) throw new Error('Invalid exchange rate');
+
+            // Step 3: Convert → ₹ per gram (1 troy oz = 31.1035 grams)
+            const priceInrPerGram = Math.round((priceUsdPerOz * usdToInr) / 31.1035);
+
+            document.getElementById('livePriceInput').value = priceInrPerGram;
+            currentLivePrice = priceInrPerGram;
+
+            const ts = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+            setLiveStatus(`✓ Live price fetched at ${ts} — $${priceUsdPerOz.toLocaleString()} /oz × ₹${Math.round(usdToInr)}/$ = ₹${priceInrPerGram.toLocaleString('en-IN')}/g (24K)`, 'success');
+            recalculate();
+
+        } catch (e) {
+            console.error('Live price fetch failed:', e);
+            setLiveStatus('Could not fetch live price. Check your internet connection or enter manually.', 'error');
         }
-
-        const res = await apiRequest(url);
-        if (!res.ok) return;
-
-        const data = await res.json();
-
-        // Update header
-        document.getElementById("totalGramsHeader").innerText = formatGrams(data.totalGrams);
-
-        // Update summary card
-        document.getElementById("currentValueSummary").innerText = formatCurrency(data.currentValue);
-
-        // Update stats
-        document.getElementById("totalGrams").innerText = formatGrams(data.totalGrams);
-        document.getElementById("totalInvested").innerText = formatCurrency(data.totalInvested);
-        document.getElementById("livePrice").innerText = formatCurrency(data.livePrice);
-        document.getElementById("currentValue").innerText = formatCurrency(data.currentValue);
-
-        const profitEl = document.getElementById("profitLoss");
-        profitEl.innerText = formatCurrency(data.profitLoss);
-        profitEl.className = "value " + (data.profitLoss >= 0 ? "profit" : "loss");
-
-        renderChart(data.totalInvested, data.currentValue);
-        loadHistory(monthValue);
     }
 
-    async function loadHistory(monthFilter = "") {
-        let url = "/gold";
+    /* ── RECALCULATE stats client-side whenever live price changes ── */
+    function recalculate() {
+        const inputVal = parseFloat(document.getElementById('livePriceInput').value);
+        currentLivePrice = isNaN(inputVal) || inputVal <= 0 ? 0 : inputVal;
 
-        if (monthFilter) {
-            const [year, month] = monthFilter.split("-");
-            url = `/gold/filter?year=${year}&month=${month}`;
+        if (!allPurchases.length) return;
+
+        const monthFilter = document.getElementById('monthFilter').value;
+        const filtered = monthFilter
+            ? allPurchases.filter(g => g.purchaseDate && g.purchaseDate.startsWith(monthFilter))
+            : allPurchases;
+
+        const totalGrams    = filtered.reduce((a, g) => a + parseFloat(g.gramsPurchased || 0), 0);
+        const totalInvested = filtered.reduce((a, g) => a + parseFloat(g.totalInvested || (g.gramsPurchased * g.purchasePricePerGram) || 0), 0);
+        const currentValue  = currentLivePrice > 0 ? totalGrams * currentLivePrice : 0;
+        const profitLoss    = currentValue - totalInvested;
+
+        // Header
+        document.getElementById('totalGramsHeader').textContent = fmtG(totalGrams);
+
+        // Stat cards
+        document.getElementById('statGrams').textContent        = fmtG(totalGrams);
+        document.getElementById('statInvested').textContent     = fmt(totalInvested);
+        document.getElementById('statLivePrice').textContent    = currentLivePrice > 0 ? fmt(currentLivePrice) : '—';
+        document.getElementById('statCurrentValue').textContent = currentValue > 0 ? fmt(currentValue) : '—';
+
+        const plEl   = document.getElementById('statProfitLoss');
+        const plCard = plEl.closest('.stat-card');
+        const plIcon = plCard ? plCard.querySelector('.stat-icon') : null;
+
+        if (currentValue > 0) {
+            plEl.textContent = fmt(profitLoss);
+            plEl.className   = profitLoss >= 0 ? 'profit' : 'loss';
+            if (plIcon) {
+                plIcon.className = 'stat-icon ' + (profitLoss >= 0 ? 'green' : 'red');
+                plIcon.innerHTML = profitLoss >= 0
+                    ? '<i class="fas fa-arrow-trend-up"></i>'
+                    : '<i class="fas fa-arrow-trend-down"></i>';
+            }
+        } else {
+            plEl.textContent = '—';
+            plEl.className   = '';
         }
+
+        renderChart(totalInvested, currentValue > 0 ? currentValue : totalInvested);
+        renderTable(filtered);
+    }
+
+    /* ── LOAD all purchases from backend ── */
+    async function loadGold() {
+        const mv  = document.getElementById('monthFilter').value;
+        let url   = '/gold/summary';
+        if (mv) { const [y, m] = mv.split('-'); url = `/gold/summary/filter?year=${y}&month=${m}`; }
 
         const res = await apiRequest(url);
         if (!res.ok) return;
+        const data = await res.json();
 
+        // If backend provides a valid live price, use it
+        if (data.livePrice && parseFloat(data.livePrice) > 0) {
+            currentLivePrice = parseFloat(data.livePrice);
+            document.getElementById('livePriceInput').value = currentLivePrice;
+            setLiveStatus('✓ Live price from server — ₹' + currentLivePrice.toLocaleString('en-IN') + '/g', 'success');
+        }
+
+        await loadHistory(mv);
+        recalculate();
+    }
+
+    async function loadHistory(monthFilter) {
+        let url = '/gold';
+        if (monthFilter) { const [y, m] = monthFilter.split('-'); url = `/gold/filter?year=${y}&month=${m}`; }
+
+        const res  = await apiRequest(url);
+        if (!res.ok) return;
         const list = await res.json();
-        const tbody = document.querySelector("#goldTable tbody");
-        tbody.innerHTML = "";
+        allPurchases = list || [];
+    }
+
+    function renderTable(list) {
+        const tbody  = document.getElementById('goldTableBody');
+        const tableW = document.getElementById('goldTableWrap');
+        const empty  = document.getElementById('emptyState');
+        tbody.innerHTML = '';
 
         if (!list || list.length === 0) {
-            document.getElementById("emptyState").style.display = "block";
+            empty.style.display  = 'block';
+            tableW.style.display = 'none';
             return;
         }
 
-        document.getElementById("emptyState").style.display = "none";
+        empty.style.display  = 'none';
+        tableW.style.display = '';
 
-        list.forEach(gold => {
-            const profitClass = gold.profit >= 0 ? "badge-profit" : "badge-loss";
-            const profitText = gold.profit >= 0 ? "Profit" : "Loss";
+        list.forEach(g => {
+            const d          = new Date(g.purchaseDate).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
+            const grams      = parseFloat(g.gramsPurchased || 0);
+            const invested   = parseFloat(g.totalInvested || (grams * parseFloat(g.purchasePricePerGram || 0)));
+            const curVal     = currentLivePrice > 0 ? grams * currentLivePrice : null;
+            const profit     = curVal !== null ? curVal - invested : null;
+            const isProfit   = profit !== null ? profit >= 0 : true;
+            const badgeCls   = isProfit ? 'badge-profit' : 'badge-loss';
+            const badgeIcon  = isProfit ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down';
 
             tbody.innerHTML += `
-                <tr>
-                    <td>${new Date(gold.purchaseDate).toLocaleDateString('en-IN', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
-                    })}</td>
-                    <td><strong>${formatGrams(gold.gramsPurchased)}</strong></td>
-                    <td>${formatCurrency(gold.purchasePricePerGram)}</td>
-                    <td>${formatCurrency(gold.totalInvested)}</td>
-                    <td>${formatCurrency(gold.currentValue)}</td>
-                    <td><span class="badge ${profitClass}">${profitText} ${formatCurrency(gold.profit)}</span></td>
-                    <td>
-                        <div class="table-actions">
-                            <button class="edit-btn" onclick="editGold(${gold.id})">
-                                <i class="fas fa-edit"></i> Edit
-                            </button>
-                            <button class="delete-btn" onclick="deleteGold(${gold.id})">
-                                <i class="fas fa-trash"></i> Delete
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `;
+        <tr>
+          <td>${d}</td>
+          <td class="grams-cell">${fmtG(grams)}</td>
+          <td style="color:var(--slate-600)">${fmt(g.purchasePricePerGram)}</td>
+          <td class="amount-cell">${fmt(invested)}</td>
+          <td class="amount-cell">${curVal !== null ? fmt(curVal) : '—'}</td>
+          <td>${profit !== null
+                ? `<span class="badge ${badgeCls}"><i class="fas ${badgeIcon}"></i>${fmt(Math.abs(profit))}</span>`
+                : '<span style="color:var(--slate-400);font-size:0.8rem">Enter price</span>'
+            }</td>
+          <td>
+            <div class="row-actions">
+              <button class="icon-btn edit" onclick="editGold(${g.id})"><i class="fas fa-pen"></i></button>
+              <button class="icon-btn del"  onclick="deleteGold(${g.id})"><i class="fas fa-trash"></i></button>
+            </div>
+          </td>
+        </tr>`;
         });
     }
 
     function renderChart(invested, current) {
         if (chart) chart.destroy();
 
-        const ctx = document.getElementById("goldChart").getContext('2d');
+        const ctx      = document.getElementById('goldChart').getContext('2d');
+        const isProfit = current >= invested;
+
+        const gradInvested = ctx.createLinearGradient(0, 0, 0, 240);
+        gradInvested.addColorStop(0, 'rgba(22, 163, 74, 0.9)');
+        gradInvested.addColorStop(1, 'rgba(22, 163, 74, 0.5)');
+
+        const gradCurrent = ctx.createLinearGradient(0, 0, 0, 240);
+        gradCurrent.addColorStop(0, isProfit ? 'rgba(34, 197, 94, 1)' : 'rgba(220, 38, 38, 0.9)');
+        gradCurrent.addColorStop(1, isProfit ? 'rgba(34, 197, 94, 0.5)' : 'rgba(220, 38, 38, 0.5)');
 
         chart = new Chart(ctx, {
-            type: "bar",
+            type: 'bar',
             data: {
-                labels: ["Total Invested", "Current Value"],
-                datasets: [{
-                    label: "Amount (₹)",
-                    data: [invested, current],
-                    backgroundColor: ["#b45309", "#facc15"],
-                    borderRadius: 6,
-                    barPercentage: 0.5
-                }]
+                labels: ['Total Invested', 'Current Value'],
+                datasets: [{ data: [invested, current],
+                    backgroundColor: [gradInvested, gradCurrent],
+                    borderRadius: 10, borderSkipped: false, barPercentage: 0.45 }]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: false,
+                responsive: true, maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
                 plugins: {
-                    legend: {
-                        display: false
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#0f172a', titleColor: '#94a3b8', bodyColor: '#ffffff',
+                        padding: 12, cornerRadius: 10,
+                        titleFont: { family: 'DM Sans', size: 11 },
+                        bodyFont: { family: 'DM Sans', size: 13, weight: '600' },
+                        callbacks: { label: ctx => '  ' + new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(ctx.parsed.y) }
                     }
                 },
                 scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return '₹' + value;
-                            }
-                        }
-                    }
+                    x: { grid: { display: false }, border: { display: false }, ticks: { color: '#94a3b8', font: { family: 'DM Sans', size: 12 } } },
+                    y: { grid: { color: '#f1f5f9' }, border: { display: false },
+                        ticks: { color: '#94a3b8', font: { family: 'DM Sans', size: 11 },
+                            callback: v => '₹' + (v >= 100000 ? (v/100000).toFixed(1)+'L' : v >= 1000 ? (v/1000).toFixed(0)+'K' : v) } }
                 }
             }
         });
     }
 
     async function addGold() {
-        const grams = parseFloat(document.getElementById("grams").value);
-        const price = parseFloat(document.getElementById("price").value);
-        const date = document.getElementById("date").value;
+        const grams = parseFloat(document.getElementById('grams').value);
+        const price = parseFloat(document.getElementById('price').value);
+        const date  = document.getElementById('date').value;
 
-        if (!grams || !price || !date) {
-            alert("Please fill all required fields");
-            return;
-        }
+        if (!grams || !price || !date)  return setError('Please fill all required fields.');
+        if (grams <= 0 || price <= 0)   return setError('Grams and price must be greater than 0.');
+        setError(null);
 
-        if (grams <= 0 || price <= 0) {
-            alert("Grams and price must be greater than 0");
-            return;
-        }
-
-        const res = await apiRequest("/gold", {
-            method: "POST",
-            body: JSON.stringify({
-                gramsPurchased: grams,
-                purchasePricePerGram: price,
-                purchaseDate: date
-            })
+        const res = await apiRequest('/gold', {
+            method: 'POST',
+            body: JSON.stringify({ gramsPurchased: grams, purchasePricePerGram: price, purchaseDate: date })
         });
 
         if (res.ok) {
-            alert("Gold purchase added successfully!");
-            document.getElementById("grams").value = "";
-            document.getElementById("price").value = "";
-            document.getElementById("date").value = "";
-            loadGold();
-        } else {
-            alert("Failed to add gold purchase");
-        }
+            ['grams','price','date'].forEach(id => document.getElementById(id).value = '');
+            await loadHistory(document.getElementById('monthFilter').value);
+            recalculate();
+        } else setError('Failed to add gold purchase.');
     }
 
     async function deleteGold(id) {
-        if (!confirm("Are you sure you want to delete this purchase?")) return;
-
-        const res = await apiRequest("/gold/" + id, {
-            method: "DELETE"
-        });
-
+        if (!confirm('Delete this purchase?')) return;
+        const res = await apiRequest('/gold/' + id, { method: 'DELETE' });
         if (res.ok) {
-            loadGold();
-        } else {
-            alert("Failed to delete purchase");
-        }
+            await loadHistory(document.getElementById('monthFilter').value);
+            recalculate();
+        } else setError('Failed to delete purchase.');
     }
 
     async function editGold(id) {
-        const newGrams = prompt("Enter new grams purchased:");
-        const newPrice = prompt("Enter new price per gram:");
-
+        const newGrams = prompt('Enter new grams purchased:');
+        const newPrice = prompt('Enter new price per gram (₹):');
         if (!newGrams || !newPrice) return;
+        if (parseFloat(newGrams) <= 0 || parseFloat(newPrice) <= 0) return setError('Values must be greater than 0.');
 
-        if (parseFloat(newGrams) <= 0 || parseFloat(newPrice) <= 0) {
-            alert("Values must be greater than 0");
-            return;
-        }
-
-        const res = await apiRequest("/gold/" + id, {
-            method: "PUT",
-            body: JSON.stringify({
-                gramsPurchased: parseFloat(newGrams),
-                purchasePricePerGram: parseFloat(newPrice),
-                purchaseDate: new Date().toISOString().split("T")[0]
-            })
+        const res = await apiRequest('/gold/' + id, {
+            method: 'PUT',
+            body: JSON.stringify({ gramsPurchased: parseFloat(newGrams), purchasePricePerGram: parseFloat(newPrice), purchaseDate: new Date().toISOString().split('T')[0] })
         });
 
         if (res.ok) {
-            loadGold();
-        } else {
-            alert("Failed to update purchase");
-        }
+            await loadHistory(document.getElementById('monthFilter').value);
+            recalculate();
+        } else setError('Failed to update purchase.');
     }
 </script>
-
 </body>
 </html>

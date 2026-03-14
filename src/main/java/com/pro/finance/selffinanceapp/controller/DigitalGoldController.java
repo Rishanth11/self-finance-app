@@ -5,6 +5,8 @@ import com.pro.finance.selffinanceapp.dto.GoldHistoryDTO;
 import com.pro.finance.selffinanceapp.dto.GoldSummaryDTO;
 import com.pro.finance.selffinanceapp.model.DigitalGold;
 import com.pro.finance.selffinanceapp.service.DigitalGoldService;
+
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -20,20 +22,17 @@ public class DigitalGoldController {
         this.service = service;
     }
 
-    // ➕ Add Gold
     @PostMapping
-    public DigitalGold addGold(@RequestBody DigitalGoldDTO dto,
+    public DigitalGold addGold(@Valid @RequestBody DigitalGoldDTO dto,
                                Principal principal) {
         return service.addGold(dto, principal.getName());
     }
 
-    // 📊 Summary
     @GetMapping("/summary")
     public GoldSummaryDTO getSummary(Principal principal) {
         return service.getSummary(principal.getName());
     }
 
-    // 📋 Purchase History
     @GetMapping
     public List<GoldHistoryDTO> getAllGold(Principal principal) {
         return service.getAllGold(principal.getName());
@@ -63,7 +62,7 @@ public class DigitalGoldController {
     }
 
     @GetMapping("/filter")
-    public List<DigitalGold> getFilteredHistory(
+    public List<GoldHistoryDTO> getFilteredHistory(
             @RequestParam int year,
             @RequestParam int month,
             Principal principal) {

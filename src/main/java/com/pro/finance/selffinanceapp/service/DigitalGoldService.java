@@ -9,6 +9,7 @@ import com.pro.finance.selffinanceapp.repository.DigitalGoldRepository;
 import com.pro.finance.selffinanceapp.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -33,12 +34,15 @@ public class DigitalGoldService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         DigitalGold gold = new DigitalGold();
+
         gold.setGramsPurchased(dto.getGramsPurchased());
         gold.setPurchasePricePerGram(dto.getPurchasePricePerGram());
         gold.setPurchaseDate(dto.getPurchaseDate());
-        gold.setTotalInvested(
-                dto.getGramsPurchased() * dto.getPurchasePricePerGram()
-        );
+
+        BigDecimal totalInvested =
+                dto.getGramsPurchased().multiply(dto.getPurchasePricePerGram());
+
+        gold.setTotalInvested(totalInvested);
         gold.setUser(user);
 
         return repo.save(gold);
@@ -49,19 +53,26 @@ public class DigitalGoldService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        List<DigitalGold> list = repo.findByUserId(user.getId());
+        List<DigitalGold> list =
+                repo.findByUserIdOrderByPurchaseDateDesc(user.getId());
 
-        double totalGrams = 0;
-        double totalInvested = 0;
+        BigDecimal totalGrams = BigDecimal.ZERO;
+        BigDecimal totalInvested = BigDecimal.ZERO;
 
         for (DigitalGold gold : list) {
-            totalGrams += gold.getGramsPurchased();
-            totalInvested += gold.getTotalInvested();
+            totalGrams = totalGrams.add(gold.getGramsPurchased());
+            totalInvested = totalInvested.add(gold.getTotalInvested());
         }
 
-        double livePrice = priceService.getLiveGoldPricePerGram();
-        double currentValue = totalGrams * livePrice;
-        double profitLoss = currentValue - totalInvested;
+        BigDecimal livePrice = priceService.getLiveGoldPricePerGram();
+
+        BigDecimal currentValue = BigDecimal.ZERO;
+        BigDecimal profitLoss = BigDecimal.ZERO;
+
+        if (livePrice != null) {
+            currentValue = totalGrams.multiply(livePrice);
+            profitLoss = currentValue.subtract(totalInvested);
+        }
 
         return new GoldSummaryDTO(
                 totalGrams,
@@ -77,16 +88,23 @@ public class DigitalGoldService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        List<DigitalGold> list = repo.findByUserId(user.getId());
-        double livePrice = priceService.getLiveGoldPricePerGram();
+        List<DigitalGold> list =
+                repo.findByUserIdOrderByPurchaseDateDesc(user.getId());
+
+        BigDecimal livePrice = priceService.getLiveGoldPricePerGram();
 
         return list.stream().map(gold -> {
 
-            double currentValue =
-                    gold.getGramsPurchased() * livePrice;
+            BigDecimal currentValue = BigDecimal.ZERO;
+            BigDecimal profit = BigDecimal.ZERO;
 
-            double profit =
-                    currentValue - gold.getTotalInvested();
+            if (livePrice != null) {
+                currentValue =
+                        gold.getGramsPurchased().multiply(livePrice);
+
+                profit =
+                        currentValue.subtract(gold.getTotalInvested());
+            }
 
             return new GoldHistoryDTO(
                     gold.getId(),
@@ -107,7 +125,7 @@ public class DigitalGoldService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         DigitalGold gold = repo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Not found"));
+                .orElseThrow(() -> new RuntimeException("Gold record not found"));
 
         if (!gold.getUser().getId().equals(user.getId())) {
             throw new RuntimeException("Access denied");
@@ -124,7 +142,7 @@ public class DigitalGoldService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         DigitalGold gold = repo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Not found"));
+                .orElseThrow(() -> new RuntimeException("Gold record not found"));
 
         if (!gold.getUser().getId().equals(user.getId())) {
             throw new RuntimeException("Access denied");
@@ -133,17 +151,16 @@ public class DigitalGoldService {
         gold.setGramsPurchased(dto.getGramsPurchased());
         gold.setPurchasePricePerGram(dto.getPurchasePricePerGram());
         gold.setPurchaseDate(dto.getPurchaseDate());
-        gold.setTotalInvested(
-                dto.getGramsPurchased() * dto.getPurchasePricePerGram()
-        );
+
+        BigDecimal totalInvested =
+                dto.getGramsPurchased().multiply(dto.getPurchasePricePerGram());
+
+        gold.setTotalInvested(totalInvested);
 
         return repo.save(gold);
     }
 
-    public GoldSummaryDTO getFilteredSummary(
-            String email,
-            int year,
-            int month) {
+    public GoldSummaryDTO getFilteredSummary(String email, int year, int month) {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -155,17 +172,23 @@ public class DigitalGoldService {
                 repo.findByUserIdAndPurchaseDateBetween(
                         user.getId(), start, end);
 
-        double totalGrams = 0;
-        double totalInvested = 0;
+        BigDecimal totalGrams = BigDecimal.ZERO;
+        BigDecimal totalInvested = BigDecimal.ZERO;
 
         for (DigitalGold gold : list) {
-            totalGrams += gold.getGramsPurchased();
-            totalInvested += gold.getTotalInvested();
+            totalGrams = totalGrams.add(gold.getGramsPurchased());
+            totalInvested = totalInvested.add(gold.getTotalInvested());
         }
 
-        double livePrice = priceService.getLiveGoldPricePerGram();
-        double currentValue = totalGrams * livePrice;
-        double profitLoss = currentValue - totalInvested;
+        BigDecimal livePrice = priceService.getLiveGoldPricePerGram();
+
+        BigDecimal currentValue = BigDecimal.ZERO;
+        BigDecimal profitLoss = BigDecimal.ZERO;
+
+        if (livePrice != null) {
+            currentValue = totalGrams.multiply(livePrice);
+            profitLoss = currentValue.subtract(totalInvested);
+        }
 
         return new GoldSummaryDTO(
                 totalGrams,
@@ -176,10 +199,7 @@ public class DigitalGoldService {
         );
     }
 
-    public List<DigitalGold> getFilteredHistory(
-            String email,
-            int year,
-            int month) {
+    public List<GoldHistoryDTO> getFilteredHistory(String email, int year, int month) {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -187,7 +207,32 @@ public class DigitalGoldService {
         LocalDate start = LocalDate.of(year, month, 1);
         LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
 
-        return repo.findByUserIdAndPurchaseDateBetween(
-                user.getId(), start, end);
+        BigDecimal livePrice = priceService.getLiveGoldPricePerGram();
+
+        return repo.findByUserIdAndPurchaseDateBetween(user.getId(), start, end)
+                .stream()
+                .map(gold -> {
+
+                    BigDecimal currentValue = BigDecimal.ZERO;
+                    BigDecimal profit = BigDecimal.ZERO;
+
+                    if (livePrice != null) {
+                        currentValue =
+                                gold.getGramsPurchased().multiply(livePrice);
+
+                        profit =
+                                currentValue.subtract(gold.getTotalInvested());
+                    }
+
+                    return new GoldHistoryDTO(
+                            gold.getId(),
+                            gold.getPurchaseDate().toString(),
+                            gold.getGramsPurchased(),
+                            gold.getPurchasePricePerGram(),
+                            gold.getTotalInvested(),
+                            currentValue,
+                            profit
+                    );
+                }).toList();
     }
 }
