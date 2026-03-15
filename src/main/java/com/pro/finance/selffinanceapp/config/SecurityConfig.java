@@ -3,7 +3,8 @@ package com.pro.finance.selffinanceapp.config;
 import com.pro.finance.selffinanceapp.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;               // <- important
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -55,7 +56,7 @@ public class SecurityConfig {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(uds);
         provider.setPasswordEncoder(encoder);
-        return new ProviderManager(List.of(provider)); // ProviderManager implements org.springframework.security.authentication.AuthenticationManager
+        return new ProviderManager(List.of(provider));
     }
 
     @Bean
@@ -76,8 +77,10 @@ public class SecurityConfig {
                                 "/css/**",
                                 "/images/**",
                                 "/api/auth/**",
+                                "/favicon.ico",
                                 "/error"
                         ).permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // allow CORS preflight
                         .anyRequest().authenticated()
                 );
 

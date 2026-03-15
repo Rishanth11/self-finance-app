@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard · Personal Finance</title>
+    <title>Dashboard · FLUX360 Personal Finance</title>
+    <link rel="icon" href="../images/FLUX360_logo.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -40,56 +41,23 @@
 
         .page { max-width: 1180px; margin: 0 auto; }
 
-        /* ── TOP BAR ── */
         .top-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 16px;
-            margin-bottom: 32px;
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 16px; margin-bottom: 32px;
             animation: fadeUp 0.4s ease both;
         }
 
-        /* Logo + app name */
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+        .brand { display: flex; align-items: center; gap: 12px; }
+        .brand-logo { height: 44px; width: auto; }
+        .brand-text h1 { font-size: 1.2rem; font-weight: 600; color: var(--slate-900); letter-spacing: -0.02em; line-height: 1.2; }
+        .brand-text p  { font-size: 0.78rem; color: var(--slate-400); margin-top: 1px; }
 
-        .brand-logo {
-            height: 44px;
-            width: auto;
-        }
-
-        .brand-text h1 {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--slate-900);
-            letter-spacing: -0.02em;
-            line-height: 1.2;
-        }
-
-        .brand-text p {
-            font-size: 0.78rem;
-            color: var(--slate-400);
-            margin-top: 1px;
-        }
-
-        /* User greeting pill */
         .greeting-pill {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: var(--white);
-            border: 1.5px solid var(--slate-200);
-            border-radius: 40px;
-            padding: 10px 18px;
-            font-size: 0.875rem;
-            color: var(--slate-600);
+            display: flex; align-items: center; gap: 10px;
+            background: var(--white); border: 1.5px solid var(--slate-200);
+            border-radius: 40px; padding: 10px 18px;
+            font-size: 0.875rem; color: var(--slate-600);
         }
-
         .greeting-pill i { color: var(--green); }
         .greeting-pill strong { color: var(--slate-900); font-weight: 600; }
 
@@ -100,62 +68,40 @@
             font-weight: 500; cursor: pointer; background: var(--red-dim);
             color: var(--red); transition: background 0.15s;
         }
-
         .logout-btn:hover { background: var(--red); color: white; }
 
-        /* ── STAT CARDS ── */
         .stat-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
+            gap: 16px; margin-bottom: 24px;
             animation: fadeUp 0.4s 0.05s ease both;
         }
 
         .stat-card {
-            background: var(--white);
-            border: 1.5px solid var(--slate-200);
-            border-radius: 16px;
-            padding: 20px 22px;
-            position: relative;
-            overflow: hidden;
+            background: var(--white); border: 1.5px solid var(--slate-200);
+            border-radius: 16px; padding: 20px 22px;
+            position: relative; overflow: hidden;
             transition: transform 0.2s, box-shadow 0.2s;
         }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
 
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-        }
-
-        /* top accent bar */
         .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 3px;
-            border-radius: 16px 16px 0 0;
+            content: ''; position: absolute; top: 0; left: 0; right: 0;
+            height: 3px; border-radius: 16px 16px 0 0;
         }
-
         .stat-card.s-income::before  { background: var(--green); }
         .stat-card.s-expense::before { background: var(--red); }
         .stat-card.s-savings::before { background: #0ea5e9; }
         .stat-card.s-rate::before    { background: #8b5cf6; }
         .stat-card.s-sip::before     { background: #f59e0b; }
         .stat-card.s-gold::before    { background: #d97706; }
+        .stat-card.s-silver::before  { background: #64748b; }
 
-        .stat-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 14px;
-        }
+        .stat-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 
         .stat-label {
-            font-size: 0.72rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--slate-400);
+            font-size: 0.72rem; font-weight: 500;
+            text-transform: uppercase; letter-spacing: 0.05em; color: var(--slate-400);
         }
 
         .stat-icon {
@@ -163,86 +109,39 @@
             display: flex; align-items: center; justify-content: center;
             font-size: 0.875rem; flex-shrink: 0;
         }
+        .stat-icon.green  { background: var(--green-dim); color: var(--green); }
+        .stat-icon.red    { background: var(--red-dim);   color: var(--red); }
+        .stat-icon.blue   { background: #e0f2fe;          color: #0284c7; }
+        .stat-icon.purple { background: #ede9fe;          color: #7c3aed; }
+        .stat-icon.amber  { background: #fef3c7;          color: #d97706; }
+        .stat-icon.slate  { background: var(--slate-100); color: var(--slate-600); }
 
-        .stat-icon.green  { background: var(--green-dim);  color: var(--green); }
-        .stat-icon.red    { background: var(--red-dim);    color: var(--red); }
-        .stat-icon.blue   { background: #e0f2fe;           color: #0284c7; }
-        .stat-icon.purple { background: #ede9fe;           color: #7c3aed; }
-        .stat-icon.amber  { background: #fef3c7;           color: #d97706; }
-        .stat-icon.slate  { background: var(--slate-100);  color: var(--slate-600); }
+        .stat-value { font-size: 1.5rem; font-weight: 600; color: var(--slate-900); letter-spacing: -0.02em; margin-bottom: 4px; }
+        .stat-sub   { font-size: 0.75rem; color: var(--slate-400); display: flex; align-items: center; gap: 4px; }
 
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--slate-900);
-            letter-spacing: -0.02em;
-            margin-bottom: 4px;
-        }
-
-        .stat-sub {
-            font-size: 0.75rem;
-            color: var(--slate-400);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        /* ── CARD ── */
         .card {
-            background: var(--white);
-            border: 1.5px solid var(--slate-200);
-            border-radius: 20px;
-            padding: 24px 26px;
-            margin-bottom: 20px;
+            background: var(--white); border: 1.5px solid var(--slate-200);
+            border-radius: 20px; padding: 24px 26px; margin-bottom: 20px;
             animation: fadeUp 0.4s 0.1s ease both;
         }
 
-        .card-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 22px;
-        }
+        .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 22px; }
 
         .card-header-icon {
-            width: 34px; height: 34px;
-            background: var(--green-dim); border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            color: var(--green); font-size: 0.875rem;
+            width: 34px; height: 34px; background: var(--green-dim);
+            border-radius: 10px; display: flex; align-items: center;
+            justify-content: center; color: var(--green); font-size: 0.875rem;
         }
 
-        .card-header h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--slate-900);
-        }
+        .card-header h3 { font-size: 1rem; font-weight: 600; color: var(--slate-900); }
 
-        /* ── CHART ── */
         .chart-box {
-            background: var(--slate-50);
-            border: 1.5px solid var(--slate-200);
-            border-radius: 14px;
-            padding: 20px;
-            height: 280px;
-            position: relative;
+            background: var(--slate-50); border: 1.5px solid var(--slate-200);
+            border-radius: 14px; padding: 20px; height: 280px; position: relative;
         }
-
         .chart-box canvas { width: 100% !important; height: 100% !important; }
 
-        /* ── NAV BUTTONS ── */
-        .nav-section {
-            animation: fadeUp 0.4s 0.15s ease both;
-        }
-
-        .nav-label {
-            font-size: 0.72rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: var(--slate-400);
-            margin-bottom: 14px;
-            text-align: center;
-        }
+        .nav-section { animation: fadeUp 0.4s 0.15s ease both; }
 
         .nav-grid {
             display: grid;
@@ -251,62 +150,40 @@
         }
 
         .nav-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            padding: 20px 16px;
-            border: 1.5px solid var(--slate-200);
-            border-radius: 16px;
-            background: var(--white);
-            cursor: pointer;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--slate-700);
-            transition: all 0.2s;
+            display: flex; flex-direction: column; align-items: center;
+            gap: 10px; padding: 20px 16px;
+            border: 1.5px solid var(--slate-200); border-radius: 16px;
+            background: var(--white); cursor: pointer;
+            font-family: 'DM Sans', sans-serif; font-size: 0.875rem;
+            font-weight: 500; color: var(--slate-700); transition: all 0.2s;
         }
-
-        .nav-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-        }
+        .nav-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.08); }
 
         .nav-btn-icon {
-            width: 44px; height: 44px;
-            border-radius: 12px;
+            width: 44px; height: 44px; border-radius: 12px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.1rem;
-            transition: transform 0.2s;
+            font-size: 1.1rem; transition: transform 0.2s;
         }
-
         .nav-btn:hover .nav-btn-icon { transform: scale(1.1); }
 
         .nav-btn.income  .nav-btn-icon { background: var(--green-dim); color: var(--green); }
         .nav-btn.expense .nav-btn-icon { background: var(--red-dim);   color: var(--red); }
         .nav-btn.sip     .nav-btn-icon { background: #fef3c7;          color: #d97706; }
         .nav-btn.gold    .nav-btn-icon { background: #fef3c7;          color: #d97706; }
+        .nav-btn.silver  .nav-btn-icon { background: var(--green-dim); color: var(--green); }
 
         .nav-btn.income:hover  { border-color: var(--green-border); background: var(--green-dim); color: var(--green); }
         .nav-btn.expense:hover { border-color: #fecaca;             background: var(--red-dim);   color: var(--red); }
         .nav-btn.sip:hover     { border-color: #fde68a;             background: #fef9c3;          color: #92400e; }
         .nav-btn.gold:hover    { border-color: #fde68a;             background: #fef9c3;          color: #92400e; }
+        .nav-btn.silver:hover  { border-color: var(--green-border); background: var(--green-dim); color: var(--green); }
 
-        /* ── FOOTER NOTE ── */
         .footer-note {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 0.75rem;
-            color: var(--slate-400);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
+            text-align: center; margin-top: 20px; font-size: 0.75rem; color: var(--slate-400);
+            display: flex; align-items: center; justify-content: center; gap: 6px;
         }
-
         .footer-note i { color: var(--green); }
 
-        /* ── ANIMATION ── */
         @keyframes fadeUp {
             from { opacity: 0; transform: translateY(14px); }
             to   { opacity: 1; transform: translateY(0); }
@@ -325,7 +202,6 @@
 
     <!-- TOP BAR -->
     <div class="top-bar">
-        <!-- Logo + App name -->
         <div class="brand">
             <img src="../images/FLUX360_logo.png" alt="FLUX360" class="brand-logo">
             <div class="brand-text">
@@ -333,8 +209,6 @@
                 <p>Your complete wealth management platform.</p>
             </div>
         </div>
-
-        <!-- Right: greeting + logout -->
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
             <div class="greeting-pill">
                 <i class="fas fa-user-circle"></i>
@@ -401,6 +275,15 @@
             <div class="stat-value" id="goldValue">₹0</div>
             <div class="stat-sub"><i class="fas fa-circle" style="font-size:0.5rem;color:#d97706"></i> Current value</div>
         </div>
+
+        <div class="stat-card s-silver">
+            <div class="stat-top">
+                <span class="stat-label">Silver portfolio</span>
+                <div class="stat-icon slate"><i class="fas fa-medal"></i></div>
+            </div>
+            <div class="stat-value" id="silverValue">₹0</div>
+            <div class="stat-sub"><i class="fas fa-circle" style="font-size:0.5rem;color:#64748b"></i> Current value</div>
+        </div>
     </div>
 
     <!-- CHART CARD -->
@@ -437,10 +320,13 @@
                 <div class="nav-btn-icon"><i class="fas fa-coins"></i></div>
                 Gold Tracker
             </button>
+            <button class="nav-btn silver" onclick="goToSilver()">
+                <div class="nav-btn-icon"><i class="fas fa-medal"></i></div>
+                Silver
+            </button>
         </div>
     </div>
 
-    <!-- FOOTER -->
     <div class="footer-note">
         <i class="fas fa-shield-alt"></i>
         Secured · FLUX360 Personal Finance v1.0
@@ -459,7 +345,10 @@
     });
 
     function fmt(n) {
-        return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(n || 0);
+        return new Intl.NumberFormat('en-IN', {
+            style: 'currency', currency: 'INR',
+            minimumFractionDigits: 0, maximumFractionDigits: 0
+        }).format(n || 0);
     }
 
     function getUserName() {
@@ -475,50 +364,51 @@
         document.getElementById('userName').textContent = getUserName();
 
         try {
-            const [incomeRes, expenseRes, sipRes, goldRes] = await Promise.all([
+            // Silver uses /api/silver/portfolio with NO userId —
+            // Spring Security reads the logged-in user from the JWT token automatically
+            const [incomeRes, expenseRes, sipRes, goldRes, silverRes] = await Promise.all([
                 apiRequest('/incomes'),
                 apiRequest('/expenses'),
                 apiRequest('/sip'),
-                apiRequest('/gold/summary')
+                apiRequest('/gold/summary'),
+                apiRequest('/silver/portfolio')
             ]);
 
-            const incomes     = incomeRes.ok  ? await incomeRes.json()  : [];
-            const expenses    = expenseRes.ok ? await expenseRes.json() : [];
-            const sips        = sipRes.ok     ? await sipRes.json()     : [];
-            const goldSummary = goldRes.ok    ? await goldRes.json()    : null;
+            const incomes       = incomeRes.ok    ? await incomeRes.json()   : [];
+            const expenses      = expenseRes.ok   ? await expenseRes.json()  : [];
+            const sips          = sipRes.ok       ? await sipRes.json()      : [];
+            const goldSummary   = goldRes.ok      ? await goldRes.json()     : null;
+            const silverSummary = silverRes.ok    ? await silverRes.json()   : null;
 
             let totalIncome = 0, totalExpense = 0, totalSipValue = 0;
 
             incomes.forEach(i  => totalIncome  += parseFloat(i.amount) || 0);
             expenses.forEach(e => totalExpense += parseFloat(e.amount) || 0);
 
-            // Fetch SIP portfolio value per SIP
             for (const sip of sips) {
                 try {
                     const pRes = await apiRequest(`/sip/${sip.id}/portfolio`);
                     if (pRes.ok) {
                         const p = await pRes.json();
-                        if (p.navAvailable !== false) {
-                            totalSipValue += parseFloat(p.currentValue) || 0;
-                        }
+                        if (p.navAvailable !== false) totalSipValue += parseFloat(p.currentValue) || 0;
                     }
                 } catch(e) { /* skip */ }
             }
 
-            const totalGoldValue = goldSummary ? (parseFloat(goldSummary.currentValue) || 0) : 0;
-            const netSavings     = totalIncome - totalExpense;
-            const savingsRate    = totalIncome > 0 ? ((netSavings / totalIncome) * 100).toFixed(1) : '0.0';
+            const totalGoldValue   = goldSummary   ? (parseFloat(goldSummary.currentValue)        || 0) : 0;
+            const totalSilverValue = silverSummary ? (parseFloat(silverSummary.totalCurrentValue) || 0) : 0;
+            const netSavings       = totalIncome - totalExpense;
+            const savingsRate      = totalIncome > 0 ? ((netSavings / totalIncome) * 100).toFixed(1) : '0.0';
 
-            document.getElementById('totalIncome').textContent   = fmt(totalIncome);
-            document.getElementById('totalExpense').textContent  = fmt(totalExpense);
-            document.getElementById('netSavings').textContent    = fmt(netSavings);
+            document.getElementById('totalIncome').textContent    = fmt(totalIncome);
+            document.getElementById('totalExpense').textContent   = fmt(totalExpense);
+            document.getElementById('netSavings').textContent     = fmt(netSavings);
             document.getElementById('savingsPercent').textContent = savingsRate + '%';
-            document.getElementById('sipValue').textContent      = fmt(totalSipValue);
-            document.getElementById('goldValue').textContent     = fmt(totalGoldValue);
+            document.getElementById('sipValue').textContent       = fmt(totalSipValue);
+            document.getElementById('goldValue').textContent      = fmt(totalGoldValue);
+            document.getElementById('silverValue').textContent    = fmt(totalSilverValue);
 
-            // Colour net savings based on positive/negative
-            const savingsEl = document.getElementById('netSavings');
-            savingsEl.style.color = netSavings >= 0 ? 'var(--green)' : 'var(--red)';
+            document.getElementById('netSavings').style.color = netSavings >= 0 ? 'var(--green)' : 'var(--red)';
 
             renderChart(totalIncome, totalExpense, netSavings);
 
@@ -532,7 +422,6 @@
 
         const ctx = document.getElementById('summaryChart').getContext('2d');
 
-        // Gradients
         const gradIncome = ctx.createLinearGradient(0, 0, 0, 240);
         gradIncome.addColorStop(0, 'rgba(22, 163, 74, 0.9)');
         gradIncome.addColorStop(1, 'rgba(22, 163, 74, 0.5)');
@@ -552,45 +441,31 @@
                 datasets: [{
                     data: [income, expense, Math.max(savings, 0)],
                     backgroundColor: [gradIncome, gradExpense, gradSavings],
-                    borderRadius: 10,
-                    borderSkipped: false,
-                    barPercentage: 0.5,
+                    borderRadius: 10, borderSkipped: false, barPercentage: 0.5
                 }]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: false,
+                responsive: true, maintainAspectRatio: false,
                 interaction: { mode: 'index', intersect: false },
                 plugins: {
                     legend: { display: false },
                     tooltip: {
-                        backgroundColor: '#0f172a',
-                        titleColor: '#94a3b8',
-                        bodyColor: '#ffffff',
-                        padding: 12,
-                        cornerRadius: 10,
+                        backgroundColor: '#0f172a', titleColor: '#94a3b8', bodyColor: '#ffffff',
+                        padding: 12, cornerRadius: 10,
                         titleFont: { family: 'DM Sans', size: 11 },
                         bodyFont: { family: 'DM Sans', size: 13, weight: '600' },
                         callbacks: {
-                            label: ctx => '  ' + new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(ctx.parsed.y)
+                            label: ctx => '  ' + new Intl.NumberFormat('en-IN', {
+                                style: 'currency', currency: 'INR', minimumFractionDigits: 0
+                            }).format(ctx.parsed.y)
                         }
                     }
                 },
                 scales: {
-                    x: {
-                        grid: { display: false },
-                        border: { display: false },
-                        ticks: { color: '#94a3b8', font: { family: 'DM Sans', size: 12 } }
-                    },
-                    y: {
-                        grid: { color: '#f1f5f9' },
-                        border: { display: false },
-                        ticks: {
-                            color: '#94a3b8',
-                            font: { family: 'DM Sans', size: 11 },
-                            callback: v => '₹' + (v >= 100000 ? (v/100000).toFixed(1)+'L' : v >= 1000 ? (v/1000).toFixed(0)+'K' : v)
-                        }
-                    }
+                    x: { grid: { display: false }, border: { display: false }, ticks: { color: '#94a3b8', font: { family: 'DM Sans', size: 12 } } },
+                    y: { grid: { color: '#f1f5f9' }, border: { display: false },
+                        ticks: { color: '#94a3b8', font: { family: 'DM Sans', size: 11 },
+                            callback: v => '₹' + (v >= 100000 ? (v/100000).toFixed(1)+'L' : v >= 1000 ? (v/1000).toFixed(0)+'K' : v) } }
                 }
             }
         });
@@ -600,6 +475,7 @@
     function goToExpense() { window.location.href = '/pages/expense.html'; }
     function goToSip()     { window.location.href = '/pages/sip.html'; }
     function goToGold()    { window.location.href = '/pages/digital-gold.html'; }
+    function goToSilver()  { window.location.href = '/pages/silver.html'; }
 
     function logout() {
         if (confirm('Are you sure you want to logout?')) {

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Digital Gold · FLUX360 Personal Finance</title>
+    <title>Silver · FLUX360 Personal Finance</title>
     <link rel="icon" href="../images/FLUX360_logo.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -42,7 +42,6 @@
 
         .page { max-width: 1180px; margin: 0 auto; }
 
-        /* ── PAGE HEADER ── */
         .page-header {
             display: flex; align-items: center; justify-content: space-between;
             flex-wrap: wrap; gap: 16px; margin-bottom: 32px;
@@ -87,7 +86,6 @@
         }
         .month-filter button:hover { background: var(--green-dim); }
 
-        /* ── STAT ROW ── */
         .stat-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -106,9 +104,9 @@
             display: flex; align-items: center; justify-content: center;
             font-size: 1rem; flex-shrink: 0;
         }
-        .stat-icon.green { background: var(--green-dim); color: var(--green); }
-        .stat-icon.slate { background: var(--slate-100); color: var(--slate-600); }
-        .stat-icon.red   { background: var(--red-dim);   color: var(--red); }
+        .stat-icon.green  { background: var(--green-dim);  color: var(--green); }
+        .stat-icon.slate  { background: var(--slate-100);  color: var(--slate-600); }
+        .stat-icon.red    { background: var(--red-dim);    color: var(--red); }
 
         .stat-info p {
             font-size: 0.75rem; color: var(--slate-400);
@@ -120,7 +118,6 @@
         .stat-info strong.profit { color: var(--green); }
         .stat-info strong.loss   { color: var(--red); }
 
-        /* ── CARD ── */
         .card {
             background: var(--white); border: 1.5px solid var(--slate-200);
             border-radius: 20px; padding: 24px 26px; margin-bottom: 20px;
@@ -136,7 +133,6 @@
 
         .card-header h3 { font-size: 1rem; font-weight: 600; color: var(--slate-900); }
 
-        /* ── FORM ── */
         .form-grid { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; }
 
         .field { flex: 1 1 160px; min-width: 150px; }
@@ -168,7 +164,6 @@
             border-radius: 8px; padding: 8px 14px; margin-bottom: 16px; display: none;
         }
 
-        /* ── BUTTONS ── */
         .btn {
             display: inline-flex; align-items: center; gap: 7px;
             padding: 10px 20px; border-radius: 10px; border: none;
@@ -187,7 +182,6 @@
         .btn-ghost { background: var(--slate-100); color: var(--slate-600); }
         .btn-ghost:hover { background: var(--slate-200); }
 
-        /* ── TABLE ── */
         .table-scroll { overflow-x: auto; }
 
         table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
@@ -229,7 +223,6 @@
         .icon-btn.del  { background: var(--red-dim);   color: var(--red); }
         .icon-btn.del:hover  { background: var(--red);   color: white; }
 
-        /* ── EMPTY STATE ── */
         .empty-state {
             text-align: center; padding: 48px 20px;
             color: var(--slate-400); display: none;
@@ -237,7 +230,6 @@
         .empty-state i { font-size: 2.5rem; margin-bottom: 12px; display: block; }
         .empty-state p { font-size: 0.9rem; }
 
-        /* ── CHART ── */
         .chart-box {
             background: var(--slate-50); border: 1.5px solid var(--slate-200);
             border-radius: 14px; padding: 20px; height: 280px;
@@ -247,7 +239,6 @@
 
         .divider { height: 1px; background: var(--slate-200); margin: 22px 0; }
 
-        /* ── LIVE PRICE ROW ── */
         .live-price-row {
             display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
             background: var(--green-dim); border: 1.5px solid var(--green-border);
@@ -256,10 +247,8 @@
 
         .live-price-label {
             display: flex; align-items: center; gap: 7px;
-            font-size: 0.85rem; font-weight: 500; color: var(--green);
-            flex-shrink: 0;
+            font-size: 0.85rem; font-weight: 500; color: var(--green); flex-shrink: 0;
         }
-
         .live-price-label i { font-size: 0.8rem; }
 
         .live-price-input-wrap {
@@ -269,9 +258,8 @@
         }
 
         .live-price-prefix {
-            padding: 0 10px; font-size: 0.9rem;
-            color: var(--slate-400); background: var(--slate-50);
-            border-right: 1.5px solid var(--slate-200);
+            padding: 0 10px; font-size: 0.9rem; color: var(--slate-400);
+            background: var(--slate-50); border-right: 1.5px solid var(--slate-200);
             height: 100%; display: flex; align-items: center;
         }
 
@@ -281,16 +269,11 @@
             font-weight: 600; color: var(--slate-900);
             background: transparent; width: 100%;
         }
-
         .live-price-input-wrap input::placeholder { color: var(--slate-400); font-weight: 400; }
 
         .btn-sm { padding: 9px 14px; font-size: 0.8rem; }
 
-        .live-status {
-            font-size: 0.78rem; color: var(--slate-400);
-            margin-top: 6px; display: none;
-        }
-
+        .live-status { font-size: 0.78rem; color: var(--slate-400); margin-top: 6px; display: none; }
         .live-status.success { color: var(--green); display: block; }
         .live-status.error   { color: var(--red);   display: block; }
 
@@ -299,7 +282,6 @@
             letter-spacing: 0.06em; color: var(--slate-400); margin-bottom: 14px;
         }
 
-        /* ── ANIMATION ── */
         @keyframes fadeUp {
             from { opacity: 0; transform: translateY(14px); }
             to   { opacity: 1; transform: translateY(0); }
@@ -318,10 +300,10 @@
     <!-- HEADER -->
     <div class="page-header">
         <div class="page-title">
-            <div class="page-title-icon"><i class="fas fa-coins"></i></div>
+            <div class="page-title-icon"><i class="fas fa-medal"></i></div>
             <div>
-                <h1>Gold Investment Tracker</h1>
-                <p>Track your gold investments</p>
+                <h1>Silver</h1>
+                <p>Track your silver investments</p>
             </div>
         </div>
         <div class="header-right">
@@ -331,7 +313,7 @@
             </div>
             <div class="month-filter">
                 <i class="far fa-calendar"></i>
-                <input type="month" id="monthFilter" onchange="loadGold()">
+                <input type="month" id="monthFilter" onchange="recalculate()">
                 <button onclick="clearFilter()">All</button>
             </div>
         </div>
@@ -349,15 +331,15 @@
         </div>
         <div class="stat-card">
             <div class="stat-icon slate"><i class="fas fa-chart-line"></i></div>
-            <div class="stat-info"><p>Live price/g</p><strong id="statLivePrice">₹0</strong></div>
+            <div class="stat-info"><p>Live price/g</p><strong id="statLivePrice">—</strong></div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon green"><i class="fas fa-wallet"></i></div>
-            <div class="stat-info"><p>Current value</p><strong id="statCurrentValue">₹0</strong></div>
+            <div class="stat-icon slate"><i class="fas fa-wallet"></i></div>
+            <div class="stat-info"><p>Current value</p><strong id="statCurrentValue">—</strong></div>
         </div>
         <div class="stat-card">
             <div class="stat-icon green"><i class="fas fa-arrow-trend-up"></i></div>
-            <div class="stat-info"><p>Profit / Loss</p><strong id="statProfitLoss">₹0</strong></div>
+            <div class="stat-info"><p>Profit / Loss</p><strong id="statProfitLoss">—</strong></div>
         </div>
     </div>
 
@@ -373,21 +355,21 @@
         <div class="form-grid">
             <div class="field">
                 <label for="grams">Grams *</label>
-                <input type="number" id="grams" placeholder="e.g. 10.5" min="0" step="0.01">
+                <input type="number" id="grams" placeholder="e.g. 100" min="0" step="0.01">
             </div>
             <div class="field">
                 <label for="price">Price per gram (₹) *</label>
-                <input type="number" id="price" placeholder="e.g. 6500" min="0" step="0.01">
+                <input type="number" id="price" placeholder="e.g. 95.50" min="0" step="0.01">
             </div>
             <div class="field">
-                <label for="date">Purchase date *</label>
-                <input type="date" id="date">
+                <label for="purchaseDate">Purchase date *</label>
+                <input type="date" id="purchaseDate">
             </div>
         </div>
 
         <div class="form-actions">
-            <button class="btn btn-primary" onclick="addGold()">
-                <i class="fas fa-plus"></i> Add gold
+            <button class="btn btn-primary" onclick="addSilver()">
+                <i class="fas fa-plus"></i> Add silver
             </button>
         </div>
     </div>
@@ -399,15 +381,14 @@
             <h3>Portfolio overview</h3>
         </div>
 
-        <!-- Live price input -->
         <div class="live-price-row">
             <div class="live-price-label">
                 <i class="fas fa-bolt"></i>
-                Current gold price per gram
+                Current silver price per gram
             </div>
             <div class="live-price-input-wrap">
                 <span class="live-price-prefix">₹</span>
-                <input type="number" id="livePriceInput" placeholder="Enter today's price" step="1" min="0" oninput="recalculate()">
+                <input type="number" id="livePriceInput" placeholder="Enter today's price" step="0.01" min="0" oninput="recalculate()">
             </div>
             <button class="btn btn-primary btn-sm" onclick="fetchLivePrice()">
                 <i class="fas fa-rotate"></i> Refresh
@@ -420,7 +401,7 @@
         <div class="section-label">Invested vs current value</div>
 
         <div class="chart-box">
-            <canvas id="goldChart"></canvas>
+            <canvas id="silverChart"></canvas>
         </div>
     </div>
 
@@ -433,11 +414,11 @@
 
         <div id="emptyState" class="empty-state">
             <i class="far fa-folder-open"></i>
-            <p>No purchases yet — add your first gold purchase above.</p>
+            <p>No purchases yet — add your first silver purchase above.</p>
         </div>
 
         <div class="table-scroll">
-            <table id="goldTableWrap">
+            <table id="silverTableWrap">
                 <thead>
                 <tr>
                     <th>Date</th>
@@ -449,7 +430,7 @@
                     <th></th>
                 </tr>
                 </thead>
-                <tbody id="goldTableBody"></tbody>
+                <tbody id="silverTableBody"></tbody>
             </table>
         </div>
     </div>
@@ -460,17 +441,20 @@
 <script src="../js/api.js"></script>
 <script>
     let chart;
-    let allPurchases  = [];
+    let allPurchases = [];
     let currentLivePrice = 0;
 
     document.addEventListener('DOMContentLoaded', () => {
         if (typeof requireAuth === 'function') requireAuth();
-        loadGold();
-        fetchLivePrice(); // auto-fetch real price on load
+        loadSilver();
+        fetchLivePrice();
     });
 
     function fmt(n) {
-        return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(n || 0);
+        return new Intl.NumberFormat('en-IN', {
+            style: 'currency', currency: 'INR',
+            minimumFractionDigits: 0, maximumFractionDigits: 0
+        }).format(n || 0);
     }
 
     function fmtG(n) { return parseFloat(n || 0).toFixed(2) + 'g'; }
@@ -489,64 +473,56 @@
 
     function clearFilter() {
         document.getElementById('monthFilter').value = '';
-        loadGold();
+        recalculate();
     }
 
-    /* ── FETCH REAL LIVE GOLD PRICE (gold-api.com, no key, CORS enabled) ── */
+    /* ── FETCH LIVE SILVER PRICE ── */
     async function fetchLivePrice() {
-        setLiveStatus('Fetching live gold price…', '');
+        setLiveStatus('Fetching live silver price…', '');
         try {
-            // Step 1: Get gold price in USD per troy ounce (free, no key, CORS enabled)
-            const goldRes = await fetch('https://api.gold-api.com/price/XAU');
-            const goldData = await goldRes.json();
-            const priceUsdPerOz = parseFloat(goldData.price);
+            const silverRes  = await fetch('https://api.gold-api.com/price/XAG');
+            const silverData = await silverRes.json();
+            const priceUsdPerOz = parseFloat(silverData.price);
+            if (!priceUsdPerOz || priceUsdPerOz <= 0) throw new Error('Invalid silver price');
 
-            if (!priceUsdPerOz || priceUsdPerOz <= 0) throw new Error('Invalid gold price');
-
-            // Step 2: Get USD → INR exchange rate (free, no key)
             const fxRes  = await fetch('https://api.frankfurter.app/latest?from=USD&to=INR');
             const fxData = await fxRes.json();
             const usdToInr = parseFloat(fxData.rates.INR);
-
             if (!usdToInr || usdToInr <= 0) throw new Error('Invalid exchange rate');
 
-            // Step 3: Convert → ₹ per gram (1 troy oz = 31.1035 grams)
-            const priceInrPerGram = Math.round((priceUsdPerOz * usdToInr) / 31.1035);
+            const priceInrPerGram = parseFloat((priceUsdPerOz * usdToInr / 31.1035).toFixed(2));
 
             document.getElementById('livePriceInput').value = priceInrPerGram;
             currentLivePrice = priceInrPerGram;
 
             const ts = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
-            setLiveStatus(`✓ Live price fetched at ${ts} — $${priceUsdPerOz.toLocaleString()} /oz × ₹${Math.round(usdToInr)}/$ = ₹${priceInrPerGram.toLocaleString('en-IN')}/g (24K)`, 'success');
+            setLiveStatus(
+                `✓ Live price fetched at ${ts} — $${priceUsdPerOz.toLocaleString()} /oz × ₹${Math.round(usdToInr)}/$ = ₹${priceInrPerGram.toLocaleString('en-IN')}/g`,
+                'success'
+            );
             recalculate();
-
         } catch (e) {
-            console.error('Live price fetch failed:', e);
-            setLiveStatus('Could not fetch live price. Check your internet connection or enter manually.', 'error');
+            console.error('Live silver price fetch failed:', e);
+            setLiveStatus('Could not fetch live price. Check your internet or enter manually.', 'error');
         }
     }
 
-    /* ── RECALCULATE stats client-side whenever live price changes ── */
+    /* ── RECALCULATE stats client-side ── */
     function recalculate() {
         const inputVal = parseFloat(document.getElementById('livePriceInput').value);
         currentLivePrice = isNaN(inputVal) || inputVal <= 0 ? 0 : inputVal;
 
-        if (!allPurchases.length) return;
-
         const monthFilter = document.getElementById('monthFilter').value;
         const filtered = monthFilter
-            ? allPurchases.filter(g => g.purchaseDate && g.purchaseDate.startsWith(monthFilter))
+            ? allPurchases.filter(s => s.purchaseDate && s.purchaseDate.startsWith(monthFilter))
             : allPurchases;
 
-        const totalGrams    = filtered.reduce((a, g) => a + parseFloat(g.gramsPurchased || 0), 0);
-        const totalInvested = filtered.reduce((a, g) => a + parseFloat(g.totalInvested || (g.gramsPurchased * g.purchasePricePerGram) || 0), 0);
+        const totalGrams    = filtered.reduce((a, s) => a + parseFloat(s.grams || 0), 0);
+        const totalInvested = filtered.reduce((a, s) => a + parseFloat(s.grams || 0) * parseFloat(s.pricePerGram || 0), 0);
         const currentValue  = currentLivePrice > 0 ? totalGrams * currentLivePrice : 0;
         const profitLoss    = currentValue - totalInvested;
 
-        // Header
         document.getElementById('totalGramsHeader').textContent = fmtG(totalGrams);
-
-        // Stat cards
         document.getElementById('statGrams').textContent        = fmtG(totalGrams);
         document.getElementById('statInvested').textContent     = fmt(totalInvested);
         document.getElementById('statLivePrice').textContent    = currentLivePrice > 0 ? fmt(currentLivePrice) : '—';
@@ -574,40 +550,39 @@
         renderTable(filtered);
     }
 
-    /* ── LOAD all purchases from backend ── */
-    async function loadGold() {
-        const mv  = document.getElementById('monthFilter').value;
-        let url   = '/gold/summary';
-        if (mv) { const [y, m] = mv.split('-'); url = `/gold/summary/filter?year=${y}&month=${m}`; }
+    /* ── LOAD purchases from backend ── */
+    /* userId is NOT sent — Spring Security reads the logged-in user from the JWT token automatically */
+    async function loadSilver() {
+        try {
+            const res = await apiRequest('/silver/portfolio');
+            if (!res.ok) return;
+            const data = await res.json();
 
-        const res = await apiRequest(url);
-        if (!res.ok) return;
-        const data = await res.json();
+            allPurchases = (data.investments || []).map(inv => ({
+                id:           inv.id,
+                grams:        inv.grams,
+                pricePerGram: inv.purchasePrice,
+                purchaseDate: inv.purchaseDate
+            }));
 
-        // If backend provides a valid live price, use it
-        if (data.livePrice && parseFloat(data.livePrice) > 0) {
-            currentLivePrice = parseFloat(data.livePrice);
-            document.getElementById('livePriceInput').value = currentLivePrice;
-            setLiveStatus('✓ Live price from server — ₹' + currentLivePrice.toLocaleString('en-IN') + '/g', 'success');
+            if (data.investments && data.investments.length > 0 && data.investments[0].currentPricePerGram) {
+                const backendPrice = parseFloat(data.investments[0].currentPricePerGram);
+                if (backendPrice > 0) {
+                    currentLivePrice = backendPrice;
+                    document.getElementById('livePriceInput').value = backendPrice;
+                    setLiveStatus('✓ Live price from server — ₹' + backendPrice.toLocaleString('en-IN') + '/g', 'success');
+                }
+            }
+        } catch (e) {
+            console.error('Failed to load silver investments:', e);
         }
-
-        await loadHistory(mv);
         recalculate();
     }
 
-    async function loadHistory(monthFilter) {
-        let url = '/gold';
-        if (monthFilter) { const [y, m] = monthFilter.split('-'); url = `/gold/filter?year=${y}&month=${m}`; }
-
-        const res  = await apiRequest(url);
-        if (!res.ok) return;
-        const list = await res.json();
-        allPurchases = list || [];
-    }
-
+    /* ── RENDER TABLE ── */
     function renderTable(list) {
-        const tbody  = document.getElementById('goldTableBody');
-        const tableW = document.getElementById('goldTableWrap');
+        const tbody  = document.getElementById('silverTableBody');
+        const tableW = document.getElementById('silverTableWrap');
         const empty  = document.getElementById('emptyState');
         tbody.innerHTML = '';
 
@@ -620,41 +595,43 @@
         empty.style.display  = 'none';
         tableW.style.display = '';
 
-        list.forEach(g => {
-            const d          = new Date(g.purchaseDate).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
-            const grams      = parseFloat(g.gramsPurchased || 0);
-            const invested   = parseFloat(g.totalInvested || (grams * parseFloat(g.purchasePricePerGram || 0)));
-            const curVal     = currentLivePrice > 0 ? grams * currentLivePrice : null;
-            const profit     = curVal !== null ? curVal - invested : null;
-            const isProfit   = profit !== null ? profit >= 0 : true;
-            const badgeCls   = isProfit ? 'badge-profit' : 'badge-loss';
-            const badgeIcon  = isProfit ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down';
+        list.forEach(s => {
+            const d        = new Date(s.purchaseDate).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
+            const grams    = parseFloat(s.grams || 0);
+            const invested = grams * parseFloat(s.pricePerGram || 0);
+            const curVal   = currentLivePrice > 0 ? grams * currentLivePrice : null;
+            const profit   = curVal !== null ? curVal - invested : null;
+            const isProfit = profit !== null ? profit >= 0 : true;
 
             tbody.innerHTML += `
         <tr>
           <td>${d}</td>
           <td class="grams-cell">${fmtG(grams)}</td>
-          <td style="color:var(--slate-600)">${fmt(g.purchasePricePerGram)}</td>
+          <td style="color:var(--slate-600)">${fmt(s.pricePerGram)}</td>
           <td class="amount-cell">${fmt(invested)}</td>
           <td class="amount-cell">${curVal !== null ? fmt(curVal) : '—'}</td>
           <td>${profit !== null
-                ? `<span class="badge ${badgeCls}"><i class="fas ${badgeIcon}"></i>${fmt(Math.abs(profit))}</span>`
+                ? `<span class="badge ${isProfit ? 'badge-profit' : 'badge-loss'}">
+                     <i class="fas ${isProfit ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down'}"></i>
+                     ${fmt(Math.abs(profit))}
+                   </span>`
                 : '<span style="color:var(--slate-400);font-size:0.8rem">Enter price</span>'
             }</td>
           <td>
             <div class="row-actions">
-              <button class="icon-btn edit" onclick="editGold(${g.id})"><i class="fas fa-pen"></i></button>
-              <button class="icon-btn del"  onclick="deleteGold(${g.id})"><i class="fas fa-trash"></i></button>
+              <button class="icon-btn edit" onclick="editSilver(${s.id})"><i class="fas fa-pen"></i></button>
+              <button class="icon-btn del"  onclick="deleteSilver(${s.id})"><i class="fas fa-trash"></i></button>
             </div>
           </td>
         </tr>`;
         });
     }
 
+    /* ── RENDER CHART ── */
     function renderChart(invested, current) {
         if (chart) chart.destroy();
 
-        const ctx      = document.getElementById('goldChart').getContext('2d');
+        const ctx      = document.getElementById('silverChart').getContext('2d');
         const isProfit = current >= invested;
 
         const gradInvested = ctx.createLinearGradient(0, 0, 0, 240);
@@ -669,9 +646,11 @@
             type: 'bar',
             data: {
                 labels: ['Total Invested', 'Current Value'],
-                datasets: [{ data: [invested, current],
+                datasets: [{
+                    data: [invested, current],
                     backgroundColor: [gradInvested, gradCurrent],
-                    borderRadius: 10, borderSkipped: false, barPercentage: 0.45 }]
+                    borderRadius: 10, borderSkipped: false, barPercentage: 0.45
+                }]
             },
             options: {
                 responsive: true, maintainAspectRatio: false,
@@ -683,64 +662,83 @@
                         padding: 12, cornerRadius: 10,
                         titleFont: { family: 'DM Sans', size: 11 },
                         bodyFont: { family: 'DM Sans', size: 13, weight: '600' },
-                        callbacks: { label: ctx => '  ' + new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(ctx.parsed.y) }
+                        callbacks: {
+                            label: ctx => '  ' + new Intl.NumberFormat('en-IN', {
+                                style: 'currency', currency: 'INR', minimumFractionDigits: 0
+                            }).format(ctx.parsed.y)
+                        }
                     }
                 },
                 scales: {
-                    x: { grid: { display: false }, border: { display: false }, ticks: { color: '#94a3b8', font: { family: 'DM Sans', size: 12 } } },
-                    y: { grid: { color: '#f1f5f9' }, border: { display: false },
-                        ticks: { color: '#94a3b8', font: { family: 'DM Sans', size: 11 },
-                            callback: v => '₹' + (v >= 100000 ? (v/100000).toFixed(1)+'L' : v >= 1000 ? (v/1000).toFixed(0)+'K' : v) } }
+                    x: {
+                        grid: { display: false }, border: { display: false },
+                        ticks: { color: '#94a3b8', font: { family: 'DM Sans', size: 12 } }
+                    },
+                    y: {
+                        grid: { color: '#f1f5f9' }, border: { display: false },
+                        ticks: {
+                            color: '#94a3b8', font: { family: 'DM Sans', size: 11 },
+                            callback: v => '₹' + (v >= 100000 ? (v / 100000).toFixed(1) + 'L' : v >= 1000 ? (v / 1000).toFixed(0) + 'K' : v)
+                        }
+                    }
                 }
             }
         });
     }
 
-    async function addGold() {
+    /* ── ADD ── */
+    async function addSilver() {
         const grams = parseFloat(document.getElementById('grams').value);
         const price = parseFloat(document.getElementById('price').value);
-        const date  = document.getElementById('date').value;
+        const date  = document.getElementById('purchaseDate').value;
 
-        if (!grams || !price || !date)  return setError('Please fill all required fields.');
-        if (grams <= 0 || price <= 0)   return setError('Grams and price must be greater than 0.');
+        if (!grams || !price || !date) return setError('Please fill all required fields.');
+        if (grams <= 0 || price <= 0)  return setError('Grams and price must be greater than 0.');
         setError(null);
 
-        const res = await apiRequest('/gold', {
-            method: 'POST',
-            body: JSON.stringify({ gramsPurchased: grams, purchasePricePerGram: price, purchaseDate: date })
-        });
+        const params = new URLSearchParams({ grams, pricePerGram: price, purchaseDate: date });
+        const res = await apiRequest(`/silver/invest?${params}`, { method: 'POST' });
 
         if (res.ok) {
-            ['grams','price','date'].forEach(id => document.getElementById(id).value = '');
-            await loadHistory(document.getElementById('monthFilter').value);
-            recalculate();
-        } else setError('Failed to add gold purchase.');
+            ['grams', 'price', 'purchaseDate'].forEach(id => document.getElementById(id).value = '');
+            await loadSilver();
+        } else {
+            setError('Failed to add silver purchase.');
+        }
     }
 
-    async function deleteGold(id) {
+    /* ── DELETE ── */
+    async function deleteSilver(id) {
         if (!confirm('Delete this purchase?')) return;
-        const res = await apiRequest('/gold/' + id, { method: 'DELETE' });
+        const res = await apiRequest(`/silver/invest/${id}`, { method: 'DELETE' });
         if (res.ok) {
-            await loadHistory(document.getElementById('monthFilter').value);
-            recalculate();
-        } else setError('Failed to delete purchase.');
+            await loadSilver();
+        } else {
+            setError('Failed to delete purchase.');
+        }
     }
 
-    async function editGold(id) {
+    /* ── EDIT ── */
+    async function editSilver(id) {
         const newGrams = prompt('Enter new grams purchased:');
         const newPrice = prompt('Enter new price per gram (₹):');
         if (!newGrams || !newPrice) return;
         if (parseFloat(newGrams) <= 0 || parseFloat(newPrice) <= 0) return setError('Values must be greater than 0.');
 
-        const res = await apiRequest('/gold/' + id, {
+        const res = await apiRequest(`/silver/invest/${id}`, {
             method: 'PUT',
-            body: JSON.stringify({ gramsPurchased: parseFloat(newGrams), purchasePricePerGram: parseFloat(newPrice), purchaseDate: new Date().toISOString().split('T')[0] })
+            body: JSON.stringify({
+                grams:        parseFloat(newGrams),
+                pricePerGram: parseFloat(newPrice),
+                purchaseDate: new Date().toISOString().split('T')[0]
+            })
         });
 
         if (res.ok) {
-            await loadHistory(document.getElementById('monthFilter').value);
-            recalculate();
-        } else setError('Failed to update purchase.');
+            await loadSilver();
+        } else {
+            setError('Failed to update purchase.');
+        }
     }
 </script>
 </body>
