@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard · FLUX360 Personal Finance</title>
+    <title>Dashboard · FLUX360</title>
     <link rel="icon" href="../images/FLUX360_logo.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -70,6 +70,7 @@
         }
         .logout-btn:hover { background: var(--red); color: white; }
 
+        /* ── STAT CARDS ── */
         .stat-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
@@ -119,6 +120,7 @@
         .stat-value { font-size: 1.5rem; font-weight: 600; color: var(--slate-900); letter-spacing: -0.02em; margin-bottom: 4px; }
         .stat-sub   { font-size: 0.75rem; color: var(--slate-400); display: flex; align-items: center; gap: 4px; }
 
+        /* ── CARD ── */
         .card {
             background: var(--white); border: 1.5px solid var(--slate-200);
             border-radius: 20px; padding: 24px 26px; margin-bottom: 20px;
@@ -141,6 +143,7 @@
         }
         .chart-box canvas { width: 100% !important; height: 100% !important; }
 
+        /* ── NAV BUTTONS ── */
         .nav-section { animation: fadeUp 0.4s 0.15s ease both; }
 
         .nav-grid {
@@ -157,33 +160,31 @@
             font-family: 'DM Sans', sans-serif; font-size: 0.875rem;
             font-weight: 500; color: var(--slate-700); transition: all 0.2s;
         }
-        .nav-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.08); }
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+            border-color: var(--green-border);
+            background: var(--green-dim);
+            color: var(--green);
+        }
 
         .nav-btn-icon {
             width: 44px; height: 44px; border-radius: 12px;
             display: flex; align-items: center; justify-content: center;
             font-size: 1.1rem; transition: transform 0.2s;
+            background: var(--green-dim);
+            color: var(--green);
         }
         .nav-btn:hover .nav-btn-icon { transform: scale(1.1); }
 
-        .nav-btn.income  .nav-btn-icon { background: var(--green-dim); color: var(--green); }
-        .nav-btn.expense .nav-btn-icon { background: var(--red-dim);   color: var(--red); }
-        .nav-btn.sip     .nav-btn-icon { background: #fef3c7;          color: #d97706; }
-        .nav-btn.gold    .nav-btn-icon { background: #fef3c7;          color: #d97706; }
-        .nav-btn.silver  .nav-btn-icon { background: var(--green-dim); color: var(--green); }
-
-        .nav-btn.income:hover  { border-color: var(--green-border); background: var(--green-dim); color: var(--green); }
-        .nav-btn.expense:hover { border-color: #fecaca;             background: var(--red-dim);   color: var(--red); }
-        .nav-btn.sip:hover     { border-color: #fde68a;             background: #fef9c3;          color: #92400e; }
-        .nav-btn.gold:hover    { border-color: #fde68a;             background: #fef9c3;          color: #92400e; }
-        .nav-btn.silver:hover  { border-color: var(--green-border); background: var(--green-dim); color: var(--green); }
-
+        /* ── FOOTER ── */
         .footer-note {
             text-align: center; margin-top: 20px; font-size: 0.75rem; color: var(--slate-400);
             display: flex; align-items: center; justify-content: center; gap: 6px;
         }
         .footer-note i { color: var(--green); }
 
+        /* ── ANIMATION ── */
         @keyframes fadeUp {
             from { opacity: 0; transform: translateY(14px); }
             to   { opacity: 1; transform: translateY(0); }
@@ -304,25 +305,29 @@
             <h3>Quick navigation</h3>
         </div>
         <div class="nav-grid">
-            <button class="nav-btn income" onclick="goToIncome()">
+            <button class="nav-btn" onclick="goToIncome()">
                 <div class="nav-btn-icon"><i class="fas fa-arrow-trend-up"></i></div>
                 Income
             </button>
-            <button class="nav-btn expense" onclick="goToExpense()">
+            <button class="nav-btn" onclick="goToExpense()">
                 <div class="nav-btn-icon"><i class="fas fa-receipt"></i></div>
                 Expense
             </button>
-            <button class="nav-btn sip" onclick="goToSip()">
+            <button class="nav-btn" onclick="goToSip()">
                 <div class="nav-btn-icon"><i class="fas fa-chart-line"></i></div>
                 SIP
             </button>
-            <button class="nav-btn gold" onclick="goToGold()">
+            <button class="nav-btn" onclick="goToGold()">
                 <div class="nav-btn-icon"><i class="fas fa-coins"></i></div>
-                Gold Tracker
+                Gold
             </button>
-            <button class="nav-btn silver" onclick="goToSilver()">
+            <button class="nav-btn" onclick="goToSilver()">
                 <div class="nav-btn-icon"><i class="fas fa-medal"></i></div>
                 Silver
+            </button>
+            <button class="nav-btn" onclick="goToAccounts()">
+                <div class="nav-btn-icon"><i class="fas fa-wallet"></i></div>
+                Accounts
             </button>
         </div>
     </div>
@@ -364,8 +369,6 @@
         document.getElementById('userName').textContent = getUserName();
 
         try {
-            // Silver uses /api/silver/portfolio with NO userId —
-            // Spring Security reads the logged-in user from the JWT token automatically
             const [incomeRes, expenseRes, sipRes, goldRes, silverRes] = await Promise.all([
                 apiRequest('/incomes'),
                 apiRequest('/expenses'),
@@ -471,11 +474,12 @@
         });
     }
 
-    function goToIncome()  { window.location.href = '/pages/income.html'; }
-    function goToExpense() { window.location.href = '/pages/expense.html'; }
-    function goToSip()     { window.location.href = '/pages/sip.html'; }
-    function goToGold()    { window.location.href = '/pages/digital-gold.html'; }
-    function goToSilver()  { window.location.href = '/pages/silver.html'; }
+    function goToIncome()   { window.location.href = '/pages/income.html'; }
+    function goToExpense()  { window.location.href = '/pages/expense.html'; }
+    function goToSip()      { window.location.href = '/pages/sip.html'; }
+    function goToGold()     { window.location.href = '/pages/digital-gold.html'; }
+    function goToSilver()   { window.location.href = '/pages/silver.html'; }
+    function goToAccounts() { window.location.href = '/pages/accounts.html'; }
 
     function logout() {
         if (confirm('Are you sure you want to logout?')) {

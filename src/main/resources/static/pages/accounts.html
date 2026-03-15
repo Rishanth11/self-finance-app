@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="../images/FLUX360_logo.png">
+  <title>Accounts · FLUX360</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+        --green:        #16a34a;
+        --green-light:  #22c55e;
+        --green-dim:    #dcfce7;
+        --green-border: #bbf7d0;
+        --slate-900:    #0f172a;
+        --slate-700:    #334155;
+        --slate-600:    #475569;
+        --slate-400:    #94a3b8;
+        --slate-200:    #e2e8f0;
+        --slate-100:    #f1f5f9;
+        --slate-50:     #f8fafc;
+        --white:        #ffffff;
+        --red:          #dc2626;
+        --red-dim:      #fef2f2;
+        --red-border:   #fee2e2;
+        --blue:         #2563eb;
+        --blue-dim:     #eff6ff;
+        --blue-border:  #bfdbfe;
+        --amber:        #d97706;
+        --amber-dim:    #fef3c7;
+    }
+
+    body { background: #f5f7f5; font-family: 'DM Sans', sans-serif; color: var(--slate-900); min-height: 100vh; padding: 36px 28px; }
+    .page { max-width: 1180px; margin: 0 auto; }
+
+    .page-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 32px; animation: fadeUp 0.4s ease both; }
+    .page-title { display: flex; align-items: center; gap: 14px; }
+    .page-title-icon { width: 44px; height: 44px; background: var(--green); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.1rem; }
+    .page-title h1 { font-size: 1.5rem; font-weight: 600; color: var(--slate-900); letter-spacing: -0.02em; }
+    .page-title p  { font-size: 0.85rem; color: var(--slate-400); margin-top: 1px; }
+
+    .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; animation: fadeUp 0.4s 0.05s ease both; }
+    .stat-card { background: var(--white); border: 1.5px solid var(--slate-200); border-radius: 16px; padding: 20px 22px; display: flex; align-items: center; gap: 16px; }
+    .stat-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+    .stat-icon.green { background: var(--green-dim); color: var(--green); }
+    .stat-icon.blue  { background: var(--blue-dim);  color: var(--blue); }
+    .stat-icon.red   { background: var(--red-dim);   color: var(--red); }
+    .stat-icon.slate { background: var(--slate-100); color: var(--slate-600); }
+    .stat-info p { font-size: 0.75rem; color: var(--slate-400); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 3px; }
+    .stat-info strong { font-size: 1.3rem; font-weight: 600; color: var(--slate-900); letter-spacing: -0.02em; }
+
+    .card { background: var(--white); border: 1.5px solid var(--slate-200); border-radius: 20px; padding: 24px 26px; margin-bottom: 20px; }
+    .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+    .card-header-left { display: flex; align-items: center; gap: 10px; }
+    .card-header-icon { width: 34px; height: 34px; background: var(--green-dim); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--green); font-size: 0.875rem; }
+    .card-header h3 { font-size: 1rem; font-weight: 600; color: var(--slate-900); }
+
+    .accounts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+    .account-card { border: 1.5px solid var(--slate-200); border-radius: 16px; padding: 20px; background: var(--white); transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; position: relative; overflow: hidden; }
+    .account-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.07); }
+    .account-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: 16px 16px 0 0; }
+    .account-card.bank::before        { background: var(--green); }
+    .account-card.upi::before         { background: var(--blue); }
+    .account-card.credit_card::before { background: var(--red); }
+    .account-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .account-type-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 500; }
+    .badge-bank        { background: var(--green-dim); color: var(--green); }
+    .badge-upi         { background: var(--blue-dim);  color: var(--blue); }
+    .badge-credit_card { background: var(--red-dim);   color: var(--red); }
+    .account-actions { display: flex; gap: 6px; }
+    .icon-btn { width: 28px; height: 28px; border: none; border-radius: 7px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; transition: background 0.15s, color 0.15s; }
+    .icon-btn.edit { background: var(--slate-100); color: var(--slate-600); }
+    .icon-btn.edit:hover { background: var(--green); color: white; }
+    .icon-btn.del  { background: var(--red-dim); color: var(--red); }
+    .icon-btn.del:hover { background: var(--red); color: white; }
+    .account-name { font-size: 1rem; font-weight: 600; color: var(--slate-900); margin-bottom: 8px; }
+    .account-balance { font-size: 1.6rem; font-weight: 600; letter-spacing: -0.02em; }
+    .account-balance.positive { color: var(--green); }
+    .account-balance.negative { color: var(--red); }
+    .account-balance.zero     { color: var(--slate-400); }
+    .account-balance-label { font-size: 0.72rem; color: var(--slate-400); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px; }
+    .account-view-btn { margin-top: 14px; width: 100%; padding: 8px; border-radius: 8px; border: 1.5px solid var(--slate-200); background: var(--slate-50); font-family: 'DM Sans', sans-serif; font-size: 0.8rem; font-weight: 500; color: var(--slate-600); cursor: pointer; transition: all 0.15s; }
+    .account-view-btn:hover { border-color: var(--green); color: var(--green); background: var(--green-dim); }
+
+    .add-account-card { border: 1.5px dashed var(--slate-200); border-radius: 16px; padding: 20px; background: var(--slate-50); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: all 0.15s; min-height: 160px; }
+    .add-account-card:hover { border-color: var(--green); background: var(--green-dim); }
+    .add-account-card i { font-size: 1.5rem; color: var(--slate-400); }
+    .add-account-card:hover i { color: var(--green); }
+    .add-account-card span { font-size: 0.875rem; font-weight: 500; color: var(--slate-400); }
+    .add-account-card:hover span { color: var(--green); }
+
+    .form-grid { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; }
+    .field { flex: 1 1 160px; min-width: 150px; }
+    .field label { display: block; font-size: 0.72rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; color: var(--slate-400); margin-bottom: 6px; }
+    .field input, .field select { width: 100%; padding: 11px 14px; border: 1.5px solid var(--slate-200); border-radius: 10px; background: var(--white); font-family: 'DM Sans', sans-serif; font-size: 0.9rem; color: var(--slate-900); transition: border-color 0.2s, box-shadow 0.2s; }
+    .field input::placeholder { color: var(--slate-400); }
+    .field input:focus, .field select:focus { outline: none; border-color: var(--green-light); box-shadow: 0 0 0 3px rgba(34,197,94,0.1); }
+    .form-actions { display: flex; gap: 10px; margin-top: 18px; }
+
+    .error-msg { font-size: 0.82rem; color: var(--red); background: var(--red-dim); border: 1px solid var(--red-border); border-radius: 8px; padding: 8px 14px; margin-bottom: 16px; display: none; }
+
+    .btn { display: inline-flex; align-items: center; gap: 7px; padding: 10px 20px; border-radius: 10px; border: none; font-family: 'DM Sans', sans-serif; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: background 0.15s, transform 0.12s, box-shadow 0.15s; }
+    .btn-primary { background: var(--green); color: white; box-shadow: 0 3px 10px rgba(22,163,74,0.3); }
+    .btn-primary:hover { background: #15803d; transform: translateY(-1px); }
+    .btn-ghost { background: var(--slate-100); color: var(--slate-600); }
+    .btn-ghost:hover { background: var(--slate-200); }
+    .btn-blue { background: var(--blue); color: white; box-shadow: 0 3px 10px rgba(37,99,235,0.3); }
+    .btn-blue:hover { background: #1d4ed8; transform: translateY(-1px); }
+    .btn-sm { padding: 8px 14px; font-size: 0.8rem; }
+
+    .table-scroll { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    thead tr { border-bottom: 1.5px solid var(--slate-200); }
+    th { text-align: left; padding: 10px 14px; font-size: 0.7rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--slate-400); }
+    td { padding: 14px 14px; border-bottom: 1px solid var(--slate-100); color: var(--slate-700); }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: var(--slate-50); }
+
+    .tx-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 500; }
+    .tx-credit       { background: var(--green-dim); color: var(--green); }
+    .tx-debit        { background: var(--red-dim);   color: var(--red); }
+    .tx-transfer_in  { background: var(--blue-dim);  color: var(--blue); }
+    .tx-transfer_out { background: var(--amber-dim); color: var(--amber); }
+    .amount-plus  { font-weight: 600; color: var(--green); }
+    .amount-minus { font-weight: 600; color: var(--red); }
+    .amount-blue  { font-weight: 600; color: var(--blue); }
+    .amount-amber { font-weight: 600; color: var(--amber); }
+
+    .empty-state { text-align: center; padding: 48px 20px; color: var(--slate-400); display: none; }
+    .empty-state i { font-size: 2.5rem; margin-bottom: 12px; display: block; }
+    .empty-state p { font-size: 0.9rem; }
+
+    .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.45); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--white); border-radius: 20px; padding: 28px 30px; width: 100%; max-width: 480px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); animation: fadeUp 0.2s ease both; }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+    .modal-header h3 { font-size: 1.1rem; font-weight: 600; }
+    .modal-close { background: none; border: none; font-size: 1.1rem; color: var(--slate-400); cursor: pointer; }
+    .modal-close:hover { color: var(--slate-900); }
+
+    .tab-row { display: flex; gap: 8px; margin-bottom: 20px; }
+    .tab-btn { padding: 7px 16px; border-radius: 20px; border: 1.5px solid var(--slate-200); background: none; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500; color: var(--slate-600); cursor: pointer; transition: all 0.15s; }
+    .tab-btn.active { background: var(--green); color: white; border-color: var(--green); }
+
+    .back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 0.875rem; color: var(--slate-600); cursor: pointer; background: none; border: none; font-family: 'DM Sans', sans-serif; font-weight: 500; margin-bottom: 20px; padding: 0; }
+    .back-btn:hover { color: var(--green); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 600px) { body { padding: 20px 16px; } .page-header { flex-direction: column; align-items: flex-start; } }
+    .section { animation: fadeUp 0.3s ease both; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <div class="page-title">
+      <div class="page-title-icon"><i class="fas fa-wallet"></i></div>
+      <div>
+        <h1>Accounts</h1>
+        <p>Manage your bank accounts, UPI &amp; cards</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAT ROW -->
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="stat-icon green"><i class="fas fa-landmark"></i></div>
+      <div class="stat-info"><p>Total assets</p><strong id="statAssets">₹0</strong></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon red"><i class="fas fa-credit-card"></i></div>
+      <div class="stat-info"><p>Credit card debt</p><strong id="statDebt">₹0</strong></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon blue"><i class="fas fa-scale-balanced"></i></div>
+      <div class="stat-info"><p>Net worth</p><strong id="statNet">₹0</strong></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon slate"><i class="fas fa-list"></i></div>
+      <div class="stat-info"><p>Total accounts</p><strong id="statCount">0</strong></div>
+    </div>
+  </div>
+
+  <!-- ACCOUNTS LIST SECTION -->
+  <div id="sectionAccounts" class="section">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-left">
+          <div class="card-header-icon"><i class="fas fa-wallet"></i></div>
+          <h3>Your accounts</h3>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="openAddAccountModal()">
+          <i class="fas fa-plus"></i> Add account
+        </button>
+      </div>
+      <div class="accounts-grid" id="accountsGrid"></div>
+    </div>
+
+    <!-- TRANSFER CARD -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-left">
+          <div class="card-header-icon"><i class="fas fa-right-left"></i></div>
+          <h3>Transfer between accounts</h3>
+        </div>
+      </div>
+      <div id="transferError" class="error-msg"></div>
+      <div class="form-grid">
+        <div class="field"><label>From account</label><select id="transferFrom"></select></div>
+        <div class="field"><label>To account</label><select id="transferTo"></select></div>
+        <div class="field"><label>Amount (₹)</label><input type="number" id="transferAmount" placeholder="e.g. 5000" min="0" step="0.01"></div>
+        <div class="field"><label>Date</label><input type="date" id="transferDate"></div>
+        <div class="field"><label>Description</label><input type="text" id="transferDesc" placeholder="e.g. Moving savings"></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-blue" onclick="doTransfer()">
+          <i class="fas fa-right-left"></i> Transfer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACCOUNT DETAIL SECTION -->
+  <div id="sectionDetail" class="section hidden">
+    <button class="back-btn" onclick="showAccountsList()">
+      <i class="fas fa-arrow-left"></i> Back to accounts
+    </button>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-left">
+          <div class="card-header-icon"><i class="fas fa-clock-rotate-left"></i></div>
+          <h3 id="detailTitle">Transactions</h3>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <input type="month" id="txMonthFilter" onchange="loadTransactions()"
+                 style="border:1.5px solid var(--slate-200);border-radius:8px;padding:6px 10px;font-family:'DM Sans',sans-serif;font-size:0.875rem;color:var(--slate-700);">
+          <button class="btn btn-ghost btn-sm" onclick="document.getElementById('txMonthFilter').value='';loadTransactions()">All</button>
+          <button class="btn btn-primary btn-sm" onclick="openAddTxModal()">
+            <i class="fas fa-plus"></i> Add transaction
+          </button>
+        </div>
+      </div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px;">
+        <div style="background:var(--slate-50);border:1.5px solid var(--slate-200);border-radius:12px;padding:14px 20px;">
+          <div style="font-size:0.72rem;color:var(--slate-400);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px;">Current balance</div>
+          <div style="font-size:1.4rem;font-weight:600;" id="detailBalance">₹0</div>
+        </div>
+        <div style="background:var(--slate-50);border:1.5px solid var(--slate-200);border-radius:12px;padding:14px 20px;">
+          <div style="font-size:0.72rem;color:var(--slate-400);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px;">Opening balance</div>
+          <div style="font-size:1.4rem;font-weight:600;color:var(--slate-600);" id="detailOpening">₹0</div>
+        </div>
+      </div>
+      <div id="txEmptyState" class="empty-state">
+        <i class="far fa-folder-open"></i>
+        <p>No transactions yet — add your first transaction above.</p>
+      </div>
+      <div class="table-scroll">
+        <table id="txTable">
+          <thead>
+          <tr>
+            <th>Date</th>
+            <th>Description</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th></th>
+          </tr>
+          </thead>
+          <tbody id="txTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ADD ACCOUNT MODAL -->
+<div class="modal-overlay" id="addAccountModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="accountModalTitle">Add account</h3>
+      <button class="modal-close" onclick="closeModal('addAccountModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="accountModalError" class="error-msg"></div>
+    <div class="form-grid">
+      <div class="field" style="flex:1 1 100%;">
+        <label>Account name *</label>
+        <input type="text" id="accountName" placeholder="e.g. HDFC Savings">
+      </div>
+      <div class="field">
+        <label>Account type *</label>
+        <select id="accountType">
+          <option value="">Select type</option>
+          <option value="BANK">Bank account</option>
+          <option value="UPI">UPI</option>
+          <option value="CREDIT_CARD">Credit card</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Opening balance (₹)</label>
+        <input type="number" id="openingBalance" placeholder="e.g. 50000" min="0" step="0.01">
+      </div>
+    </div>
+    <div id="creditCardNote" style="display:none;margin-top:12px;font-size:0.8rem;color:var(--red);background:var(--red-dim);border:1px solid var(--red-border);border-radius:8px;padding:8px 12px;">
+      <i class="fas fa-info-circle"></i> For credit cards, enter your current outstanding amount (what you owe).
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-primary" onclick="saveAccount()"><i class="fas fa-check"></i> Save</button>
+      <button class="btn btn-ghost" onclick="closeModal('addAccountModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD TRANSACTION MODAL -->
+<div class="modal-overlay" id="addTxModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Add transaction</h3>
+      <button class="modal-close" onclick="closeModal('addTxModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="txModalError" class="error-msg"></div>
+    <div class="tab-row">
+      <button class="tab-btn active" id="tabCredit" onclick="setTxTab('CREDIT')">
+        <i class="fas fa-arrow-down"></i> Credit
+      </button>
+      <button class="tab-btn" id="tabDebit" onclick="setTxTab('DEBIT')">
+        <i class="fas fa-arrow-up"></i> Debit
+      </button>
+    </div>
+    <div id="txCreditNote" style="font-size:0.8rem;color:var(--green);margin-bottom:12px;"></div>
+    <div class="form-grid">
+      <div class="field"><label>Amount (₹) *</label><input type="number" id="txAmount" placeholder="e.g. 10000" min="0" step="0.01"></div>
+      <div class="field"><label>Date *</label><input type="date" id="txDate"></div>
+      <div class="field" style="flex:1 1 100%;"><label>Description</label><input type="text" id="txDesc" placeholder="e.g. Salary received"></div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-primary" onclick="saveTx()"><i class="fas fa-check"></i> Save</button>
+      <button class="btn btn-ghost" onclick="closeModal('addTxModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/guard.js"></script>
+<script src="../js/api.js"></script>
+<script>
+  let allAccounts      = [];
+  let selectedAccountId   = null;
+  let selectedAccountType = null;
+  let editingAccountId    = null;
+  let currentTxType    = 'CREDIT';
+
+  document.addEventListener('DOMContentLoaded', () => {
+      if (typeof requireAuth === 'function') requireAuth();
+      document.getElementById('transferDate').value = today();
+      document.getElementById('txDate').value = today();
+      loadAccounts();
+  });
+
+  function today() { return new Date().toISOString().split('T')[0]; }
+
+  function fmt(n) {
+      return new Intl.NumberFormat('en-IN', {
+          style: 'currency', currency: 'INR',
+          minimumFractionDigits: 0, maximumFractionDigits: 0
+      }).format(n || 0);
+  }
+
+  // ── LOAD ACCOUNTS ──
+  async function loadAccounts() {
+      const res = await apiRequest('/accounts');
+      if (!res.ok) return;
+      allAccounts = await res.json();
+      renderAccounts();
+      renderTransferDropdowns();
+      updateStats();
+  }
+
+  function updateStats() {
+      let assets = 0, debt = 0;
+      allAccounts.forEach(a => {
+          if (a.type === 'CREDIT_CARD') debt  += parseFloat(a.balance || 0);
+          else                          assets += parseFloat(a.balance || 0);
+      });
+      const net = assets - debt;
+      document.getElementById('statAssets').textContent = fmt(assets);
+      document.getElementById('statDebt').textContent   = fmt(debt);
+      document.getElementById('statNet').textContent    = fmt(net);
+      document.getElementById('statCount').textContent  = allAccounts.length;
+      document.getElementById('statNet').style.color  = net >= 0 ? 'var(--green)' : 'var(--red)';
+      document.getElementById('statDebt').style.color = debt > 0 ? 'var(--red)'   : 'var(--slate-900)';
+  }
+
+  function renderAccounts() {
+      const grid = document.getElementById('accountsGrid');
+      grid.innerHTML = '';
+      allAccounts.forEach(a => {
+          const typeClass  = a.type.toLowerCase();
+          const badgeClass = 'badge-' + typeClass;
+          const typeLabel  = a.type === 'CREDIT_CARD' ? 'Credit card' : a.type === 'UPI' ? 'UPI' : 'Bank';
+          const typeIcon   = a.type === 'CREDIT_CARD' ? 'fa-credit-card' : a.type === 'UPI' ? 'fa-mobile-screen' : 'fa-landmark';
+          const bal        = parseFloat(a.balance || 0);
+          const balClass   = bal > 0 ? 'positive' : bal < 0 ? 'negative' : 'zero';
+          const balLabel   = a.type === 'CREDIT_CARD' ? 'Outstanding debt' : 'Available balance';
+          grid.innerHTML  += `
+          <div class="account-card ${typeClass}" onclick="viewAccount(${a.id})">
+              <div class="account-card-top">
+                  <span class="account-type-badge ${badgeClass}"><i class="fas ${typeIcon}"></i> ${typeLabel}</span>
+                  <div class="account-actions" onclick="event.stopPropagation()">
+                      <button class="icon-btn edit" onclick="openEditAccount(${a.id})"><i class="fas fa-pen"></i></button>
+                      <button class="icon-btn del"  onclick="deleteAccount(${a.id})"><i class="fas fa-trash"></i></button>
+                  </div>
+              </div>
+              <div class="account-name">${a.name}</div>
+              <div class="account-balance ${balClass}">${fmt(bal)}</div>
+              <div class="account-balance-label">${balLabel}</div>
+              <button class="account-view-btn"><i class="fas fa-clock-rotate-left"></i> View transactions</button>
+          </div>`;
+      });
+      grid.innerHTML += `
+      <div class="add-account-card" onclick="openAddAccountModal()">
+          <i class="fas fa-plus"></i>
+          <span>Add new account</span>
+      </div>`;
+  }
+
+  function renderTransferDropdowns() {
+      const opts = allAccounts.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
+      document.getElementById('transferFrom').innerHTML = '<option value="">Select account</option>' + opts;
+      document.getElementById('transferTo').innerHTML   = '<option value="">Select account</option>' + opts;
+  }
+
+  // ── VIEW ACCOUNT DETAIL ──
+  function viewAccount(id) {
+      selectedAccountId   = id;
+      const account = allAccounts.find(a => a.id === id);
+      if (!account) return;
+      selectedAccountType = account.type;
+      document.getElementById('detailTitle').textContent = account.name + ' — Transactions';
+      const bal   = parseFloat(account.balance || 0);
+      const balEl = document.getElementById('detailBalance');
+      balEl.textContent = fmt(bal);
+      balEl.style.color = account.type === 'CREDIT_CARD'
+          ? (bal > 0 ? 'var(--red)' : 'var(--green)')
+          : (bal >= 0 ? 'var(--green)' : 'var(--red)');
+      document.getElementById('detailOpening').textContent = fmt(account.openingBalance);
+      document.getElementById('sectionAccounts').classList.add('hidden');
+      document.getElementById('sectionDetail').classList.remove('hidden');
+      loadTransactions();
+  }
+
+  function showAccountsList() {
+      document.getElementById('sectionDetail').classList.add('hidden');
+      document.getElementById('sectionAccounts').classList.remove('hidden');
+      selectedAccountId = null;
+  }
+
+  // ── TRANSACTIONS ──
+  async function loadTransactions() {
+      if (!selectedAccountId) return;
+      const month = document.getElementById('txMonthFilter').value;
+      const url   = `/accounts/${selectedAccountId}/transactions` + (month ? `?month=${month}` : '');
+      const res   = await apiRequest(url);
+      if (!res.ok) return;
+      renderTxTable(await res.json());
+  }
+
+  function renderTxTable(list) {
+      const tbody = document.getElementById('txTableBody');
+      const table = document.getElementById('txTable');
+      const empty = document.getElementById('txEmptyState');
+      tbody.innerHTML = '';
+      if (!list || list.length === 0) {
+          empty.style.display = 'block'; table.style.display = 'none'; return;
+      }
+      empty.style.display = 'none'; table.style.display = '';
+      list.forEach(tx => {
+          const d         = new Date(tx.date).toLocaleDateString('en-IN', { year:'numeric', month:'short', day:'numeric' });
+          const typeLabel = tx.type === 'TRANSFER_IN' ? 'Transfer in' : tx.type === 'TRANSFER_OUT' ? 'Transfer out' : tx.type === 'CREDIT' ? 'Credit' : 'Debit';
+          const typeClass = 'tx-' + tx.type.toLowerCase();
+          const typeIcon  = tx.type === 'CREDIT' ? 'fa-arrow-down' : tx.type === 'DEBIT' ? 'fa-arrow-up' : tx.type === 'TRANSFER_IN' ? 'fa-arrow-right' : 'fa-arrow-left';
+          const amtClass  = tx.type === 'CREDIT' ? 'amount-plus' : tx.type === 'DEBIT' ? 'amount-minus' : tx.type === 'TRANSFER_IN' ? 'amount-blue' : 'amount-amber';
+          const amtSign   = (tx.type === 'CREDIT' || tx.type === 'TRANSFER_IN') ? '+' : '-';
+          tbody.innerHTML += `
+          <tr>
+              <td>${d}</td>
+              <td style="color:var(--slate-900)">${tx.description || '—'}</td>
+              <td><span class="tx-badge ${typeClass}"><i class="fas ${typeIcon}"></i> ${typeLabel}</span></td>
+              <td class="${amtClass}">${amtSign}${fmt(tx.amount)}</td>
+              <td><button class="icon-btn del" onclick="deleteTx(${tx.id})"><i class="fas fa-trash"></i></button></td>
+          </tr>`;
+      });
+  }
+
+  // ── ACCOUNT MODAL ──
+  function openAddAccountModal() {
+      editingAccountId = null;
+      document.getElementById('accountModalTitle').textContent = 'Add account';
+      document.getElementById('accountName').value    = '';
+      document.getElementById('accountType').value    = '';
+      document.getElementById('openingBalance').value = '';
+      document.getElementById('creditCardNote').style.display = 'none';
+      setModalError('accountModalError', null);
+      document.getElementById('addAccountModal').classList.add('open');
+  }
+
+  function openEditAccount(id) {
+      const a = allAccounts.find(ac => ac.id === id);
+      if (!a) return;
+      editingAccountId = id;
+      document.getElementById('accountModalTitle').textContent = 'Edit account';
+      document.getElementById('accountName').value    = a.name;
+      document.getElementById('accountType').value    = a.type;
+      document.getElementById('openingBalance').value = a.openingBalance;
+      document.getElementById('creditCardNote').style.display = a.type === 'CREDIT_CARD' ? 'block' : 'none';
+      setModalError('accountModalError', null);
+      document.getElementById('addAccountModal').classList.add('open');
+  }
+
+  document.getElementById('accountType').addEventListener('change', function() {
+      document.getElementById('creditCardNote').style.display = this.value === 'CREDIT_CARD' ? 'block' : 'none';
+  });
+
+  async function saveAccount() {
+      const name    = document.getElementById('accountName').value.trim();
+      const type    = document.getElementById('accountType').value;
+      const opening = parseFloat(document.getElementById('openingBalance').value) || 0;
+      if (!name || !type) return setModalError('accountModalError', 'Please fill all required fields.');
+      const res = await apiRequest(editingAccountId ? `/accounts/${editingAccountId}` : '/accounts', {
+          method: editingAccountId ? 'PUT' : 'POST',
+          body: JSON.stringify({ name, type, openingBalance: opening })
+      });
+      if (res.ok) { closeModal('addAccountModal'); await loadAccounts(); }
+      else setModalError('accountModalError', 'Failed to save account.');
+  }
+
+  async function deleteAccount(id) {
+      if (!confirm('Delete this account and all its transactions?')) return;
+      const res = await apiRequest(`/accounts/${id}`, { method: 'DELETE' });
+      if (res.ok) await loadAccounts();
+  }
+
+  // ── TRANSACTION MODAL ──
+  function openAddTxModal() {
+      document.getElementById('txAmount').value = '';
+      document.getElementById('txDate').value   = today();
+      document.getElementById('txDesc').value   = '';
+      setTxTab('CREDIT');
+      setModalError('txModalError', null);
+      updateTxNote();
+      document.getElementById('addTxModal').classList.add('open');
+  }
+
+  function setTxTab(type) {
+      currentTxType = type;
+      document.getElementById('tabCredit').classList.toggle('active', type === 'CREDIT');
+      document.getElementById('tabDebit').classList.toggle('active',  type === 'DEBIT');
+      updateTxNote();
+  }
+
+  function updateTxNote() {
+      const note = document.getElementById('txCreditNote');
+      if (!selectedAccountType) { note.textContent = ''; return; }
+      if (selectedAccountType === 'CREDIT_CARD') {
+          note.textContent = currentTxType === 'CREDIT'
+              ? '💳 Credit = paying off your credit card bill (reduces debt)'
+              : '💳 Debit = spending on credit card (increases debt)';
+          note.style.color = currentTxType === 'CREDIT' ? 'var(--green)' : 'var(--red)';
+      } else {
+          note.textContent = currentTxType === 'CREDIT'
+              ? '✓ Credit = money received into this account'
+              : '✓ Debit = money spent from this account';
+          note.style.color = currentTxType === 'CREDIT' ? 'var(--green)' : 'var(--slate-600)';
+      }
+  }
+
+  async function saveTx() {
+      const amount = parseFloat(document.getElementById('txAmount').value);
+      const date   = document.getElementById('txDate').value;
+      const desc   = document.getElementById('txDesc').value.trim();
+      if (!amount || amount <= 0 || !date)
+          return setModalError('txModalError', 'Please enter a valid amount and date.');
+      const res = await apiRequest('/accounts/transactions', {
+          method: 'POST',
+          body: JSON.stringify({ amount, type: currentTxType, description: desc, date, accountId: selectedAccountId })
+      });
+      if (res.ok) {
+          closeModal('addTxModal');
+          await loadAccounts();
+          await viewAccount(selectedAccountId);
+      } else setModalError('txModalError', 'Failed to save transaction.');
+  }
+
+  async function deleteTx(id) {
+      if (!confirm('Delete this transaction? The account balance will be reversed.')) return;
+      const res = await apiRequest(`/accounts/transactions/${id}`, { method: 'DELETE' });
+      if (res.ok) { await loadAccounts(); await loadTransactions(); }
+  }
+
+  // ── TRANSFER ──
+  async function doTransfer() {
+      const fromId = parseInt(document.getElementById('transferFrom').value);
+      const toId   = parseInt(document.getElementById('transferTo').value);
+      const amount = parseFloat(document.getElementById('transferAmount').value);
+      const date   = document.getElementById('transferDate').value;
+      const desc   = document.getElementById('transferDesc').value.trim();
+      document.getElementById('transferError').style.display = 'none';
+      if (!fromId || !toId)       return showTransferError('Please select both accounts.');
+      if (fromId === toId)        return showTransferError('From and To accounts must be different.');
+      if (!amount || amount <= 0) return showTransferError('Please enter a valid amount.');
+      const res = await apiRequest('/accounts/transfer', {
+          method: 'POST',
+          body: JSON.stringify({ fromAccountId: fromId, toAccountId: toId, amount, date, description: desc })
+      });
+      if (res.ok) {
+          document.getElementById('transferAmount').value = '';
+          document.getElementById('transferDesc').value   = '';
+          await loadAccounts();
+      } else showTransferError((await res.text()) || 'Transfer failed.');
+  }
+
+  function showTransferError(msg) {
+      const el = document.getElementById('transferError');
+      el.textContent = msg; el.style.display = 'block';
+  }
+
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+  function setModalError(id, msg) {
+      const el = document.getElementById(id);
+      el.textContent = msg || '';
+      el.style.display = msg ? 'block' : 'none';
+  }
+</script>
+</body>
+</html>
