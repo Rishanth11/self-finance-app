@@ -42,7 +42,7 @@ public class AuthController {
             return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .body(Map.of(
-                            "id", created.getId(),
+                            "id",    created.getId(),
                             "email", created.getEmail()
                     ));
         } catch (IllegalArgumentException ex) {
@@ -64,18 +64,18 @@ public class AuthController {
                     )
             );
 
-            // ✅ IMPORTANT: get full UserDetails (contains ROLE info)
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-            // ✅ Generate JWT WITH authorities
-            String token = jwtUtil.generateToken(userDetails);
+            // Fetch the full User entity so we can include the name in the JWT
+            User user = userService.findByEmail(dto.getEmail());
 
-            return ResponseEntity.ok(
-                    Map.of(
-                            "token", token,
-                            "expiresIn", 24 * 60 * 60 // seconds
-                    )
-            );
+            // Generate JWT with name claim — frontend reads payload.name directly
+            String token = jwtUtil.generateToken(userDetails, user);
+
+            return ResponseEntity.ok(Map.of(
+                    "token",     token,
+                    "expiresIn", 24 * 60 * 60
+            ));
 
         } catch (BadCredentialsException ex) {
             return ResponseEntity

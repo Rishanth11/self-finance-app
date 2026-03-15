@@ -1,5 +1,6 @@
 package com.pro.finance.selffinanceapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,6 +19,7 @@ public class SipInvestment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore   // ← prevents lazy-load proxy serialization error
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -41,5 +43,4 @@ public class SipInvestment {
     private BigDecimal targetAmount;
 
     private LocalDate targetDate;
-
 }

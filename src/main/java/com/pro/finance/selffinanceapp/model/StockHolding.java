@@ -1,5 +1,6 @@
 package com.pro.finance.selffinanceapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -15,16 +16,17 @@ public class StockHolding {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String symbol;       // e.g. RELIANCE, TCS
-    private String exchange;     // NSE or BSE
+    private String symbol;
+    private String exchange;
     private String companyName;
-    private String sector;       // IT, Banking, Pharma, etc.
+    private String sector;
 
     private Integer quantity;
     private BigDecimal avgBuyPrice;
     private LocalDate buyDate;
 
-    @ManyToOne
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 }

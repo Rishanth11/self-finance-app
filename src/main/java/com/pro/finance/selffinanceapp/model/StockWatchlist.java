@@ -1,5 +1,6 @@
 package com.pro.finance.selffinanceapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -13,11 +14,12 @@ public class StockWatchlist {
     private Long id;
 
     private String symbol;
-    private String exchange;     // NSE or BSE
+    private String exchange;
     private String companyName;
     private String sector;
 
-    @ManyToOne
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 }

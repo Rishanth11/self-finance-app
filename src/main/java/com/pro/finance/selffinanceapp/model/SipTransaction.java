@@ -1,5 +1,6 @@
 package com.pro.finance.selffinanceapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,6 +19,7 @@ public class SipTransaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore   // ← prevents circular reference + lazy-load proxy error
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sip_id", nullable = false)
     private SipInvestment sip;
