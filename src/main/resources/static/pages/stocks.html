@@ -369,7 +369,6 @@
             </div>
         </div>
     </div>
-
 </div>
 
 <!-- EDIT HOLDING MODAL -->
@@ -438,8 +437,8 @@
 <script src="../js/guard.js"></script>
 <script src="../js/api.js"></script>
 <script>
-    let holdings  = [];
-    let watchlist = [];
+    let holdings   = [];
+    let watchlist  = [];
     let livePrices = {};
     let editingId  = null;
     let sectorChart = null, weightChart = null, pnlChart = null;
@@ -464,12 +463,12 @@
     function today() { return new Date().toISOString().split('T')[0]; }
 
     function fmt(n) {
-        return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n || 0);
+        return new Intl.NumberFormat('en-IN', { style:'currency', currency:'INR', minimumFractionDigits:2, maximumFractionDigits:2 }).format(n || 0);
     }
     function fmtShort(n) {
         if (Math.abs(n) >= 10000000) return '₹' + (n/10000000).toFixed(2) + 'Cr';
-        if (Math.abs(n) >= 100000)  return '₹' + (n/100000).toFixed(2) + 'L';
-        if (Math.abs(n) >= 1000)    return '₹' + (n/1000).toFixed(1) + 'K';
+        if (Math.abs(n) >= 100000)   return '₹' + (n/100000).toFixed(2) + 'L';
+        if (Math.abs(n) >= 1000)     return '₹' + (n/1000).toFixed(1) + 'K';
         return fmt(n);
     }
 
@@ -481,8 +480,7 @@
 
     function showTab(tab) {
         ['portfolio','market','news'].forEach(t => {
-            document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1))
-                .classList.toggle('hidden', t !== tab);
+            document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('hidden', t !== tab);
         });
         document.querySelectorAll('.tab-nav-btn').forEach((btn, i) => {
             btn.classList.toggle('active', ['portfolio','market','news'][i] === tab);
@@ -491,25 +489,15 @@
         if (tab === 'market') { loadIndices(); loadGainersLosers(); }
     }
 
-    // ══════════════════════════════════════════
-    // ALL PRICES GO THROUGH SPRING BOOT PROXY
-    // No direct Yahoo Finance calls from browser
-    // ══════════════════════════════════════════
-
+    // ── PRICE FETCHING via Spring Boot proxy ──
     async function fetchPriceBatch(symbolList) {
-        // symbolList = [{ symbol, exchange }, ...]
         if (!symbolList.length) return {};
-        // Build Yahoo-style tickers: RELIANCE.NS, HDFCBANK.BO, etc.
-        const tickers = symbolList.map(s =>
-            s.symbol + (s.exchange === 'NSE' ? '.NS' : '.BO')
-        ).join(',');
-
+        // Use SYMBOL.NS / SYMBOL.BO format for regular stocks
+        const tickers = symbolList.map(s => s.symbol + (s.exchange === 'NSE' ? '.NS' : '.BO')).join(',');
         try {
             const res  = await apiRequest('/stocks/proxy/prices?symbols=' + encodeURIComponent(tickers));
             if (!res.ok) return {};
             const data = await res.json();
-
-            // Remap from ticker key back to symbol_exchange key
             const result = {};
             symbolList.forEach(s => {
                 const ticker = s.symbol + (s.exchange === 'NSE' ? '.NS' : '.BO');
@@ -518,21 +506,6 @@
             });
             return result;
         } catch { return {}; }
-    }
-
-    async function fetchSinglePrice(yahooTicker) {
-        try {
-            const res  = await apiRequest('/stocks/proxy/price?symbol=' + encodeURIComponent(yahooTicker));
-            if (!res.ok) return null;
-            const body = await res.json();
-            const meta = body?.chart?.result?.[0]?.meta;
-            if (!meta) return null;
-            const price     = meta.regularMarketPrice || 0;
-            const prevClose = meta.previousClose || meta.chartPreviousClose || price;
-            const change    = price - prevClose;
-            const changePct = prevClose > 0 ? (change / prevClose) * 100 : 0;
-            return { price, change, changePct };
-        } catch { return null; }
     }
 
     // ── HOLDINGS ──
@@ -645,7 +618,7 @@
 
     function renderWeightChart() {
         const labels = holdings.map(h => h.symbol);
-        const data   = holdings.map(h => { const lp = livePrices[h.symbol + '_' + h.exchange]; return lp?.price > 0 ? h.quantity * lp.price : h.quantity * parseFloat(h.avgBuyPrice); });
+        const data   = holdings.map(h => { const lp = livePrices[h.symbol+'_'+h.exchange]; return lp?.price > 0 ? h.quantity * lp.price : h.quantity * parseFloat(h.avgBuyPrice); });
         const colors = ['#16a34a','#2563eb','#d97706','#dc2626','#7c3aed','#0891b2','#db2777','#65a30d','#ea580c','#6366f1','#64748b','#f59e0b'];
         if (weightChart) weightChart.destroy();
         weightChart = new Chart(document.getElementById('weightChart'), {
@@ -658,7 +631,7 @@
     function renderPnLChart() {
         let profitVal = 0, lossVal = 0;
         holdings.forEach(h => {
-            const lp       = livePrices[h.symbol + '_' + h.exchange];
+            const lp = livePrices[h.symbol+'_'+h.exchange];
             const invested = h.quantity * parseFloat(h.avgBuyPrice);
             const current  = lp?.price > 0 ? h.quantity * lp.price : invested;
             if (current - invested >= 0) profitVal += current; else lossVal += current;
@@ -676,13 +649,13 @@
 
     // ── ADD / EDIT / DELETE HOLDING ──
     async function addHolding() {
-        const symbol  = document.getElementById('hSymbol').value.trim().toUpperCase();
-        const exchange= document.getElementById('hExchange').value;
-        const company = document.getElementById('hCompany').value.trim();
-        const sector  = document.getElementById('hSector').value;
-        const qty     = parseInt(document.getElementById('hQty').value);
-        const price   = parseFloat(document.getElementById('hPrice').value);
-        const date    = document.getElementById('hDate').value;
+        const symbol   = document.getElementById('hSymbol').value.trim().toUpperCase();
+        const exchange = document.getElementById('hExchange').value;
+        const company  = document.getElementById('hCompany').value.trim();
+        const sector   = document.getElementById('hSector').value;
+        const qty      = parseInt(document.getElementById('hQty').value);
+        const price    = parseFloat(document.getElementById('hPrice').value);
+        const date     = document.getElementById('hDate').value;
         if (!symbol || !qty || !price) return setError('holdingError', 'Please fill all required fields.');
         if (qty <= 0 || price <= 0)    return setError('holdingError', 'Quantity and price must be greater than 0.');
         setError('holdingError', null);
@@ -696,9 +669,9 @@
 
     function clearHoldingForm() {
         ['hSymbol','hCompany','hQty','hPrice'].forEach(id => document.getElementById(id).value = '');
-        document.getElementById('hDate').value = today();
+        document.getElementById('hDate').value     = today();
         document.getElementById('hExchange').value = 'NSE';
-        document.getElementById('hSector').value = 'IT';
+        document.getElementById('hSector').value   = 'IT';
     }
 
     async function deleteHolding(id) {
@@ -723,13 +696,13 @@
     }
 
     async function saveEdit() {
-        const symbol  = document.getElementById('eSymbol').value.trim().toUpperCase();
-        const exchange= document.getElementById('eExchange').value;
-        const company = document.getElementById('eCompany').value.trim();
-        const sector  = document.getElementById('eSector').value;
-        const qty     = parseInt(document.getElementById('eQty').value);
-        const price   = parseFloat(document.getElementById('ePrice').value);
-        const date    = document.getElementById('eDate').value;
+        const symbol   = document.getElementById('eSymbol').value.trim().toUpperCase();
+        const exchange = document.getElementById('eExchange').value;
+        const company  = document.getElementById('eCompany').value.trim();
+        const sector   = document.getElementById('eSector').value;
+        const qty      = parseInt(document.getElementById('eQty').value);
+        const price    = parseFloat(document.getElementById('ePrice').value);
+        const date     = document.getElementById('eDate').value;
         if (!symbol || !qty || !price) return setError('editError', 'Please fill all required fields.');
         const res = await apiRequest(`/stocks/holdings/${editingId}`, {
             method: 'PUT',
@@ -766,15 +739,14 @@
             const key = w.symbol + '_' + w.exchange;
             const lp  = livePrices[key];
             const ltp = lp?.price || 0;
-            const change = lp?.change || 0;
-            const changePct = lp?.changePct || 0;
+            const change = lp?.change || 0, changePct = lp?.changePct || 0;
             const cc = change > 0 ? 'change-up' : change < 0 ? 'change-down' : 'change-flat';
             const cs = change > 0 ? '+' : '';
             tbody.innerHTML += `
             <tr>
-                <td><div class="stock-name-cell"><span class="stock-symbol">${w.symbol}</span><span class="stock-company">${w.companyName || '—'}</span></div></td>
+                <td><div class="stock-name-cell"><span class="stock-symbol">${w.symbol}</span><span class="stock-company">${w.companyName||'—'}</span></div></td>
                 <td><span class="exchange-badge badge-${w.exchange.toLowerCase()}">${w.exchange}</span></td>
-                <td><span class="sector-badge">${w.sector || '—'}</span></td>
+                <td><span class="sector-badge">${w.sector||'—'}</span></td>
                 <td class="price-cell">${ltp > 0 ? fmt(ltp) : '—'}</td>
                 <td class="${cc}">${ltp > 0 ? cs + change.toFixed(2) : '—'}</td>
                 <td class="${cc}">${ltp > 0 ? cs + changePct.toFixed(2) + '%' : '—'}</td>
@@ -791,10 +763,10 @@
     }
 
     async function saveWatchlist() {
-        const symbol  = document.getElementById('wSymbol').value.trim().toUpperCase();
-        const exchange= document.getElementById('wExchange').value;
-        const company = document.getElementById('wCompany').value.trim();
-        const sector  = document.getElementById('wSector').value;
+        const symbol   = document.getElementById('wSymbol').value.trim().toUpperCase();
+        const exchange = document.getElementById('wExchange').value;
+        const company  = document.getElementById('wCompany').value.trim();
+        const sector   = document.getElementById('wSector').value;
         if (!symbol) return setError('watchlistError', 'Please enter a stock symbol.');
         const res = await apiRequest('/stocks/watchlist', {
             method: 'POST', body: JSON.stringify({ symbol, exchange, companyName: company, sector })
@@ -809,21 +781,22 @@
     }
 
     // ── INDICES ──
+    // Keys match INDEX_TICKER_MAP in StockPriceController — no ^ or %5E needed
     const INDICES = [
-        { name: 'NIFTY 50',   ticker: '%5ENSEI'    },
-        { name: 'SENSEX',     ticker: '%5EBSESN'   },
-        { name: 'NIFTY BANK', ticker: '%5ENSEBANK' },
-        { name: 'NIFTY IT',   ticker: 'NIFTYIT.NS' },
+        { name: 'NIFTY 50',   key: 'NIFTY50'   },
+        { name: 'SENSEX',     key: 'SENSEX'     },
+        { name: 'NIFTY BANK', key: 'BANKNIFTY'  },
+        { name: 'NIFTY IT',   key: 'NIFTYIT'    },
     ];
 
     async function loadIndices() {
-        const tickers = INDICES.map(i => i.ticker).join(',');
-        const res = await apiRequest('/stocks/proxy/prices?symbols=' + tickers);
+        const keys = INDICES.map(i => i.key).join(',');
+        const res  = await apiRequest('/stocks/proxy/prices?symbols=' + encodeURIComponent(keys));
         const data = res.ok ? await res.json() : {};
         const grid = document.getElementById('indexGrid');
         grid.innerHTML = '';
         INDICES.forEach(idx => {
-            const d   = data[idx.ticker] || {};
+            const d   = data[idx.key] || {};
             const p   = d.price    || 0;
             const c   = d.change   || 0;
             const cp  = d.changePct || 0;
@@ -859,14 +832,14 @@
             <tr>
                 <td class="stock-symbol">${s.symbol}</td>
                 <td class="price-cell">${fmt(s.price)}</td>
-                <td class="change-up">▲ ${(s.changePct || 0).toFixed(2)}%</td>
+                <td class="change-up">▲ ${(s.changePct||0).toFixed(2)}%</td>
             </tr>`).join('');
 
         document.getElementById('losersBody').innerHTML = losers.map(s => `
             <tr>
                 <td class="stock-symbol">${s.symbol}</td>
                 <td class="price-cell">${fmt(s.price)}</td>
-                <td class="change-down">▼ ${Math.abs(s.changePct || 0).toFixed(2)}%</td>
+                <td class="change-down">▼ ${Math.abs(s.changePct||0).toFixed(2)}%</td>
             </tr>`).join('');
     }
 
@@ -879,11 +852,9 @@
             if (!res.ok) throw new Error('Failed');
             const data = await res.json();
             if (!data.items?.length) throw new Error('No items');
-
             newsList.innerHTML = data.items.map(item => {
                 const date = item.pubDate ? new Date(item.pubDate).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }) : '';
-                return `
-                <a class="news-item" href="${item.link}" target="_blank" rel="noopener">
+                return `<a class="news-item" href="${item.link}" target="_blank" rel="noopener">
                     <div class="news-dot"></div>
                     <div class="news-content">
                         <div class="news-title">${item.title}</div>
