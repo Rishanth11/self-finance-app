@@ -31,7 +31,6 @@ public class SipService {
     /* ---------------- CREATE SIP ---------------- */
 
     public SipInvestment createSip(SipRequestDTO dto, User user) {
-
         SipInvestment sip = new SipInvestment();
         sip.setUser(user);
         sip.setFundName(dto.getFundName());
@@ -43,7 +42,6 @@ public class SipService {
         sip.setTargetAmount(dto.getTargetAmount());
         sip.setInflationRate(dto.getInflationRate());
         sip.setActive(true);
-
         return sipRepo.save(sip);
     }
 
@@ -51,18 +49,14 @@ public class SipService {
 
     @Transactional
     public void executeSipNow(Long sipId, User user) {
-
         SipInvestment sip = getOwnedSip(sipId, user);
 
-        boolean alreadyExecuted =
-                txnRepo.existsBySipAndInvestDate(sip, LocalDate.now());
-
+        boolean alreadyExecuted = txnRepo.existsBySipAndInvestDate(sip, LocalDate.now());
         if (alreadyExecuted) {
             throw new RuntimeException("SIP already executed today");
         }
 
         BigDecimal nav = navService.fetchLatestNav(sip.getFundCode());
-
         if (nav.compareTo(BigDecimal.ZERO) <= 0) {
             throw new RuntimeException("Invalid NAV");
         }
@@ -83,16 +77,15 @@ public class SipService {
     /* ---------------- PORTFOLIO ---------------- */
 
     public SipPortfolioDTO getPortfolio(Long sipId, User user) {
-
         SipInvestment sip = getOwnedSip(sipId, user);
         List<SipTransaction> txns = txnRepo.findBySip(sip);
 
         BigDecimal totalInvested = BigDecimal.ZERO;
-        BigDecimal totalUnits = BigDecimal.ZERO;
+        BigDecimal totalUnits    = BigDecimal.ZERO;
 
         for (SipTransaction txn : txns) {
             totalInvested = totalInvested.add(txn.getAmount());
-            totalUnits = totalUnits.add(txn.getUnits());
+            totalUnits    = totalUnits.add(txn.getUnits());
         }
 
         BigDecimal currentNav;
@@ -102,51 +95,38 @@ public class SipService {
             currentNav = navService.fetchLatestNav(sip.getFundCode());
         } catch (Exception e) {
             navAvailable = false;
-            currentNav = BigDecimal.ZERO;
+            currentNav   = BigDecimal.ZERO;
         }
 
         BigDecimal currentValue = totalUnits.multiply(currentNav);
-        BigDecimal returns = currentValue.subtract(totalInvested);
+        BigDecimal returns      = currentValue.subtract(totalInvested);
 
-        /* ---------------- XIRR ---------------- */
-
+        /* XIRR */
         BigDecimal xirr = BigDecimal.ZERO;
-
         if (txns.size() >= 1 && currentValue.compareTo(BigDecimal.ZERO) > 0) {
-
-            List<Double> amounts = new ArrayList<>();
-            List<LocalDate> dates = new ArrayList<>();
-
+            List<Double>    amounts = new ArrayList<>();
+            List<LocalDate> dates   = new ArrayList<>();
             for (SipTransaction txn : txns) {
-                amounts.add(-txn.getAmount().doubleValue()); // investment = negative
+                amounts.add(-txn.getAmount().doubleValue());
                 dates.add(txn.getInvestDate());
             }
-
-            amounts.add(currentValue.doubleValue()); // current value = positive
+            amounts.add(currentValue.doubleValue());
             dates.add(LocalDate.now());
-
             double xirrValue = XirrCalculator.calculate(amounts, dates);
-
-            xirr = BigDecimal.valueOf(xirrValue)
-                    .setScale(2, RoundingMode.HALF_UP);
+            xirr = BigDecimal.valueOf(xirrValue).setScale(2, RoundingMode.HALF_UP);
         }
 
-        /* ---------------- REAL RETURN ---------------- */
-
+        /* Real return */
         BigDecimal realReturn = BigDecimal.ZERO;
-
         if (sip.getInflationRate() != null) {
             realReturn = xirr.subtract(sip.getInflationRate())
                     .setScale(2, RoundingMode.HALF_UP);
         }
 
-        /* ---------------- GOAL PROGRESS ---------------- */
-
+        /* Goal progress */
         BigDecimal goalProgress = BigDecimal.ZERO;
-
         if (sip.getTargetAmount() != null &&
                 sip.getTargetAmount().compareTo(BigDecimal.ZERO) > 0) {
-
             goalProgress = currentValue
                     .divide(sip.getTargetAmount(), 6, RoundingMode.HALF_UP)
                     .multiply(BigDecimal.valueOf(100))
@@ -154,47 +134,20 @@ public class SipService {
         }
 
         return new SipPortfolioDTO(
-                totalInvested,
-                currentValue,
-                returns,
-                xirr,
-                realReturn,
-                goalProgress,
-                navAvailable,
-                sip.getGoalName(),
-                sip.getTargetAmount()
+                totalInvested, currentValue, returns,
+                xirr, realReturn, goalProgress,
+                navAvailable, sip.getGoalName(), sip.getTargetAmount()
         );
     }
 
-    /* ---------------- OWNERSHIP VALIDATION ---------------- */
-
-    private SipInvestment getOwnedSip(Long sipId, User user) {
-
-        SipInvestment sip = sipRepo.findById(sipId)
-                .orElseThrow(() -> new RuntimeException("SIP not found"));
-
-        if (!sip.getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("Access denied");
-        }
-
-        return sip;
-    }
-
-    public List<SipInvestment> getAllByUser(User user) {
-        return sipRepo.findByUser(user);
-    }
+    /* ---------------- CHART ---------------- */
 
     public List<Map<String, Object>> getSipChart(Long sipId, User user) {
-
-        SipInvestment sip = getOwnedSip(sipId, user);
+        SipInvestment sip  = getOwnedSip(sipId, user);
         List<SipTransaction> txns = txnRepo.findBySip(sip);
-
         txns.sort(Comparator.comparing(SipTransaction::getInvestDate));
 
-        List<Map<String, Object>> result = new ArrayList<>();
-
-        BigDecimal cumulativeUnits = BigDecimal.ZERO;
-
+        // Fetch current NAV once — used only for the final (today's) value point
         BigDecimal currentNav;
         try {
             currentNav = navService.fetchLatestNav(sip.getFundCode());
@@ -202,23 +155,44 @@ public class SipService {
             currentNav = BigDecimal.ZERO;
         }
 
-        for (SipTransaction txn : txns) {
+        List<Map<String, Object>> result = new ArrayList<>();
+        BigDecimal cumulativeUnits = BigDecimal.ZERO;
 
+        for (int i = 0; i < txns.size(); i++) {
+            SipTransaction txn = txns.get(i);
             cumulativeUnits = cumulativeUnits.add(txn.getUnits());
 
-            Map<String, Object> map = new HashMap<>();
-            map.put("date", txn.getInvestDate().toString());
-            map.put("value", cumulativeUnits.multiply(currentNav));
+            // Fix 3: use the NAV at the time of each transaction for historical accuracy
+            // For the last transaction, also add a current-value point using today's NAV
+            BigDecimal navForPoint = txn.getNav();
 
+            Map<String, Object> map = new HashMap<>();
+            map.put("date",  txn.getInvestDate().toString());
+            map.put("value", cumulativeUnits.multiply(navForPoint)
+                    .setScale(2, RoundingMode.HALF_UP));
             result.add(map);
+        }
+
+        // Add a current-value point at today's date if NAV is available
+        if (currentNav.compareTo(BigDecimal.ZERO) > 0 && !txns.isEmpty()) {
+            Map<String, Object> today = new HashMap<>();
+            today.put("date",  LocalDate.now().toString());
+            today.put("value", cumulativeUnits.multiply(currentNav)
+                    .setScale(2, RoundingMode.HALF_UP));
+            result.add(today);
         }
 
         return result;
     }
 
+    /* ---------------- CRUD ---------------- */
+
+    public List<SipInvestment> getAllByUser(User user) {
+        return sipRepo.findByUser(user);
+    }
+
     public void deleteSip(Long sipId, User user) {
-        SipInvestment sip = getOwnedSip(sipId, user);
-        sipRepo.delete(sip);
+        sipRepo.delete(getOwnedSip(sipId, user));
     }
 
     public void deactivateSip(Long sipId, User user) {
@@ -233,5 +207,14 @@ public class SipService {
         sipRepo.save(sip);
     }
 
+    /* ---------------- OWNERSHIP CHECK ---------------- */
 
+    private SipInvestment getOwnedSip(Long sipId, User user) {
+        SipInvestment sip = sipRepo.findById(sipId)
+                .orElseThrow(() -> new RuntimeException("SIP not found"));
+        if (!sip.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Access denied");
+        }
+        return sip;
+    }
 }

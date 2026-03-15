@@ -4,11 +4,14 @@ import com.pro.finance.selffinanceapp.model.SipInvestment;
 import com.pro.finance.selffinanceapp.repository.SipInvestmentRepository;
 import com.pro.finance.selffinanceapp.service.SipService;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@Component  // ← Fix 1: Spring now picks this up as a bean
 public class SipScheduler {
+
     private final SipInvestmentRepository sipRepo;
     private final SipService sipService;
 
@@ -18,24 +21,21 @@ public class SipScheduler {
         this.sipService = sipService;
     }
 
-    @Scheduled(cron = "0 0 10 * * ?")
+    @Scheduled(cron = "0 0 10 * * ?")  // runs every day at 10:00 AM
     public void autoExecuteSips() {
 
         int today = LocalDate.now().getDayOfMonth();
 
-        List<SipInvestment> activeSips =
-                sipRepo.findAll()
-                        .stream()
-                        .filter(SipInvestment::isActive)
-                        .toList();
+        // Fix 2: query only active SIPs — database filters, not Java stream
+        List<SipInvestment> activeSips = sipRepo.findByActiveTrue();
 
         for (SipInvestment sip : activeSips) {
-
             if (sip.getSipDay() == today) {
-
                 try {
                     sipService.executeSipNow(sip.getId(), sip.getUser());
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                    // already executed today or invalid NAV — skip silently
+                }
             }
         }
     }

@@ -97,6 +97,7 @@
         .stat-card.s-sip::before     { background: #f59e0b; }
         .stat-card.s-gold::before    { background: #d97706; }
         .stat-card.s-silver::before  { background: #64748b; }
+        .stat-card.s-stocks::before  { background: #2563eb; }
 
         .stat-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 
@@ -285,6 +286,16 @@
             <div class="stat-value" id="silverValue">₹0</div>
             <div class="stat-sub"><i class="fas fa-circle" style="font-size:0.5rem;color:#64748b"></i> Current value</div>
         </div>
+
+        <!-- ── STOCKS STAT CARD ── -->
+        <div class="stat-card s-stocks">
+            <div class="stat-top">
+                <span class="stat-label">Stock portfolio</span>
+                <div class="stat-icon blue"><i class="fas fa-chart-line"></i></div>
+            </div>
+            <div class="stat-value" id="stocksValue">₹0</div>
+            <div class="stat-sub"><i class="fas fa-circle" style="font-size:0.5rem;color:#2563eb"></i> Current value</div>
+        </div>
     </div>
 
     <!-- CHART CARD -->
@@ -329,6 +340,10 @@
                 <div class="nav-btn-icon"><i class="fas fa-wallet"></i></div>
                 Accounts
             </button>
+            <button class="nav-btn" onclick="goToStocks()">
+                <div class="nav-btn-icon"><i class="fas fa-chart-line"></i></div>
+                Stocks
+            </button>
         </div>
     </div>
 
@@ -365,16 +380,29 @@
         } catch(e) { return 'User'; }
     }
 
+    // Fetch live price from Yahoo Finance for a single stock
+    async function fetchStockPrice(symbol, exchange) {
+        try {
+            const suffix = exchange === 'NSE' ? '.NS' : '.BO';
+            const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}${suffix}?interval=1d&range=1d`;
+            const res = await fetch(url);
+            if (!res.ok) return 0;
+            const data = await res.json();
+            return data?.chart?.result?.[0]?.meta?.regularMarketPrice || 0;
+        } catch { return 0; }
+    }
+
     async function loadDashboard() {
         document.getElementById('userName').textContent = getUserName();
 
         try {
-            const [incomeRes, expenseRes, sipRes, goldRes, silverRes] = await Promise.all([
+            const [incomeRes, expenseRes, sipRes, goldRes, silverRes, stocksRes] = await Promise.all([
                 apiRequest('/incomes'),
                 apiRequest('/expenses'),
                 apiRequest('/sip'),
                 apiRequest('/gold/summary'),
-                apiRequest('/silver/portfolio')
+                apiRequest('/silver/portfolio'),
+                apiRequest('/stocks/holdings')
             ]);
 
             const incomes       = incomeRes.ok    ? await incomeRes.json()   : [];
@@ -382,6 +410,7 @@
             const sips          = sipRes.ok       ? await sipRes.json()      : [];
             const goldSummary   = goldRes.ok      ? await goldRes.json()     : null;
             const silverSummary = silverRes.ok    ? await silverRes.json()   : null;
+            const stocksList    = stocksRes.ok    ? await stocksRes.json()   : [];
 
             let totalIncome = 0, totalExpense = 0, totalSipValue = 0;
 
@@ -410,10 +439,24 @@
             document.getElementById('sipValue').textContent       = fmt(totalSipValue);
             document.getElementById('goldValue').textContent      = fmt(totalGoldValue);
             document.getElementById('silverValue').textContent    = fmt(totalSilverValue);
-
-            document.getElementById('netSavings').style.color = netSavings >= 0 ? 'var(--green)' : 'var(--red)';
+            document.getElementById('netSavings').style.color     = netSavings >= 0 ? 'var(--green)' : 'var(--red)';
 
             renderChart(totalIncome, totalExpense, netSavings);
+
+            // Fetch live prices for all holdings and compute total current value
+            if (stocksList.length > 0) {
+                let totalStocksValue = 0;
+                const pricePromises = stocksList.map(h =>
+                    fetchStockPrice(h.symbol, h.exchange).then(price => {
+                        const ltp = price > 0 ? price : parseFloat(h.avgBuyPrice);
+                        totalStocksValue += h.quantity * ltp;
+                    })
+                );
+                await Promise.allSettled(pricePromises);
+                document.getElementById('stocksValue').textContent = fmt(totalStocksValue);
+            } else {
+                document.getElementById('stocksValue').textContent = '₹0';
+            }
 
         } catch(err) {
             console.error('Dashboard load failed:', err);
@@ -480,6 +523,7 @@
     function goToGold()     { window.location.href = '/pages/digital-gold.html'; }
     function goToSilver()   { window.location.href = '/pages/silver.html'; }
     function goToAccounts() { window.location.href = '/pages/accounts.html'; }
+    function goToStocks()   { window.location.href = '/pages/stocks.html'; }
 
     function logout() {
         if (confirm('Are you sure you want to logout?')) {

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>SIP · FLUX360 Personal Finance</title>
+    <title>SIP · FLUX360</title>
     <link rel="icon" href="../images/FLUX360_logo.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -34,275 +34,104 @@
             --white:         #ffffff;
         }
 
-        body {
-            background: #f5f7f5;
-            font-family: 'DM Sans', sans-serif;
-            color: var(--slate-900);
-            min-height: 100vh;
-            padding: 36px 28px;
-        }
-
+        body { background: #f5f7f5; font-family: 'DM Sans', sans-serif; color: var(--slate-900); min-height: 100vh; padding: 36px 28px; }
         .page { max-width: 1180px; margin: 0 auto; }
 
-        /* ── PAGE HEADER ── */
-        .page-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 16px;
-            margin-bottom: 32px;
-            animation: fadeUp 0.4s ease both;
-        }
-
+        .page-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 32px; animation: fadeUp 0.4s ease both; }
         .page-title { display: flex; align-items: center; gap: 14px; }
-
-        .page-title-icon {
-            width: 44px; height: 44px;
-            background: var(--accent);
-            border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            color: white; font-size: 1.1rem;
-        }
-
+        .page-title-icon { width: 44px; height: 44px; background: var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.1rem; }
         .page-title h1 { font-size: 1.5rem; font-weight: 600; color: var(--slate-900); letter-spacing: -0.02em; }
         .page-title p  { font-size: 0.85rem; color: var(--slate-400); margin-top: 1px; }
-
         .header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-
-        .total-pill {
-            background: var(--accent);
-            color: white; padding: 10px 20px; border-radius: 40px;
-            display: flex; align-items: center; gap: 10px; font-size: 0.875rem;
-        }
+        .total-pill { background: var(--accent); color: white; padding: 10px 20px; border-radius: 40px; display: flex; align-items: center; gap: 10px; font-size: 0.875rem; }
         .total-pill span { opacity: 0.8; }
         .total-pill strong { font-size: 1.1rem; font-weight: 600; }
 
-        /* ── STAT ROW ── */
-        .stat-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
-            animation: fadeUp 0.4s 0.05s ease both;
-        }
-
-        .stat-card {
-            background: var(--white);
-            border: 1.5px solid var(--slate-200);
-            border-radius: 16px;
-            padding: 20px 22px;
-            display: flex; align-items: center; gap: 16px;
-        }
-
-        .stat-icon {
-            width: 42px; height: 42px; border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1rem; flex-shrink: 0;
-        }
-
-        .stat-icon.green  { background: var(--green-dim);   color: var(--green); }
-        .stat-icon.red    { background: var(--red-dim);     color: var(--red); }
-        .stat-icon.slate  { background: var(--slate-100);   color: var(--slate-600); }
-
+        .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; animation: fadeUp 0.4s 0.05s ease both; }
+        .stat-card { background: var(--white); border: 1.5px solid var(--slate-200); border-radius: 16px; padding: 20px 22px; display: flex; align-items: center; gap: 16px; }
+        .stat-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+        .stat-icon.green { background: var(--green-dim); color: var(--green); }
+        .stat-icon.red   { background: var(--red-dim);   color: var(--red); }
+        .stat-icon.slate { background: var(--slate-100); color: var(--slate-600); }
         .stat-info p { font-size: 0.75rem; color: var(--slate-400); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 3px; }
         .stat-info strong { font-size: 1.3rem; font-weight: 600; color: var(--slate-900); letter-spacing: -0.02em; }
         .stat-info strong.profit { color: var(--green); }
         .stat-info strong.loss   { color: var(--red); }
 
-        /* ── CARD ── */
-        .card {
-            background: var(--white);
-            border: 1.5px solid var(--slate-200);
-            border-radius: 20px;
-            padding: 24px 26px;
-            margin-bottom: 20px;
-        }
-
+        .card { background: var(--white); border: 1.5px solid var(--slate-200); border-radius: 20px; padding: 24px 26px; margin-bottom: 20px; }
         .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 22px; }
-
-        .card-header-icon {
-            width: 34px; height: 34px;
-            background: var(--accent-dim); border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            color: var(--accent); font-size: 0.875rem;
-        }
-
+        .card-header-icon { width: 34px; height: 34px; background: var(--accent-dim); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 0.875rem; }
         .card-header h3 { font-size: 1rem; font-weight: 600; color: var(--slate-900); }
 
-        /* ── FORM ── */
         .form-grid { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; }
-
         .field { flex: 1 1 160px; min-width: 150px; }
         .field.wide { flex: 2 1 240px; }
-
-        .field label {
-            display: block; font-size: 0.72rem; font-weight: 500;
-            text-transform: uppercase; letter-spacing: 0.05em;
-            color: var(--slate-400); margin-bottom: 6px;
-        }
-
-        .field input, .field select {
-            width: 100%; padding: 11px 14px;
-            border: 1.5px solid var(--slate-200); border-radius: 10px;
-            background: var(--white); font-family: 'DM Sans', sans-serif;
-            font-size: 0.9rem; color: var(--slate-900);
-            transition: border-color 0.2s, box-shadow 0.2s; appearance: none;
-        }
-
+        .field label { display: block; font-size: 0.72rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; color: var(--slate-400); margin-bottom: 6px; }
+        .field input, .field select { width: 100%; padding: 11px 14px; border: 1.5px solid var(--slate-200); border-radius: 10px; background: var(--white); font-family: 'DM Sans', sans-serif; font-size: 0.9rem; color: var(--slate-900); transition: border-color 0.2s, box-shadow 0.2s; appearance: none; }
         .field input::placeholder { color: var(--slate-400); }
-
-        .field input:focus, .field select:focus {
-            outline: none; border-color: var(--accent-light);
-            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
-        }
-
+        .field input:focus, .field select:focus { outline: none; border-color: var(--accent-light); box-shadow: 0 0 0 3px rgba(22,163,74,0.1); }
         .form-actions { display: flex; gap: 10px; margin-top: 18px; align-items: center; }
 
-        .error-msg {
-            font-size: 0.82rem; color: var(--red);
-            background: var(--red-dim); border: 1px solid var(--red-border);
-            border-radius: 8px; padding: 8px 14px; margin-bottom: 16px; display: none;
-        }
+        .error-msg { font-size: 0.82rem; color: var(--red); background: var(--red-dim); border: 1px solid var(--red-border); border-radius: 8px; padding: 8px 14px; margin-bottom: 16px; display: none; }
 
-        /* ── BUTTONS ── */
-        .btn {
-            display: inline-flex; align-items: center; gap: 7px;
-            padding: 10px 20px; border-radius: 10px; border: none;
-            font-family: 'DM Sans', sans-serif; font-size: 0.875rem;
-            font-weight: 500; cursor: pointer;
-            transition: background 0.15s, transform 0.12s, box-shadow 0.15s;
-        }
-
-        .btn-primary {
-            background: var(--accent); color: white;
-            box-shadow: 0 3px 10px rgba(22, 163, 74, 0.3);
-        }
-
-        .btn-primary:hover {
-            background: #15803d;
-            transform: translateY(-1px);
-            box-shadow: 0 5px 14px rgba(22, 163, 74, 0.35);
-        }
-
+        .btn { display: inline-flex; align-items: center; gap: 7px; padding: 10px 20px; border-radius: 10px; border: none; font-family: 'DM Sans', sans-serif; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: background 0.15s, transform 0.12s, box-shadow 0.15s; }
+        .btn-primary { background: var(--accent); color: white; box-shadow: 0 3px 10px rgba(22,163,74,0.3); }
+        .btn-primary:hover { background: #15803d; transform: translateY(-1px); box-shadow: 0 5px 14px rgba(22,163,74,0.35); }
         .btn-ghost { background: var(--slate-100); color: var(--slate-600); }
         .btn-ghost:hover { background: var(--slate-200); }
-
         .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; }
 
-        /* ── TABLE ── */
         .table-scroll { overflow-x: auto; }
-
         table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
         thead tr { border-bottom: 1.5px solid var(--slate-200); }
-
-        th {
-            text-align: left; padding: 10px 14px;
-            font-size: 0.7rem; font-weight: 500;
-            text-transform: uppercase; letter-spacing: 0.06em; color: var(--slate-400);
-        }
-
-        td {
-            padding: 14px 14px;
-            border-bottom: 1px solid var(--slate-100);
-            color: var(--slate-700); font-weight: 400;
-        }
-
+        th { text-align: left; padding: 10px 14px; font-size: 0.7rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--slate-400); }
+        td { padding: 14px 14px; border-bottom: 1px solid var(--slate-100); color: var(--slate-700); font-weight: 400; }
         tbody tr:last-child td { border-bottom: none; }
         tbody tr:hover td { background: var(--slate-50); }
 
-        .badge {
-            display: inline-block; padding: 4px 12px; border-radius: 40px;
-            font-size: 0.75rem; font-weight: 500;
-        }
-
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 40px; font-size: 0.75rem; font-weight: 500; }
         .badge-active   { background: var(--green-dim); color: var(--green); }
         .badge-inactive { background: var(--red-dim);   color: var(--red); }
 
-        .fund-name { font-weight: 500; color: var(--slate-900); font-size: 0.9rem; }
-        .fund-code { font-size: 0.76rem; color: var(--slate-400); margin-top: 2px; }
+        .fund-name  { font-weight: 500; color: var(--slate-900); font-size: 0.9rem; }
+        .fund-code  { font-size: 0.76rem; color: var(--slate-400); margin-top: 2px; }
         .amount-cell { font-weight: 600; color: var(--slate-900); font-size: 0.925rem; }
 
         .row-actions { display: flex; gap: 6px; }
-
-        .icon-btn {
-            height: 30px; padding: 0 10px; border: none; border-radius: 8px;
-            cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
-            font-size: 0.76rem; font-weight: 500; font-family: 'DM Sans', sans-serif;
-            transition: background 0.15s, color 0.15s;
-        }
-
-        .icon-btn.view   { background: var(--accent-dim);  color: var(--accent); }
+        .icon-btn { height: 30px; padding: 0 10px; border: none; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; font-size: 0.76rem; font-weight: 500; font-family: 'DM Sans', sans-serif; transition: background 0.15s, color 0.15s; }
+        .icon-btn.view { background: var(--accent-dim); color: var(--accent); }
         .icon-btn.view:hover { background: var(--accent); color: white; }
-        .icon-btn.run    { background: var(--green-dim);   color: var(--green); }
+        .icon-btn.run  { background: var(--green-dim); color: var(--green); }
         .icon-btn.run:hover:not(:disabled) { background: var(--green); color: white; }
         .icon-btn.run:disabled { opacity: 0.4; cursor: not-allowed; }
-        .icon-btn.del    { background: var(--red-dim);     color: var(--red); }
-        .icon-btn.del:hover  { background: var(--red); color: white; }
+        .icon-btn.del  { background: var(--red-dim); color: var(--red); }
+        .icon-btn.del:hover { background: var(--red); color: white; }
 
-        /* ── EMPTY STATE ── */
-        .empty-state {
-            text-align: center; padding: 48px 20px; color: var(--slate-400); display: none;
-        }
+        .empty-state { text-align: center; padding: 48px 20px; color: var(--slate-400); display: none; }
         .empty-state i { font-size: 2.5rem; margin-bottom: 12px; display: block; }
         .empty-state p { font-size: 0.9rem; }
 
-        /* ── PORTFOLIO SECTION ── */
-        .section-label {
-            font-size: 0.72rem; font-weight: 500; text-transform: uppercase;
-            letter-spacing: 0.06em; color: var(--slate-400); margin-bottom: 14px;
-        }
+        .section-label { font-size: 0.72rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--slate-400); margin-bottom: 14px; }
 
-        /* ── PROGRESS BAR ── */
         .progress-wrap { margin-top: 20px; }
-
-        .progress-meta {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 8px;
-        }
-
+        .progress-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .progress-meta span { font-size: 0.8rem; color: var(--slate-600); }
         .progress-meta strong { font-size: 0.875rem; color: var(--slate-900); font-weight: 600; }
-
-        .progress-track {
-            background: var(--slate-100); border-radius: 40px;
-            overflow: hidden; height: 10px;
-        }
-
-        .progress-fill {
-            height: 100%; border-radius: 40px;
-            background: linear-gradient(90deg, var(--accent), var(--accent-light));
-            transition: width 0.6s ease;
-            width: 0%;
-        }
-
+        .progress-track { background: var(--slate-100); border-radius: 40px; overflow: hidden; height: 10px; }
+        .progress-fill { height: 100%; border-radius: 40px; background: linear-gradient(90deg, var(--accent), var(--accent-light)); transition: width 0.6s ease; width: 0%; }
         .progress-pct { font-size: 0.78rem; color: var(--slate-400); text-align: right; margin-top: 5px; }
 
-        /* ── CHART ── */
-        .chart-box {
-            background: var(--slate-50); border: 1.5px solid var(--slate-200);
-            border-radius: 14px; padding: 20px; height: 300px; margin-top: 22px; position: relative;
-        }
-
+        .chart-box { background: var(--slate-50); border: 1.5px solid var(--slate-200); border-radius: 14px; padding: 20px; height: 300px; margin-top: 22px; position: relative; }
         .chart-box canvas { width: 100% !important; height: 100% !important; }
 
-        /* ── DIVIDER ── */
-        .divider {
-            height: 1px; background: var(--slate-200); margin: 22px 0;
-        }
+        .divider { height: 1px; background: var(--slate-200); margin: 22px 0; }
 
-        /* ── ANIMATION ── */
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(14px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
+        /* loading indicator for stat cards */
+        .loading-text { color: var(--slate-400); font-size: 0.85rem; font-weight: 400; }
 
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
         .hidden { display: none !important; }
-
-        @media (max-width: 600px) {
-            body { padding: 20px 16px; }
-            .page-header { flex-direction: column; align-items: flex-start; }
-        }
+        @media (max-width: 600px) { body { padding: 20px 16px; } .page-header { flex-direction: column; align-items: flex-start; } }
     </style>
 </head>
 <body>
@@ -330,38 +159,24 @@
     <div class="stat-row">
         <div class="stat-card">
             <div class="stat-icon green"><i class="fas fa-layer-group"></i></div>
-            <div class="stat-info">
-                <p>Active SIPs</p>
-                <strong id="statActive">0</strong>
-            </div>
+            <div class="stat-info"><p>Active SIPs</p><strong id="statActive">0</strong></div>
         </div>
         <div class="stat-card">
             <div class="stat-icon green"><i class="fas fa-indian-rupee-sign"></i></div>
-            <div class="stat-info">
-                <p>Monthly invest</p>
-                <strong id="statMonthly">₹0</strong>
-            </div>
+            <div class="stat-info"><p>Monthly invest</p><strong id="statMonthly">₹0</strong></div>
         </div>
         <div class="stat-card">
             <div class="stat-icon green"><i class="fas fa-coins"></i></div>
-            <div class="stat-info">
-                <p>Total invested</p>
-                <strong id="statInvested">₹0</strong>
-            </div>
+            <!-- Fix 4: shows loading until portfolio totals are fetched -->
+            <div class="stat-info"><p>Total invested</p><strong id="statInvested"><span class="loading-text">Loading…</span></strong></div>
         </div>
         <div class="stat-card">
             <div class="stat-icon green"><i class="fas fa-arrow-trend-up"></i></div>
-            <div class="stat-info">
-                <p>Current value</p>
-                <strong id="statValue">₹0</strong>
-            </div>
+            <div class="stat-info"><p>Current value</p><strong id="statValue"><span class="loading-text">Loading…</span></strong></div>
         </div>
         <div class="stat-card">
             <div class="stat-icon slate"><i class="fas fa-percent"></i></div>
-            <div class="stat-info">
-                <p>XIRR</p>
-                <strong id="statXirr">—</strong>
-            </div>
+            <div class="stat-info"><p>Avg XIRR</p><strong id="statXirr"><span class="loading-text">Loading…</span></strong></div>
         </div>
     </div>
 
@@ -371,48 +186,19 @@
             <div class="card-header-icon"><i class="fas fa-plus"></i></div>
             <h3>Add new SIP</h3>
         </div>
-
         <div id="errorMsg" class="error-msg"></div>
-
         <div class="form-grid">
-            <div class="field wide">
-                <label for="fundName">Fund name *</label>
-                <input id="fundName" placeholder="e.g. HDFC Balanced Advantage">
-            </div>
-            <div class="field">
-                <label for="fundCode">Fund code</label>
-                <input id="fundCode" placeholder="e.g. 119551">
-            </div>
-            <div class="field">
-                <label for="monthlyAmount">Monthly amount (₹) *</label>
-                <input id="monthlyAmount" type="number" step="100" placeholder="5000">
-            </div>
-            <div class="field">
-                <label for="startDate">Start date *</label>
-                <input id="startDate" type="date">
-            </div>
-            <div class="field">
-                <label for="sipDay">SIP day (1–28) *</label>
-                <input id="sipDay" type="number" min="1" max="28" placeholder="5">
-            </div>
-            <div class="field">
-                <label for="goalName">Goal name</label>
-                <input id="goalName" placeholder="e.g. Retirement">
-            </div>
-            <div class="field">
-                <label for="targetAmount">Target amount (₹)</label>
-                <input id="targetAmount" type="number" step="10000" placeholder="1000000">
-            </div>
-            <div class="field">
-                <label for="inflationRate">Inflation rate (%)</label>
-                <input id="inflationRate" type="number" step="0.1" value="6" placeholder="6">
-            </div>
+            <div class="field wide"><label for="fundName">Fund name *</label><input id="fundName" placeholder="e.g. HDFC Balanced Advantage"></div>
+            <div class="field"><label for="fundCode">Fund code</label><input id="fundCode" placeholder="e.g. 119551"></div>
+            <div class="field"><label for="monthlyAmount">Monthly amount (₹) *</label><input id="monthlyAmount" type="number" step="100" placeholder="5000"></div>
+            <div class="field"><label for="startDate">Start date *</label><input id="startDate" type="date"></div>
+            <div class="field"><label for="sipDay">SIP day (1–28) *</label><input id="sipDay" type="number" min="1" max="28" placeholder="5"></div>
+            <div class="field"><label for="goalName">Goal name</label><input id="goalName" placeholder="e.g. Retirement"></div>
+            <div class="field"><label for="targetAmount">Target amount (₹)</label><input id="targetAmount" type="number" step="10000" placeholder="1000000"></div>
+            <div class="field"><label for="inflationRate">Inflation rate (%)</label><input id="inflationRate" type="number" step="0.1" value="6" placeholder="6"></div>
         </div>
-
         <div class="form-actions">
-            <button class="btn btn-primary" onclick="addSip()">
-                <i class="fas fa-plus"></i> Add SIP
-            </button>
+            <button class="btn btn-primary" onclick="addSip()"><i class="fas fa-plus"></i> Add SIP</button>
         </div>
     </div>
 
@@ -422,22 +208,16 @@
             <div class="card-header-icon"><i class="fas fa-table"></i></div>
             <h3>Your SIPs</h3>
         </div>
-
         <div id="emptyState" class="empty-state">
             <i class="far fa-folder-open"></i>
             <p>No SIPs added yet — start by adding one above.</p>
         </div>
-
         <div class="table-scroll">
             <table id="sipTableWrap">
                 <thead>
                 <tr>
-                    <th>Fund</th>
-                    <th>Monthly</th>
-                    <th>SIP Day</th>
-                    <th>Status</th>
-                    <th>Goal</th>
-                    <th></th>
+                    <th>Fund</th><th>Monthly</th><th>SIP Day</th>
+                    <th>Status</th><th>Goal</th><th></th>
                 </tr>
                 </thead>
                 <tbody id="sipTable"></tbody>
@@ -445,14 +225,12 @@
         </div>
     </div>
 
-    <!-- PORTFOLIO CARD (shown on view) -->
+    <!-- PORTFOLIO CARD -->
     <div class="card" id="portfolioCard" style="display:none;">
         <div class="card-header">
             <div class="card-header-icon"><i class="fas fa-chart-pie"></i></div>
             <h3 id="portfolioTitle">Portfolio</h3>
         </div>
-
-        <!-- Stats -->
         <div class="stat-row" style="margin-bottom:0;">
             <div class="stat-card">
                 <div class="stat-icon green"><i class="fas fa-coins"></i></div>
@@ -475,12 +253,8 @@
                 <div class="stat-info"><p>Real return</p><strong id="pRealReturn">0.00%</strong></div>
             </div>
         </div>
-
-        <!-- Goal tracking -->
         <div class="divider"></div>
-
         <div class="section-label">Goal tracking</div>
-
         <div class="stat-row" style="grid-template-columns:1fr 1fr; margin-bottom:0;">
             <div class="stat-card">
                 <div class="stat-icon green"><i class="fas fa-flag"></i></div>
@@ -491,7 +265,6 @@
                 <div class="stat-info"><p>Target</p><strong id="pTarget" style="font-size:1rem;">₹0</strong></div>
             </div>
         </div>
-
         <div class="progress-wrap">
             <div class="progress-meta">
                 <span>Progress</span>
@@ -501,8 +274,6 @@
                 <div class="progress-fill" id="pProgressBar"></div>
             </div>
         </div>
-
-        <!-- Chart -->
         <div class="divider"></div>
         <div class="section-label">Portfolio growth</div>
         <div class="chart-box">
@@ -516,7 +287,7 @@
 <script src="../js/api.js"></script>
 <script>
     let sipChartInstance = null;
-    let currentSipId    = null;
+    let currentSipId     = null;
 
     document.addEventListener('DOMContentLoaded', () => {
         if (typeof requireAuth === 'function') requireAuth();
@@ -524,7 +295,10 @@
     });
 
     function fmt(n) {
-        return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(n || 0);
+        return new Intl.NumberFormat('en-IN', {
+            style: 'currency', currency: 'INR',
+            minimumFractionDigits: 0, maximumFractionDigits: 0
+        }).format(n || 0);
     }
 
     function setError(msg) {
@@ -533,6 +307,7 @@
         el.style.display = msg ? 'block' : 'none';
     }
 
+    // ── ADD SIP ──
     function addSip() {
         const fundName      = document.getElementById('fundName').value.trim();
         const fundCode      = document.getElementById('fundCode').value.trim();
@@ -543,13 +318,14 @@
         const targetAmount  = parseFloat(document.getElementById('targetAmount').value);
         const inflationRate = parseFloat(document.getElementById('inflationRate').value) || 6;
 
-        if (!fundName || !monthlyAmount || monthlyAmount <= 0 || !startDate || sipDay < 1 || sipDay > 28) {
+        if (!fundName || !monthlyAmount || monthlyAmount <= 0 || !startDate || sipDay < 1 || sipDay > 28)
             return setError('Please fill all required fields with valid values.');
-        }
         setError(null);
 
-        const payload = { fundName, fundCode, monthlyAmount, startDate, sipDay, goalName,
-            targetAmount: isNaN(targetAmount) ? null : targetAmount, inflationRate };
+        const payload = {
+            fundName, fundCode, monthlyAmount, startDate, sipDay, goalName,
+            targetAmount: isNaN(targetAmount) ? null : targetAmount, inflationRate
+        };
 
         apiRequest('/sip', { method: 'POST', body: JSON.stringify(payload) }).then(res => {
             if (res.ok) {
@@ -560,6 +336,7 @@
         });
     }
 
+    // ── LOAD SIPs ──
     function loadSips() {
         apiRequest('/sip').then(r => r.json()).then(data => {
             const tbody  = document.getElementById('sipTable');
@@ -570,7 +347,11 @@
             if (!data || data.length === 0) {
                 empty.style.display  = 'block';
                 tableW.style.display = 'none';
-                updateHeaderStats([]);
+                updateBasicStats([]);
+                // Clear loading state when no SIPs
+                document.getElementById('statInvested').textContent = '₹0';
+                document.getElementById('statValue').textContent    = '₹0';
+                document.getElementById('statXirr').textContent     = '—';
                 return;
             }
 
@@ -580,48 +361,98 @@
             data.forEach(sip => {
                 const statusClass = sip.active ? 'badge-active' : 'badge-inactive';
                 const statusText  = sip.active ? 'Active' : 'Inactive';
-                tbody.innerHTML += `
-          <tr>
-            <td>
-              <div class="fund-name">${sip.fundName}</div>
-              ${sip.fundCode ? `<div class="fund-code">${sip.fundCode}</div>` : ''}
-            </td>
-            <td class="amount-cell">${fmt(sip.monthlyAmount)}</td>
-            <td style="color:var(--slate-400)">Day ${sip.sipDay || '—'}</td>
-            <td><span class="badge ${statusClass}">${statusText}</span></td>
-            <td style="color:var(--slate-600);font-size:0.85rem">${sip.goalName || '—'}</td>
-            <td>
-              <div class="row-actions">
-                <button class="icon-btn view" onclick="viewPortfolio(${sip.id}, '${sip.fundName.replace(/'/g,"\\'")}')">
-                  <i class="fas fa-chart-simple"></i> View
-                </button>
-                <button class="icon-btn run" onclick="executeSip(${sip.id})" ${sip.active ? '' : 'disabled'}>
-                  <i class="fas fa-play"></i> Run
-                </button>
-                <button class="icon-btn ${sip.active ? 'del' : 'run'}" onclick="toggleSip(${sip.id}, ${sip.active})">
-                  <i class="fas fa-${sip.active ? 'pause' : 'circle-play'}"></i> ${sip.active ? 'Deactivate' : 'Activate'}
-                </button>
-                <button class="icon-btn del" onclick="deleteSip(${sip.id})">
-                  <i class="fas fa-trash"></i>
-                </button>
-              </div>
-            </td>
-          </tr>`;
+                tbody.innerHTML  += `
+                <tr>
+                    <td>
+                        <div class="fund-name">${sip.fundName}</div>
+                        ${sip.fundCode ? `<div class="fund-code">${sip.fundCode}</div>` : ''}
+                    </td>
+                    <td class="amount-cell">${fmt(sip.monthlyAmount)}</td>
+                    <td style="color:var(--slate-400)">Day ${sip.sipDay || '—'}</td>
+                    <td><span class="badge ${statusClass}">${statusText}</span></td>
+                    <td style="color:var(--slate-600);font-size:0.85rem">${sip.goalName || '—'}</td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="icon-btn view" onclick="viewPortfolio(${sip.id}, '${sip.fundName.replace(/'/g,"\\'")}')">
+                                <i class="fas fa-chart-simple"></i> View
+                            </button>
+                            <button class="icon-btn run" onclick="executeSip(${sip.id})" ${sip.active ? '' : 'disabled'}>
+                                <i class="fas fa-play"></i> Run
+                            </button>
+                            <button class="icon-btn ${sip.active ? 'del' : 'run'}" onclick="toggleSip(${sip.id}, ${sip.active})">
+                                <i class="fas fa-${sip.active ? 'pause' : 'circle-play'}"></i> ${sip.active ? 'Deactivate' : 'Activate'}
+                            </button>
+                            <button class="icon-btn del" onclick="deleteSip(${sip.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>`;
             });
 
-            updateHeaderStats(data);
+            updateBasicStats(data);
+
+            // Fix 4: load portfolio totals in the background on page load
+            loadPortfolioTotals(data);
+
         }).catch(err => console.error('Error loading SIPs:', err));
     }
 
-    function updateHeaderStats(data) {
-        const active   = data.filter(s => s.active).length;
-        const monthly  = data.filter(s => s.active).reduce((a, s) => a + (parseFloat(s.monthlyAmount) || 0), 0);
+    // ── BASIC STATS (no API call needed) ──
+    function updateBasicStats(data) {
+        const active  = data.filter(s => s.active).length;
+        const monthly = data.filter(s => s.active).reduce((a, s) => a + (parseFloat(s.monthlyAmount) || 0), 0);
         document.getElementById('totalMonthly').textContent = fmt(monthly);
         document.getElementById('statActive').textContent   = active;
         document.getElementById('statMonthly').textContent  = fmt(monthly);
-        // invested/value/xirr would need portfolio data; show — until viewed
     }
 
+    // Fix 4: fetch portfolio for all active SIPs and sum totals
+    async function loadPortfolioTotals(sips) {
+        const activeSips = sips.filter(s => s.active && s.fundCode);
+        if (!activeSips.length) {
+            document.getElementById('statInvested').textContent = '₹0';
+            document.getElementById('statValue').textContent    = '₹0';
+            document.getElementById('statXirr').textContent     = '—';
+            return;
+        }
+
+        let totalInvested = 0, totalValue = 0;
+        let xirrSum = 0, xirrCount = 0;
+
+        // Fetch all in parallel for speed
+        const results = await Promise.allSettled(
+            activeSips.map(sip =>
+                apiRequest(`/sip/${sip.id}/portfolio`).then(r => r.ok ? r.json() : null)
+            )
+        );
+
+        results.forEach(result => {
+            if (result.status !== 'fulfilled' || !result.value) return;
+            const d = result.value;
+            totalInvested += parseFloat(d.totalInvested || 0);
+            if (d.navAvailable !== false) {
+                totalValue += parseFloat(d.currentValue || 0);
+                const xirr = parseFloat(d.xirr || 0);
+                if (!isNaN(xirr) && xirr !== 0) { xirrSum += xirr; xirrCount++; }
+            }
+        });
+
+        document.getElementById('statInvested').textContent = fmt(totalInvested);
+        document.getElementById('statValue').textContent    = fmt(totalValue);
+        document.getElementById('statXirr').textContent     = xirrCount > 0
+            ? (xirrSum / xirrCount).toFixed(2) + '%'
+            : '—';
+
+        // Colour XIRR
+        const xirrEl = document.getElementById('statXirr');
+        if (xirrCount > 0) {
+            const avgXirr = xirrSum / xirrCount;
+            xirrEl.className = avgXirr >= 0 ? 'profit' : 'loss';
+        }
+    }
+
+    // ── VIEW PORTFOLIO ──
     function viewPortfolio(id, name) {
         currentSipId = id;
         document.getElementById('portfolioTitle').textContent = name;
@@ -629,58 +460,45 @@
         card.style.display = 'block';
         setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
 
-        // Portfolio data
         apiRequest(`/sip/${id}/portfolio`).then(r => r.json()).then(d => {
             document.getElementById('pInvested').textContent   = fmt(d.totalInvested);
             document.getElementById('pXirr').textContent       = parseFloat(d.xirr || 0).toFixed(2) + '%';
             document.getElementById('pRealReturn').textContent = parseFloat(d.realReturn || 0).toFixed(2) + '%';
 
-            // FIX 1: Check navAvailable flag from backend
             if (d.navAvailable === false) {
                 document.getElementById('pValue').textContent   = 'NAV unavailable';
                 document.getElementById('pReturns').textContent = '—';
                 document.getElementById('pXirr').textContent    = '—';
-                document.getElementById('statValue').textContent = 'NAV unavailable';
-                document.getElementById('statXirr').textContent  = '—';
             } else {
-                document.getElementById('pValue').textContent      = fmt(d.currentValue);
-                document.getElementById('statValue').textContent   = fmt(d.currentValue);
-                document.getElementById('statXirr').textContent    = parseFloat(d.xirr || 0).toFixed(2) + '%';
-
-                const ret = parseFloat(d.returns || 0);
+                document.getElementById('pValue').textContent = fmt(d.currentValue);
+                const ret   = parseFloat(d.returns || 0);
                 const retEl = document.getElementById('pReturns');
                 retEl.textContent = fmt(ret);
-                retEl.className = ret >= 0 ? 'profit' : 'loss';
+                retEl.className   = ret >= 0 ? 'profit' : 'loss';
             }
 
-            // update global stats
-            document.getElementById('statInvested').textContent = fmt(d.totalInvested);
-
-            // Goal
             document.getElementById('pGoalName').textContent = d.goalName || '—';
             document.getElementById('pTarget').textContent   = fmt(d.targetAmount);
             const pct = Math.min(d.goalProgress || 0, 100);
-            document.getElementById('pProgressBar').style.width = pct + '%';
-            document.getElementById('pProgressPct').textContent = pct.toFixed(1) + '%';
+            document.getElementById('pProgressBar').style.width  = pct + '%';
+            document.getElementById('pProgressPct').textContent  = pct.toFixed(1) + '%';
+
         }).catch(err => console.error('Portfolio error:', err));
 
-        // Chart
         apiRequest(`/sip/${id}/chart`).then(r => r.json()).then(chartData => {
             renderSipChart(chartData);
         }).catch(err => console.error('Chart error:', err));
     }
 
+    // ── CHART ──
     function renderSipChart(chartData) {
         if (sipChartInstance) sipChartInstance.destroy();
-
-        const ctx = document.getElementById('sipChart').getContext('2d');
-        const labels = chartData.map(x => x.date);
-        const values = chartData.map(x => x.value);
-
-        // Gradient fill
+        const ctx      = document.getElementById('sipChart').getContext('2d');
+        const labels   = chartData.map(x => x.date);
+        const values   = chartData.map(x => x.value);
         const gradient = ctx.createLinearGradient(0, 0, 0, 260);
-        gradient.addColorStop(0,   'rgba(22, 163, 74, 0.18)');
-        gradient.addColorStop(1,   'rgba(22, 163, 74, 0)');
+        gradient.addColorStop(0, 'rgba(22,163,74,0.18)');
+        gradient.addColorStop(1, 'rgba(22,163,74,0)');
 
         sipChartInstance = new Chart(ctx, {
             type: 'line',
@@ -692,58 +510,35 @@
                     borderColor: '#16a34a',
                     borderWidth: 2.5,
                     backgroundColor: gradient,
-                    fill: true,
-                    tension: 0.4,
-                    pointRadius: 0,
-                    pointHoverRadius: 5,
+                    fill: true, tension: 0.4,
+                    pointRadius: 0, pointHoverRadius: 5,
                     pointHoverBackgroundColor: '#16a34a',
                     pointHoverBorderColor: '#fff',
                     pointHoverBorderWidth: 2,
                 }]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: false,
+                responsive: true, maintainAspectRatio: false,
                 interaction: { mode: 'index', intersect: false },
                 plugins: {
                     legend: { display: false },
                     tooltip: {
-                        backgroundColor: '#0f172a',
-                        titleColor: '#94a3b8',
-                        bodyColor: '#ffffff',
-                        padding: 12,
-                        cornerRadius: 10,
+                        backgroundColor: '#0f172a', titleColor: '#94a3b8', bodyColor: '#ffffff',
+                        padding: 12, cornerRadius: 10,
                         titleFont: { family: 'DM Sans', size: 11 },
                         bodyFont: { family: 'DM Sans', size: 13, weight: '600' },
-                        callbacks: {
-                            label: ctx => '  ' + new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(ctx.parsed.y)
-                        }
+                        callbacks: { label: ctx => '  ' + new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(ctx.parsed.y) }
                     }
                 },
                 scales: {
-                    x: {
-                        grid: { display: false },
-                        border: { display: false },
-                        ticks: {
-                            color: '#94a3b8',
-                            font: { family: 'DM Sans', size: 11 },
-                            maxTicksLimit: 8,
-                        }
-                    },
-                    y: {
-                        grid: { color: '#f1f5f9' },
-                        border: { display: false },
-                        ticks: {
-                            color: '#94a3b8',
-                            font: { family: 'DM Sans', size: 11 },
-                            callback: v => '₹' + (v >= 100000 ? (v/100000).toFixed(1) + 'L' : v >= 1000 ? (v/1000).toFixed(0) + 'K' : v)
-                        }
-                    }
+                    x: { grid: { display: false }, border: { display: false }, ticks: { color: '#94a3b8', font: { family: 'DM Sans', size: 11 }, maxTicksLimit: 8 } },
+                    y: { grid: { color: '#f1f5f9' }, border: { display: false }, ticks: { color: '#94a3b8', font: { family: 'DM Sans', size: 11 }, callback: v => '₹' + (v >= 100000 ? (v/100000).toFixed(1)+'L' : v >= 1000 ? (v/1000).toFixed(0)+'K' : v) } }
                 }
             }
         });
     }
 
+    // ── EXECUTE ──
     function executeSip(id) {
         if (!confirm('Execute this SIP now?')) return;
         apiRequest(`/sip/${id}/execute`, { method: 'POST' }).then(res => {
@@ -751,12 +546,12 @@
                 loadSips();
                 if (currentSipId === id) viewPortfolio(id, document.getElementById('portfolioTitle').textContent);
             } else {
-                // FIX 2: backend returns plain text, not JSON
                 res.text().then(msg => alert(msg || 'Failed to execute SIP.'));
             }
         });
     }
 
+    // ── DELETE ──
     function deleteSip(id) {
         if (!confirm('Delete this SIP?')) return;
         apiRequest(`/sip/${id}`, { method: 'DELETE' }).then(res => {
@@ -766,21 +561,18 @@
                     currentSipId = null;
                 }
                 loadSips();
-            } else {
-                alert('Failed to delete SIP. Please try again.');
-            }
+            } else alert('Failed to delete SIP. Please try again.');
         });
     }
 
-    // FIX 3: Activate / Deactivate toggle — calls backend PUT endpoints
+    // ── TOGGLE ACTIVE/INACTIVE ──
     function toggleSip(id, isActive) {
-        const action  = isActive ? 'deactivate' : 'activate';
-        const label   = isActive ? 'Deactivate' : 'Activate';
+        const action = isActive ? 'deactivate' : 'activate';
+        const label  = isActive ? 'Deactivate' : 'Activate';
         if (!confirm(`${label} this SIP?`)) return;
         apiRequest(`/sip/${id}/${action}`, { method: 'PUT' }).then(res => {
             if (res.ok) {
                 loadSips();
-                // if portfolio is open for this SIP, refresh it
                 if (currentSipId === id) viewPortfolio(id, document.getElementById('portfolioTitle').textContent);
             } else {
                 res.text().then(msg => alert(msg || `Failed to ${action} SIP.`));

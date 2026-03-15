@@ -9,4 +9,7 @@ import java.util.List;
 public interface SipInvestmentRepository extends JpaRepository<SipInvestment, Long> {
 
     List<SipInvestment> findByUser(User user);
+
+    // Fix 2: efficient query — only active SIPs, no in-memory filtering
+    List<SipInvestment> findByActiveTrue();
 }
