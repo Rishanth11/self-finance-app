@@ -1,4 +1,4 @@
-package com.pro.finance.self_finance_app;
+package com.pro.finance.selffinanceapp;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

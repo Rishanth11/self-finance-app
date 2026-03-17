@@ -105,12 +105,6 @@
 			<!-- <version>9.22.3</version> -->
 		</dependency>
 
-		<dependency>
-			<groupId>com.mysql</groupId>
-			<artifactId>mysql-connector-j</artifactId>
-			<!-- leave version to Spring Boot dependency management or add a compatible one -->
-		</dependency>
-
 	</dependencies>
 
 	<build>
