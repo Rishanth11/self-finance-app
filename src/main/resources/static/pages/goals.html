@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="../images/FLUX360_logo.png">
+  <title>Goals · FLUX360</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --green:        #16a34a;
+      --green-light:  #22c55e;
+      --green-dim:    #dcfce7;
+      --green-border: #bbf7d0;
+      --slate-900:    #0f172a;
+      --slate-700:    #334155;
+      --slate-600:    #475569;
+      --slate-400:    #94a3b8;
+      --slate-200:    #e2e8f0;
+      --slate-100:    #f1f5f9;
+      --slate-50:     #f8fafc;
+      --white:        #ffffff;
+      --red:          #dc2626;
+      --red-dim:      #fef2f2;
+      --red-border:   #fee2e2;
+      --blue:         #2563eb;
+      --blue-dim:     #eff6ff;
+      --amber:        #d97706;
+      --amber-dim:    #fef3c7;
+    }
+
+    body { background: #f5f7f5; font-family: 'DM Sans', sans-serif; color: var(--slate-900); min-height: 100vh; padding: 36px 28px; }
+    .page { max-width: 1280px; margin: 0 auto; }
+
+    /* ── PAGE HEADER ── */
+    .page-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 28px; animation: fadeUp 0.4s ease both; }
+    .page-title { display: flex; align-items: center; gap: 14px; }
+    .page-title-icon { width: 44px; height: 44px; background: var(--green); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.1rem; }
+    .page-title h1 { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.02em; }
+    .page-title p  { font-size: 0.85rem; color: var(--slate-400); margin-top: 1px; }
+
+    /* ── STAT ROW ── */
+    .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 16px; margin-bottom: 24px; animation: fadeUp 0.4s 0.05s ease both; }
+    .stat-card { background: var(--white); border: 1.5px solid var(--slate-200); border-radius: 16px; padding: 20px 22px; display: flex; align-items: center; gap: 16px; }
+    .stat-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+    .stat-icon.green { background: var(--green-dim);  color: var(--green); }
+    .stat-icon.blue  { background: var(--blue-dim);   color: var(--blue); }
+    .stat-icon.amber { background: var(--amber-dim);  color: var(--amber); }
+    .stat-icon.slate { background: var(--slate-100);  color: var(--slate-600); }
+    .stat-info p { font-size: 0.75rem; color: var(--slate-400); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 3px; }
+    .stat-info strong { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.02em; }
+
+    /* ── OVERALL PROGRESS ── */
+    .progress-card { background: var(--white); border: 1.5px solid var(--slate-200); border-radius: 16px; padding: 20px 24px; margin-bottom: 24px; animation: fadeUp 0.4s 0.08s ease both; }
+    .progress-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .progress-card-title { font-size: 0.875rem; font-weight: 600; color: var(--slate-700); display: flex; align-items: center; gap: 8px; }
+    .progress-card-title i { color: var(--green); }
+    .progress-pct { font-size: 1rem; font-weight: 600; color: var(--green); }
+    .progress-bar-outer { height: 8px; background: var(--green-dim); border-radius: 99px; overflow: hidden; }
+    .progress-bar-inner { height: 100%; background: linear-gradient(90deg, var(--green-light), var(--green)); border-radius: 99px; transition: width 0.7s cubic-bezier(0.4,0,0.2,1); }
+
+    /* ── FILTER TABS ── */
+    .filter-nav { display: flex; gap: 4px; background: var(--white); border: 1.5px solid var(--slate-200); border-radius: 14px; padding: 5px; margin-bottom: 22px; width: fit-content; animation: fadeUp 0.4s 0.1s ease both; flex-wrap: wrap; }
+    .filter-nav-btn { padding: 9px 22px; border-radius: 10px; border: none; background: none; font-family: 'DM Sans', sans-serif; font-size: 0.875rem; font-weight: 500; color: var(--slate-600); cursor: pointer; transition: all 0.15s; }
+    .filter-nav-btn.active { background: var(--green); color: white; }
+    .filter-nav-btn:not(.active):hover { background: var(--slate-100); }
+
+    /* ── GOALS GRID ── */
+    .goals-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; animation: fadeUp 0.4s 0.12s ease both; }
+
+    /* ── GOAL CARD ── */
+    .goal-card { background: var(--white); border: 1.5px solid var(--slate-200); border-radius: 20px; overflow: hidden; transition: box-shadow 0.2s, transform 0.2s; display: flex; flex-direction: column; }
+    .goal-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.10); transform: translateY(-2px); }
+
+    .goal-card-top { padding: 20px 20px 14px; display: flex; gap: 14px; align-items: flex-start; }
+    .goal-icon { width: 42px; height: 42px; border-radius: 12px; background: var(--green-dim); display: flex; align-items: center; justify-content: center; color: var(--green); font-size: 1rem; flex-shrink: 0; }
+    .goal-meta { flex: 1; min-width: 0; }
+    .goal-name { font-weight: 600; font-size: 0.975rem; letter-spacing: -0.01em; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--slate-900); }
+
+    .goal-badges { display: flex; gap: 5px; flex-wrap: wrap; }
+    .badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 6px; font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .badge-category  { background: var(--green-dim); color: var(--green); }
+    .badge-HIGH      { background: var(--red-dim);   color: var(--red); }
+    .badge-MEDIUM    { background: var(--amber-dim); color: var(--amber); }
+    .badge-LOW       { background: var(--green-dim); color: var(--green); }
+    .badge-ACTIVE    { background: var(--green-dim); color: var(--green); }
+    .badge-PAUSED    { background: var(--slate-100); color: var(--slate-600); }
+    .badge-COMPLETED { background: #d1fae5;          color: #065f46; }
+    .badge-ABANDONED { background: var(--red-dim);   color: var(--red); }
+
+    /* ── PROGRESS SECTION ── */
+    .goal-progress-section { padding: 0 20px 14px; display: flex; align-items: center; gap: 16px; }
+    .circle-wrap { position: relative; width: 68px; height: 68px; flex-shrink: 0; }
+    .circle-wrap svg { transform: rotate(-90deg); }
+    .circle-bg { fill: none; stroke: var(--green-dim); stroke-width: 5.5; }
+    .circle-fg { fill: none; stroke: var(--green); stroke-width: 5.5; stroke-linecap: round; transition: stroke-dashoffset 0.8s cubic-bezier(0.4,0,0.2,1); }
+    .circle-fg.completed { stroke: #10b981; }
+    .circle-pct { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 600; color: var(--green); }
+
+    .goal-amounts { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+    .amount-row { display: flex; justify-content: space-between; align-items: center; }
+    .amount-label { font-size: 0.72rem; color: var(--slate-400); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 500; }
+    .amount-value { font-size: 0.875rem; font-weight: 600; color: var(--slate-900); }
+    .amount-value.green { color: var(--green); }
+
+    /* ── MILESTONE STRIP ── */
+    .milestone-strip { display: flex; padding: 0 20px 10px; gap: 0; }
+    .milestone { flex: 1; position: relative; text-align: center; }
+    .milestone::before { content: ''; position: absolute; top: 5px; left: 0; right: 0; height: 2px; background: var(--slate-200); z-index: 0; }
+    .milestone:first-child::before { left: 50%; }
+    .milestone:last-child::before  { right: 50%; }
+    .milestone-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--slate-200); border: 2px solid var(--slate-200); margin: 0 auto 4px; position: relative; z-index: 1; transition: background 0.3s, border-color 0.3s; }
+    .milestone-dot.reached { background: var(--green); border-color: var(--green); }
+    .milestone-label { font-size: 0.62rem; font-weight: 500; color: var(--slate-400); }
+
+    /* ── INFO STRIP ── */
+    .goal-info-strip { padding: 10px 20px; background: var(--slate-50); border-top: 1px solid var(--slate-200); display: flex; gap: 20px; flex-wrap: wrap; }
+    .info-item .info-label { font-size: 0.68rem; font-weight: 500; color: var(--slate-400); text-transform: uppercase; letter-spacing: 0.05em; }
+    .info-item .info-val   { font-size: 0.8rem; font-weight: 600; color: var(--slate-700); margin-top: 1px; }
+    .on-track  { color: var(--green) !important; }
+    .off-track { color: var(--red)   !important; }
+
+    /* ── CARD ACTIONS ── */
+    .goal-card-actions { padding: 12px 20px; border-top: 1px solid var(--slate-200); display: flex; gap: 6px; justify-content: flex-end; margin-top: auto; }
+
+    /* ── FORM ── */
+    .form-grid { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; }
+    .field { flex: 1 1 150px; min-width: 140px; }
+    .field label { display: block; font-size: 0.72rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; color: var(--slate-400); margin-bottom: 6px; }
+    .field input, .field select, .field textarea { width: 100%; padding: 10px 14px; border: 1.5px solid var(--slate-200); border-radius: 10px; background: var(--white); font-family: 'DM Sans', sans-serif; font-size: 0.9rem; color: var(--slate-900); transition: border-color 0.2s, box-shadow 0.2s; }
+    .field input::placeholder, .field textarea::placeholder { color: var(--slate-400); }
+    .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--green-light); box-shadow: 0 0 0 3px rgba(34,197,94,0.1); }
+    .field textarea { resize: vertical; min-height: 68px; }
+    .form-actions { display: flex; gap: 10px; margin-top: 18px; }
+
+    .hint-box { background: var(--green-dim); border: 1px solid var(--green-border); border-radius: 10px; padding: 10px 14px; font-size: 0.82rem; color: #166534; display: none; margin-top: 14px; }
+    .error-msg { font-size: 0.82rem; color: var(--red); background: var(--red-dim); border: 1px solid var(--red-border); border-radius: 8px; padding: 8px 14px; margin-bottom: 16px; display: none; }
+
+    /* ── BUTTONS ── */
+    .btn { display: inline-flex; align-items: center; gap: 7px; padding: 10px 20px; border-radius: 10px; border: none; font-family: 'DM Sans', sans-serif; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: background 0.15s, transform 0.12s, box-shadow 0.15s; }
+    .btn-primary { background: var(--green); color: white; box-shadow: 0 3px 10px rgba(22,163,74,0.3); }
+    .btn-primary:hover { background: #15803d; transform: translateY(-1px); }
+    .btn-ghost { background: var(--slate-100); color: var(--slate-600); }
+    .btn-ghost:hover { background: var(--slate-200); }
+    .btn-danger { background: var(--red-dim); color: var(--red); }
+    .btn-danger:hover { background: #fecaca; }
+    .btn-sm { padding: 7px 14px; font-size: 0.8rem; }
+
+    /* ── ICON BUTTONS ── */
+    .icon-btn { width: 28px; height: 28px; border: none; border-radius: 7px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; transition: background 0.15s, color 0.15s; }
+    .icon-btn.edit { background: var(--slate-100); color: var(--slate-600); }
+    .icon-btn.edit:hover { background: var(--green); color: white; }
+    .icon-btn.del  { background: var(--red-dim); color: var(--red); }
+    .icon-btn.del:hover { background: var(--red); color: white; }
+    .row-actions { display: flex; gap: 5px; }
+
+    /* ── MODAL ── */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.45); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--white); border-radius: 20px; padding: 28px 30px; width: 100%; max-width: 580px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); animation: fadeUp 0.2s ease both; max-height: 90vh; overflow-y: auto; }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+    .modal-header h3 { font-size: 1.1rem; font-weight: 600; }
+    .modal-close { background: none; border: none; font-size: 1.1rem; color: var(--slate-400); cursor: pointer; }
+    .modal-close:hover { color: var(--slate-900); }
+
+    /* ── CONTRIBUTION LIST ── */
+    .contributions-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+    .contribution-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--slate-50); border-radius: 10px; border: 1.5px solid var(--slate-200); }
+    .contribution-amount { font-weight: 600; font-size: 0.925rem; color: var(--green); }
+    .contribution-meta { font-size: 0.75rem; color: var(--slate-400); margin-top: 2px; }
+    .contribution-del { background: none; border: none; cursor: pointer; color: var(--red); font-size: 0.8rem; opacity: 0.6; transition: opacity 0.15s; padding: 4px; }
+    .contribution-del:hover { opacity: 1; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state { text-align: center; padding: 48px 20px; color: var(--slate-400); }
+    .empty-state i { font-size: 2.5rem; margin-bottom: 12px; display: block; color: var(--slate-200); }
+    .empty-state p { font-size: 0.9rem; }
+
+    /* ── TOAST ── */
+    .toast-container { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 8px; z-index: 9999; }
+    .toast { padding: 12px 18px; border-radius: 10px; font-size: 0.875rem; font-weight: 500; background: var(--slate-900); color: #fff; box-shadow: 0 4px 20px rgba(0,0,0,0.15); animation: slideIn 0.25s ease, fadeOut 0.3s ease 2.7s forwards; max-width: 320px; }
+    .toast.error { background: var(--red); }
+    @keyframes slideIn { from { transform: translateX(40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes fadeOut { to { opacity: 0; transform: translateX(10px); } }
+    @keyframes fadeUp  { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+    .hidden { display: none !important; }
+    @media (max-width: 600px) { body { padding: 20px 16px; } .goals-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="page-title">
+      <div class="page-title-icon"><i class="fas fa-bullseye"></i></div>
+      <div>
+        <h1>Goal Planner</h1>
+        <p>Track your financial goals &amp; contributions</p>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="openGoalModal()">
+      <i class="fas fa-plus"></i> New Goal
+    </button>
+  </div>
+
+  <!-- STAT ROW -->
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="stat-icon slate"><i class="fas fa-layer-group"></i></div>
+      <div class="stat-info"><p>Total Goals</p><strong id="s-total">—</strong></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green"><i class="fas fa-circle-notch"></i></div>
+      <div class="stat-info"><p>Active</p><strong id="s-active">—</strong></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon blue"><i class="fas fa-trophy"></i></div>
+      <div class="stat-info"><p>Completed</p><strong id="s-completed">—</strong></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green"><i class="fas fa-piggy-bank"></i></div>
+      <div class="stat-info"><p>Total Saved</p><strong id="s-saved">—</strong></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon amber"><i class="fas fa-flag-checkered"></i></div>
+      <div class="stat-info"><p>Remaining</p><strong id="s-remaining">—</strong></div>
+    </div>
+  </div>
+
+  <!-- OVERALL PROGRESS -->
+  <div class="progress-card">
+    <div class="progress-card-header">
+      <div class="progress-card-title">
+        <i class="fas fa-chart-line"></i> Overall Progress Across Active Goals
+      </div>
+      <span class="progress-pct" id="overallPct">0%</span>
+    </div>
+    <div class="progress-bar-outer">
+      <div class="progress-bar-inner" id="overallBar" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- FILTER TABS -->
+  <div class="filter-nav">
+    <button class="filter-nav-btn active" onclick="filterGoals('ALL',this)">All</button>
+    <button class="filter-nav-btn" onclick="filterGoals('ACTIVE',this)">Active</button>
+    <button class="filter-nav-btn" onclick="filterGoals('COMPLETED',this)">Completed</button>
+    <button class="filter-nav-btn" onclick="filterGoals('PAUSED',this)">Paused</button>
+    <button class="filter-nav-btn" onclick="filterGoals('ABANDONED',this)">Abandoned</button>
+  </div>
+
+  <!-- GOALS GRID -->
+  <div class="goals-grid" id="goalsGrid">
+    <div class="empty-state" style="grid-column:1/-1">
+      <i class="fas fa-bullseye"></i>
+      <p>No goals yet — create your first financial goal above.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ── GOAL MODAL ── -->
+<div class="modal-overlay" id="goalModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="goalModalTitle">New Goal</h3>
+      <button class="modal-close" onclick="closeModal('goalModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="goalError" class="error-msg"></div>
+
+    <div class="form-grid">
+      <div class="field" style="flex-basis:100%;">
+        <label>Goal Name *</label>
+        <input id="g-name" placeholder="e.g. Emergency Fund" />
+      </div>
+      <div class="field" style="flex-basis:100%;">
+        <label>Description</label>
+        <textarea id="g-desc" placeholder="Optional note…"></textarea>
+      </div>
+      <div class="field">
+        <label>Category *</label>
+        <select id="g-category">
+          <option value="">Select…</option>
+          <option value="EMERGENCY_FUND">Emergency Fund</option>
+          <option value="VACATION">Vacation</option>
+          <option value="HOME">Home</option>
+          <option value="CAR">Car</option>
+          <option value="EDUCATION">Education</option>
+          <option value="WEDDING">Wedding</option>
+          <option value="RETIREMENT">Retirement</option>
+          <option value="INVESTMENT">Investment</option>
+          <option value="GADGET">Gadget</option>
+          <option value="CUSTOM">Custom</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Priority *</label>
+        <select id="g-priority">
+          <option value="HIGH">High</option>
+          <option value="MEDIUM" selected>Medium</option>
+          <option value="LOW">Low</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Target Amount (₹) *</label>
+        <input id="g-target" type="number" placeholder="0.00" min="1" oninput="calcProjection()" />
+      </div>
+      <div class="field">
+        <label>Monthly Contribution (₹) *</label>
+        <input id="g-monthly" type="number" placeholder="0.00" min="1" oninput="calcProjection()" />
+      </div>
+      <div class="field">
+        <label>Start Date *</label>
+        <input id="g-start" type="date" />
+      </div>
+      <div class="field">
+        <label>Target Date *</label>
+        <input id="g-targetDate" type="date" oninput="calcProjection()" />
+      </div>
+      <div class="field" style="flex-basis:100%;">
+        <label>Linked Account</label>
+        <input id="g-account" placeholder="e.g. SBI Savings, HDFC RD…" />
+      </div>
+    </div>
+
+    <div class="hint-box" id="projectionHint">
+      <span id="projectionText"></span>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn btn-primary" onclick="saveGoal()"><i class="fas fa-check"></i> Save Goal</button>
+      <button class="btn btn-ghost" onclick="closeModal('goalModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── CONTRIBUTE MODAL ── -->
+<div class="modal-overlay" id="contributeModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Add Contribution</h3>
+      <button class="modal-close" onclick="closeModal('contributeModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="contributeGoalName" style="font-size:0.875rem;font-weight:600;color:var(--green);margin-bottom:18px;"></div>
+    <div id="contributeError" class="error-msg"></div>
+
+    <div class="form-grid">
+      <div class="field">
+        <label>Amount (₹) *</label>
+        <input id="c-amount" type="number" placeholder="0.00" min="1" />
+      </div>
+      <div class="field">
+        <label>Date *</label>
+        <input id="c-date" type="date" />
+      </div>
+      <div class="field" style="flex-basis:100%;">
+        <label>Note</label>
+        <input id="c-note" placeholder="Optional note…" />
+      </div>
+    </div>
+
+    <div class="form-actions" style="margin-bottom:20px;">
+      <button class="btn btn-primary" onclick="submitContribution()"><i class="fas fa-plus"></i> Add Contribution</button>
+    </div>
+
+    <div style="font-size:0.75rem;font-weight:500;text-transform:uppercase;letter-spacing:0.05em;color:var(--slate-400);margin-bottom:8px;">
+      Recent Contributions
+    </div>
+    <div class="contributions-list" id="contributionsList">
+      <div style="font-size:0.82rem;color:var(--slate-400);text-align:center;padding:16px;">No contributions yet.</div>
+    </div>
+
+    <div class="form-actions" style="margin-top:16px;">
+      <button class="btn btn-ghost" onclick="closeModal('contributeModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/guard.js"></script>
+<script src="../js/api.js"></script>
+<script>
+  // ── apiRequest() already prepends /api, so use /goals not /api/goals ──
+  const API = '/goals';
+
+  let allGoals = [];
+  let editingId = null;
+  let activeContributeGoalId = null;
+
+  function fmt(v) {
+    return new Intl.NumberFormat('en-IN', { style:'currency', currency:'INR', minimumFractionDigits:0, maximumFractionDigits:0 }).format(v || 0);
+  }
+  function fmtShort(v) {
+    const n = Number(v);
+    if (Math.abs(n) >= 1e7) return '₹' + (n/1e7).toFixed(2) + 'Cr';
+    if (Math.abs(n) >= 1e5) return '₹' + (n/1e5).toFixed(2) + 'L';
+    if (Math.abs(n) >= 1e3) return '₹' + (n/1e3).toFixed(1) + 'K';
+    return fmt(n);
+  }
+  function today() { return new Date().toISOString().split('T')[0]; }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    if (typeof requireAuth === 'function') requireAuth();
+    document.getElementById('g-start').value = today();
+    document.getElementById('c-date').value  = today();
+    loadAll();
+  });
+
+  // ── LOAD ──────────────────────────────────────────────────────────
+  async function loadAll() {
+    try {
+      const [goalsRes, summaryRes] = await Promise.all([
+        apiRequest(API),
+        apiRequest(API + '/summary')
+      ]);
+      allGoals = await goalsRes.json();
+      const summary = await summaryRes.json();
+      renderSummary(summary);
+      renderGoals(allGoals);
+    } catch(e) { toast('Failed to load goals', true); }
+  }
+
+  function renderSummary(s) {
+    document.getElementById('s-total').textContent     = s.totalGoals;
+    document.getElementById('s-active').textContent    = s.activeGoals;
+    document.getElementById('s-completed').textContent = s.completedGoals;
+    document.getElementById('s-saved').textContent     = fmtShort(s.totalSavedAmount);
+    document.getElementById('s-remaining').textContent = fmtShort(s.totalRemainingAmount);
+    const pct = Math.min(100, Math.round(s.overallProgress));
+    document.getElementById('overallPct').textContent = pct + '%';
+    document.getElementById('overallBar').style.width = pct + '%';
+  }
+
+  function filterGoals(status, el) {
+    document.querySelectorAll('.filter-nav-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    const filtered = status === 'ALL' ? allGoals : allGoals.filter(g => g.status === status);
+    renderGoals(filtered);
+  }
+
+  function renderGoals(goals) {
+    const grid = document.getElementById('goalsGrid');
+    if (!goals.length) {
+      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+        <i class="fas fa-bullseye"></i>
+        <p>No goals here — try a different filter or create a new goal.</p>
+      </div>`;
+      return;
+    }
+    grid.innerHTML = goals.map(g => goalCardHTML(g)).join('');
+    // Animate SVG circles
+    goals.forEach(g => {
+      const fg = document.getElementById('fg-' + g.id);
+      if (!fg) return;
+      const r = 26, circ = 2 * Math.PI * r;
+      const pct = Math.min(100, g.progressPercentage);
+      fg.style.strokeDasharray  = circ;
+      fg.style.strokeDashoffset = circ;
+      setTimeout(() => { fg.style.strokeDashoffset = circ - (pct / 100) * circ; }, 80);
+      if (pct >= 100) fg.classList.add('completed');
+    });
+  }
+
+  function goalCardHTML(g) {
+    const pct = Math.min(100, Math.round(g.progressPercentage));
+    const r = 26, circ = 2 * Math.PI * r;
+    const milestones = [25, 50, 75, 100];
+
+    return `
+    <div class="goal-card">
+      <div class="goal-card-top">
+        <div class="goal-icon"><i class="fas fa-bullseye"></i></div>
+        <div class="goal-meta">
+          <div class="goal-name" title="${g.name}">${g.name}</div>
+          <div class="goal-badges">
+            <span class="badge badge-category">${g.category.replace(/_/g,' ')}</span>
+            <span class="badge badge-${g.priority}">${g.priority}</span>
+            <span class="badge badge-${g.status}">${g.status}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="milestone-strip">
+        ${milestones.map(m => `
+        <div class="milestone">
+          <div class="milestone-dot ${pct >= m ? 'reached' : ''}"></div>
+          <div class="milestone-label">${m}%</div>
+        </div>`).join('')}
+      </div>
+
+      <div class="goal-progress-section">
+        <div class="circle-wrap">
+          <svg width="68" height="68" viewBox="0 0 68 68">
+            <circle class="circle-bg" cx="34" cy="34" r="${r}"/>
+            <circle class="circle-fg" id="fg-${g.id}" cx="34" cy="34" r="${r}"
+              stroke-dasharray="${circ}" stroke-dashoffset="${circ}"/>
+          </svg>
+          <div class="circle-pct">${pct}%</div>
+        </div>
+        <div class="goal-amounts">
+          <div class="amount-row">
+            <span class="amount-label">Saved</span>
+            <span class="amount-value green">${fmt(g.savedAmount)}</span>
+          </div>
+          <div class="amount-row">
+            <span class="amount-label">Target</span>
+            <span class="amount-value">${fmt(g.targetAmount)}</span>
+          </div>
+          <div class="amount-row">
+            <span class="amount-label">Remaining</span>
+            <span class="amount-value">${fmt(g.remainingAmount)}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="goal-info-strip">
+        <div class="info-item">
+          <div class="info-label">Monthly</div>
+          <div class="info-val">${fmt(g.monthlyContribution)}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Target Date</div>
+          <div class="info-val">${g.targetDate}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Projected</div>
+          <div class="info-val ${g.onTrack ? 'on-track' : 'off-track'}">
+            ${g.projectedCompletionDate || '—'} ${g.onTrack ? '▲' : '⚠'}
+          </div>
+        </div>
+        ${g.linkedAccount ? `<div class="info-item"><div class="info-label">Account</div><div class="info-val">${g.linkedAccount}</div></div>` : ''}
+      </div>
+
+      <div class="goal-card-actions">
+        ${g.status === 'ACTIVE' ? `<button class="btn btn-ghost btn-sm" onclick="changeStatus(${g.id},'PAUSED')"><i class="fas fa-pause"></i> Pause</button>` : ''}
+        ${g.status === 'PAUSED' ? `<button class="btn btn-ghost btn-sm" onclick="changeStatus(${g.id},'ACTIVE')"><i class="fas fa-play"></i> Resume</button>` : ''}
+        ${g.status !== 'COMPLETED' && g.status !== 'ABANDONED'
+            ? `<button class="btn btn-ghost btn-sm" onclick="openContributeModal(${g.id},'${escHtml(g.name)}')"><i class="fas fa-plus"></i> Contribute</button>`
+            : ''}
+        <div class="row-actions">
+          <button class="icon-btn edit" onclick="openEditModal(${g.id})" title="Edit"><i class="fas fa-pen"></i></button>
+          <button class="icon-btn del"  onclick="deleteGoal(${g.id})"   title="Delete"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  function escHtml(s) { return s.replace(/'/g, "\\'"); }
+
+  // ── GOAL MODAL ────────────────────────────────────────────────────
+  function openGoalModal() {
+    editingId = null;
+    document.getElementById('goalModalTitle').textContent = 'New Goal';
+    ['g-name','g-desc','g-account'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('g-category').value   = '';
+    document.getElementById('g-priority').value   = 'MEDIUM';
+    document.getElementById('g-target').value     = '';
+    document.getElementById('g-monthly').value    = '';
+    document.getElementById('g-start').value      = today();
+    document.getElementById('g-targetDate').value = '';
+    document.getElementById('projectionHint').style.display = 'none';
+    setError('goalError', null);
+    document.getElementById('goalModal').classList.add('open');
+  }
+
+  function openEditModal(id) {
+    const g = allGoals.find(x => x.id === id);
+    if (!g) return;
+    editingId = id;
+    document.getElementById('goalModalTitle').textContent = 'Edit Goal';
+    document.getElementById('g-name').value       = g.name;
+    document.getElementById('g-desc').value       = g.description || '';
+    document.getElementById('g-category').value   = g.category;
+    document.getElementById('g-priority').value   = g.priority;
+    document.getElementById('g-target').value     = g.targetAmount;
+    document.getElementById('g-monthly').value    = g.monthlyContribution;
+    document.getElementById('g-start').value      = g.startDate;
+    document.getElementById('g-targetDate').value = g.targetDate;
+    document.getElementById('g-account').value    = g.linkedAccount || '';
+    setError('goalError', null);
+    document.getElementById('goalModal').classList.add('open');
+    calcProjection();
+  }
+
+  function calcProjection() {
+    const monthly      = parseFloat(document.getElementById('g-monthly').value);
+    const target       = parseFloat(document.getElementById('g-target').value);
+    const targetDateVal = document.getElementById('g-targetDate').value;
+    const hint = document.getElementById('projectionHint');
+    if (!monthly || !target) { hint.style.display = 'none'; return; }
+    const monthsNeeded = Math.ceil(target / monthly);
+    const projDate = new Date();
+    projDate.setMonth(projDate.getMonth() + monthsNeeded);
+    const projStr = projDate.toISOString().split('T')[0];
+    let msg = `At ₹${monthly.toLocaleString('en-IN')}/month — target in ~${monthsNeeded} months (by ${projStr}).`;
+    if (targetDateVal) {
+      msg += new Date(projStr) <= new Date(targetDateVal)
+              ? ' On track!'
+              : ' Consider increasing your monthly contribution.';
+    }
+    document.getElementById('projectionText').textContent = msg;
+    hint.style.display = 'block';
+  }
+
+  async function saveGoal() {
+    const name                = document.getElementById('g-name').value.trim();
+    const category            = document.getElementById('g-category').value;
+    const priority            = document.getElementById('g-priority').value;
+    const targetAmount        = document.getElementById('g-target').value;
+    const monthlyContribution = document.getElementById('g-monthly').value;
+    const startDate           = document.getElementById('g-start').value;
+    const targetDate          = document.getElementById('g-targetDate').value;
+
+    if (!name || !category || !targetAmount || !monthlyContribution || !targetDate)
+      return setError('goalError', 'Please fill all required fields.');
+
+    const body = {
+      name,
+      description:          document.getElementById('g-desc').value,
+      category,
+      priority,
+      targetAmount:         parseFloat(targetAmount),
+      monthlyContribution:  parseFloat(monthlyContribution),
+      startDate,
+      targetDate,
+      linkedAccount:        document.getElementById('g-account').value
+    };
+
+    try {
+      const url    = editingId ? `${API}/${editingId}` : API;
+      const method = editingId ? 'PUT' : 'POST';
+      const res    = await apiRequest(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      if (!res.ok) throw new Error();
+      closeModal('goalModal');
+      toast(editingId ? 'Goal updated!' : 'Goal created!');
+      loadAll();
+    } catch(e) { setError('goalError', 'Failed to save goal. Please try again.'); }
+  }
+
+  async function deleteGoal(id) {
+    if (!confirm('Delete this goal and all its contributions?')) return;
+    try {
+      await apiRequest(`${API}/${id}`, { method: 'DELETE' });
+      toast('Goal deleted');
+      loadAll();
+    } catch(e) { toast('Failed to delete', true); }
+  }
+
+  async function changeStatus(id, status) {
+    try {
+      await apiRequest(`${API}/${id}/status?status=${status}`, { method: 'PATCH' });
+      toast('Status updated');
+      loadAll();
+    } catch(e) { toast('Failed to update status', true); }
+  }
+
+  // ── CONTRIBUTE MODAL ──────────────────────────────────────────────
+  async function openContributeModal(goalId, goalName) {
+    activeContributeGoalId = goalId;
+    document.getElementById('contributeGoalName').textContent = goalName;
+    document.getElementById('c-amount').value = '';
+    document.getElementById('c-date').value   = today();
+    document.getElementById('c-note').value   = '';
+    setError('contributeError', null);
+    document.getElementById('contributeModal').classList.add('open');
+    await loadContributions(goalId);
+  }
+
+  async function loadContributions(goalId) {
+    try {
+      const res  = await apiRequest(`${API}/${goalId}/contributions`);
+      const list = await res.json();
+      const el   = document.getElementById('contributionsList');
+      if (!list.length) {
+        el.innerHTML = '<div style="font-size:0.82rem;color:var(--slate-400);text-align:center;padding:16px;">No contributions yet.</div>';
+        return;
+      }
+      el.innerHTML = list.slice(0, 10).map(c => `
+        <div class="contribution-item">
+          <div>
+            <div class="contribution-amount">${fmt(c.amount)}</div>
+            <div class="contribution-meta">${c.contributionDate}${c.note ? ' · ' + c.note : ''}</div>
+          </div>
+          <button class="contribution-del" onclick="delContribution(${c.id})" title="Remove">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>`).join('');
+    } catch(e) {}
+  }
+
+  async function submitContribution() {
+    const amount = document.getElementById('c-amount').value;
+    const date   = document.getElementById('c-date').value;
+    if (!amount || !date) return setError('contributeError', 'Please enter amount and date.');
+    try {
+      const res = await apiRequest(`${API}/contributions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          goalId:           activeContributeGoalId,
+          amount:           parseFloat(amount),
+          contributionDate: date,
+          note:             document.getElementById('c-note').value
+        })
+      });
+      if (!res.ok) throw new Error();
+      document.getElementById('c-amount').value = '';
+      document.getElementById('c-note').value   = '';
+      setError('contributeError', null);
+      toast('Contribution added!');
+      await loadContributions(activeContributeGoalId);
+      loadAll();
+    } catch(e) { setError('contributeError', 'Failed to add contribution.'); }
+  }
+
+  async function delContribution(id) {
+    if (!confirm('Remove this contribution?')) return;
+    try {
+      await apiRequest(`${API}/contributions/${id}`, { method: 'DELETE' });
+      toast('Contribution removed');
+      await loadContributions(activeContributeGoalId);
+      loadAll();
+    } catch(e) { toast('Failed to remove', true); }
+  }
+
+  // ── HELPERS ───────────────────────────────────────────────────────
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+  function setError(id, msg) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent   = msg || '';
+    el.style.display = msg ? 'block' : 'none';
+  }
+
+  function toast(msg, isError = false) {
+    const el = document.createElement('div');
+    el.className  = 'toast' + (isError ? ' error' : '');
+    el.textContent = msg;
+    document.getElementById('toastContainer').appendChild(el);
+    setTimeout(() => el.remove(), 3200);
+  }
+
+  ['goalModal', 'contributeModal'].forEach(id => {
+    document.getElementById(id).addEventListener('click', function(e) {
+      if (e.target === this) closeModal(id);
+    });
+  });
+</script>
+</body>
+</html>

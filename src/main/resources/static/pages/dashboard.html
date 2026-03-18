@@ -29,25 +29,26 @@
             --white:        #ffffff;
             --red:          #dc2626;
             --red-dim:      #fef2f2;
+            --red-border:   #fee2e2;
         }
 
         body { background: #f0f4f0; font-family: 'DM Sans', sans-serif; color: var(--slate-900); min-height: 100vh; padding: 28px 24px; }
         .page { max-width: 1280px; margin: 0 auto; }
 
+        /* ── TOP BAR ── */
         .top-bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 28px; animation: fadeUp 0.4s ease both; }
         .brand { display: flex; align-items: center; gap: 12px; }
         .brand-logo { height: 40px; width: auto; }
         .brand-text h1 { font-size: 1.15rem; font-weight: 600; color: var(--slate-900); letter-spacing: -0.02em; line-height: 1.2; }
         .brand-text p  { font-size: 0.75rem; color: var(--slate-400); margin-top: 1px; }
         .top-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-
         .greeting-pill { display: flex; align-items: center; gap: 9px; background: var(--white); border: 1.5px solid var(--green-border); border-radius: 40px; padding: 8px 16px; font-size: 0.85rem; color: var(--slate-600); }
         .greeting-pill i { color: var(--green); }
         .greeting-pill strong { color: var(--slate-900); font-weight: 600; }
-
         .logout-btn { display: inline-flex; align-items: center; gap: 7px; padding: 8px 16px; border-radius: 10px; border: none; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 500; cursor: pointer; background: var(--red-dim); color: var(--red); transition: background 0.15s; }
         .logout-btn:hover { background: var(--red); color: white; }
 
+        /* ── HERO ── */
         .hero { background: linear-gradient(135deg, #15803d 0%, #16a34a 50%, #22c55e 100%); border-radius: 24px; padding: 28px 32px; margin-bottom: 24px; color: white; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; animation: fadeUp 0.4s 0.05s ease both; position: relative; overflow: hidden; }
         .hero::after  { content: ''; position: absolute; right: -40px; top: -40px; width: 200px; height: 200px; border-radius: 50%; background: rgba(255,255,255,0.06); }
         .hero::before { content: ''; position: absolute; right: 80px; bottom: -60px; width: 160px; height: 160px; border-radius: 50%; background: rgba(255,255,255,0.04); }
@@ -59,29 +60,56 @@
         .hero-stat p { font-size: 0.72rem; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
         .hero-stat strong { font-size: 1.1rem; font-weight: 600; }
 
+        /* ── ALERT BANNERS ── */
+        .alert-banner { display: none; align-items: center; gap: 14px; background: var(--green-dim); border: 1.5px solid var(--green-border); border-radius: 14px; padding: 14px 20px; margin-bottom: 14px; animation: fadeUp 0.4s 0.06s ease both; }
+        .alert-banner.show { display: flex; }
+        .alert-banner-icon { width: 36px; height: 36px; background: var(--green); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.9rem; flex-shrink: 0; }
+        .alert-banner-text { flex: 1; }
+        .alert-banner-text strong { font-size: 0.875rem; font-weight: 600; color: var(--slate-900); display: block; }
+        .alert-banner-text span { font-size: 0.78rem; color: var(--slate-600); }
+        .alert-banner-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 9px; border: none; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500; cursor: pointer; background: var(--green); color: white; white-space: nowrap; transition: background 0.15s; }
+        .alert-banner-btn:hover { background: #15803d; }
+        .alert-banner.danger { background: var(--red-dim); border-color: #fca5a5; }
+        .alert-banner.danger .alert-banner-icon { background: var(--red); }
+        .alert-banner.danger .alert-banner-btn { background: var(--red); }
+        .alert-banner.danger .alert-banner-btn:hover { background: #b91c1c; }
+
+        /* ── STAT CARDS ── */
         .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 24px; animation: fadeUp 0.4s 0.08s ease both; }
         .stat-card { background: var(--white); border: 1.5px solid var(--slate-200); border-radius: 16px; padding: 18px 20px; position: relative; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
         .stat-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.07); }
         .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: 16px 16px 0 0; background: var(--green); }
+        .stat-card.accent-red::before { background: var(--red); }
         .stat-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
         .stat-label { font-size: 0.7rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--slate-400); }
         .stat-icon { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0; background: var(--green-dim); color: var(--green); }
+        .stat-icon.red { background: var(--red-dim); color: var(--red); }
         .stat-value { font-size: 1.4rem; font-weight: 600; color: var(--slate-900); letter-spacing: -0.02em; margin-bottom: 3px; }
         .stat-sub { font-size: 0.72rem; color: var(--slate-400); }
 
+        /* ── TWO COL ── */
         .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; animation: fadeUp 0.4s 0.12s ease both; }
         @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
 
+        /* ── THREE COL ── */
+        .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px; animation: fadeUp 0.4s 0.14s ease both; }
+        @media (max-width: 1100px) { .three-col { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 700px)  { .three-col { grid-template-columns: 1fr; } }
+
+        /* ── CARD ── */
         .card { background: var(--white); border: 1.5px solid var(--slate-200); border-radius: 20px; padding: 22px 24px; margin-bottom: 20px; }
         .card.no-mb { margin-bottom: 0; }
         .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
         .card-header-left { display: flex; align-items: center; gap: 10px; }
         .card-header-icon { width: 32px; height: 32px; background: var(--green-dim); border-radius: 9px; display: flex; align-items: center; justify-content: center; color: var(--green); font-size: 0.8rem; }
         .card-header h3 { font-size: 0.95rem; font-weight: 600; color: var(--slate-900); }
+        .card-link { font-size: 0.78rem; color: var(--green); font-weight: 500; cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 4px; transition: opacity 0.15s; }
+        .card-link:hover { opacity: 0.75; }
 
         .chart-box { background: var(--slate-50); border: 1.5px solid var(--slate-200); border-radius: 12px; padding: 16px; height: 240px; position: relative; }
         .chart-box canvas { width: 100% !important; height: 100% !important; }
 
+        /* ── INVESTMENT LIST ── */
         .inv-list { display: flex; flex-direction: column; gap: 10px; }
         .inv-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: var(--slate-50); border: 1.5px solid var(--slate-200); border-radius: 12px; transition: background 0.15s; cursor: pointer; }
         .inv-item:hover { background: var(--green-dim); border-color: var(--green-border); }
@@ -92,7 +120,46 @@
         .inv-value { font-size: 0.925rem; font-weight: 600; color: var(--slate-900); text-align: right; }
         .inv-label { font-size: 0.7rem; color: var(--slate-400); margin-top: 1px; text-align: right; }
 
-        .nav-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
+        /* ── EMI MINI PROGRESS ── */
+        .emi-mini-progress { margin-top: 4px; }
+        .emi-mini-bar-bg { height: 4px; background: var(--slate-200); border-radius: 99px; overflow: hidden; width: 80px; }
+        .emi-mini-bar-fill { height: 100%; background: var(--green); border-radius: 99px; }
+
+        /* ── GOALS CARD ── */
+        .goals-summary-list { display: flex; flex-direction: column; gap: 10px; }
+        .goal-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--slate-50); border: 1.5px solid var(--slate-200); border-radius: 12px; transition: background 0.15s; cursor: pointer; }
+        .goal-item:hover { background: var(--green-dim); border-color: var(--green-border); }
+        .goal-item-icon { width: 36px; height: 36px; border-radius: 10px; background: var(--green-dim); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: var(--green); flex-shrink: 0; }
+        .goal-item-body { flex: 1; min-width: 0; }
+        .goal-item-name { font-size: 0.875rem; font-weight: 500; color: var(--slate-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .goal-item-meta { font-size: 0.7rem; color: var(--slate-400); margin-top: 2px; }
+        .goal-item-right { text-align: right; flex-shrink: 0; }
+        .goal-item-pct { font-size: 0.875rem; font-weight: 600; color: var(--green); }
+        .goal-item-remaining { font-size: 0.7rem; color: var(--slate-400); margin-top: 1px; }
+        .goal-progress-bar-bg { height: 4px; background: var(--slate-200); border-radius: 99px; overflow: hidden; margin-top: 6px; }
+        .goal-progress-bar-fill { height: 100%; background: var(--green); border-radius: 99px; transition: width 0.6s ease; }
+        .goal-progress-bar-fill.completed { background: #10b981; }
+
+        /* Goals stat strip */
+        .goals-stat-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+        .goals-stat-mini { background: var(--slate-50); border: 1.5px solid var(--slate-200); border-radius: 10px; padding: 10px 14px; text-align: center; }
+        .goals-stat-mini .gsm-val { font-size: 1.1rem; font-weight: 600; color: var(--slate-900); letter-spacing: -0.02em; }
+        .goals-stat-mini .gsm-lbl { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--slate-400); font-weight: 500; margin-top: 2px; }
+
+        /* Overall goal progress bar */
+        .goal-overall-bar { margin-bottom: 16px; }
+        .goal-overall-bar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .goal-overall-bar-label { font-size: 0.75rem; font-weight: 500; color: var(--slate-600); }
+        .goal-overall-bar-pct { font-size: 0.75rem; font-weight: 600; color: var(--green); }
+        .goal-overall-bar-bg { height: 6px; background: var(--green-dim); border-radius: 99px; overflow: hidden; }
+        .goal-overall-bar-fill { height: 100%; background: linear-gradient(90deg, var(--green-light), var(--green)); border-radius: 99px; transition: width 0.7s ease; }
+
+        .goals-empty { text-align: center; padding: 28px 16px; color: var(--slate-400); }
+        .goals-empty i { font-size: 1.8rem; display: block; margin-bottom: 8px; color: var(--slate-200); }
+        .goals-empty p { font-size: 0.82rem; }
+
+        /* ── NAV GRID ── */
+        .nav-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; }
         .nav-btn { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 18px 12px; border: 1.5px solid var(--slate-200); border-radius: 14px; background: var(--white); cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500; color: var(--slate-700); transition: all 0.2s; }
         .nav-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.07); border-color: var(--green-border); background: var(--green-dim); color: var(--green); }
         .nav-btn-icon { width: 40px; height: 40px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 1rem; transition: transform 0.2s; background: var(--green-dim); color: var(--green); }
@@ -110,6 +177,8 @@
             .hero-stats { justify-content: flex-start; }
             .hero-stat { text-align: left; }
             .hero-left .hero-value { font-size: 1.8rem; }
+            .alert-banner { flex-wrap: wrap; }
+            .goals-stat-strip { grid-template-columns: repeat(3,1fr); }
         }
     </style>
 </head>
@@ -149,47 +218,72 @@
         <div class="hero-stats">
             <div class="hero-stat"><p>Total invested</p><strong id="heroInvested">₹0</strong></div>
             <div class="hero-stat"><p>Total returns</p><strong id="heroReturns">₹0</strong></div>
+            <div class="hero-stat"><p>Monthly EMI</p><strong id="heroMonthlyEmi">₹0</strong></div>
+            <div class="hero-stat"><p>Bills due</p><strong id="heroBillsDue">₹0</strong></div>
+            <div class="hero-stat"><p>Goals saved</p><strong id="heroGoalsSaved">₹0</strong></div>
             <div class="hero-stat"><p>Savings rate</p><strong id="heroSavingsRate">0%</strong></div>
         </div>
+    </div>
+
+    <!-- EMI ALERT BANNER -->
+    <div class="alert-banner" id="emiAlert">
+        <div class="alert-banner-icon"><i class="fas fa-landmark"></i></div>
+        <div class="alert-banner-text">
+            <strong id="emiAlertTitle">EMI due today</strong>
+            <span id="emiAlertSub">—</span>
+        </div>
+        <button class="alert-banner-btn" onclick="goToEmi()">
+            <i class="fas fa-landmark"></i> View EMIs
+        </button>
+    </div>
+
+    <!-- BILLS ALERT BANNER -->
+    <div class="alert-banner" id="billsAlert">
+        <div class="alert-banner-icon"><i class="fas fa-file-invoice"></i></div>
+        <div class="alert-banner-text">
+            <strong id="billsAlertTitle">Bills due soon</strong>
+            <span id="billsAlertSub">—</span>
+        </div>
+        <button class="alert-banner-btn" onclick="goToBills()">
+            <i class="fas fa-file-invoice"></i> View bills
+        </button>
     </div>
 
     <!-- STAT CARDS -->
     <div class="stat-grid">
         <div class="stat-card">
-            <div class="stat-top">
-                <span class="stat-label">Total income</span>
-                <div class="stat-icon"><i class="fas fa-arrow-trend-up"></i></div>
-            </div>
+            <div class="stat-top"><span class="stat-label">Total income</span><div class="stat-icon"><i class="fas fa-arrow-trend-up"></i></div></div>
             <div class="stat-value" id="totalIncome">₹0</div>
             <div class="stat-sub">Lifetime earnings</div>
         </div>
         <div class="stat-card">
-            <div class="stat-top">
-                <span class="stat-label">Total expense</span>
-                <div class="stat-icon"><i class="fas fa-arrow-trend-down"></i></div>
-            </div>
+            <div class="stat-top"><span class="stat-label">Total expense</span><div class="stat-icon"><i class="fas fa-arrow-trend-down"></i></div></div>
             <div class="stat-value" id="totalExpense">₹0</div>
             <div class="stat-sub">Lifetime spending</div>
         </div>
         <div class="stat-card">
-            <div class="stat-top">
-                <span class="stat-label">Net savings</span>
-                <div class="stat-icon"><i class="fas fa-piggy-bank"></i></div>
-            </div>
+            <div class="stat-top"><span class="stat-label">Net savings</span><div class="stat-icon"><i class="fas fa-piggy-bank"></i></div></div>
             <div class="stat-value" id="netSavings">₹0</div>
             <div class="stat-sub">Income − expenses</div>
         </div>
         <div class="stat-card">
-            <div class="stat-top">
-                <span class="stat-label">Savings rate</span>
-                <div class="stat-icon"><i class="fas fa-percent"></i></div>
-            </div>
+            <div class="stat-top"><span class="stat-label">Savings rate</span><div class="stat-icon"><i class="fas fa-percent"></i></div></div>
             <div class="stat-value" id="savingsRate">0%</div>
             <div class="stat-sub">Of total income</div>
         </div>
+        <div class="stat-card">
+            <div class="stat-top"><span class="stat-label">EMI outstanding</span><div class="stat-icon"><i class="fas fa-landmark"></i></div></div>
+            <div class="stat-value" id="statEmiOutstanding">₹0</div>
+            <div class="stat-sub" id="statEmiSub">0 active loans</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-top"><span class="stat-label">Bills this month</span><div class="stat-icon"><i class="fas fa-file-invoice"></i></div></div>
+            <div class="stat-value" id="statBillsMonth">₹0</div>
+            <div class="stat-sub" id="statBillsSub">0 active bills</div>
+        </div>
     </div>
 
-    <!-- TWO COLUMN -->
+    <!-- TWO COLUMN: Chart + Portfolio -->
     <div class="two-col">
         <div class="card no-mb">
             <div class="card-header">
@@ -201,7 +295,6 @@
             <div class="chart-box"><canvas id="summaryChart"></canvas></div>
         </div>
 
-        <!-- INVESTMENT PORTFOLIO — order: Gold, Silver, Stocks, SIP -->
         <div class="card no-mb">
             <div class="card-header">
                 <div class="card-header-left">
@@ -239,12 +332,89 @@
                     </div>
                     <div><div class="inv-value" id="sipValue">₹0</div><div class="inv-label">Current value</div></div>
                 </div>
+                <div class="inv-item" onclick="goToEmi()">
+                    <div class="inv-item-left">
+                        <div class="inv-dot"><i class="fas fa-landmark"></i></div>
+                        <div>
+                            <div class="inv-name">EMI / Loans</div>
+                            <div class="inv-sub" id="emiInvSub">0 active loans</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="inv-value" id="emiOutstandingValue">₹0</div>
+                        <div class="inv-label">Outstanding</div>
+                        <div class="emi-mini-progress" id="emiMiniProgressWrap" style="display:none;">
+                            <div class="emi-mini-bar-bg"><div class="emi-mini-bar-fill" id="emiMiniBar" style="width:0%"></div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="inv-item" onclick="goToBills()">
+                    <div class="inv-item-left">
+                        <div class="inv-dot"><i class="fas fa-file-invoice"></i></div>
+                        <div>
+                            <div class="inv-name">Recurring Bills</div>
+                            <div class="inv-sub" id="billsInvSub">0 active bills</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="inv-value" id="billsMonthValue">₹0</div>
+                        <div class="inv-label">Due this month</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- QUICK NAVIGATION — order: Income, Expense, Gold, Silver, Stocks, SIP, Accounts -->
-    <div class="card" style="animation: fadeUp 0.4s 0.15s ease both;">
+    <!-- GOALS SECTION -->
+    <div class="card" style="animation: fadeUp 0.4s 0.16s ease both;">
+        <div class="card-header">
+            <div class="card-header-left">
+                <div class="card-header-icon"><i class="fas fa-bullseye"></i></div>
+                <h3>Goal Planner</h3>
+            </div>
+            <a class="card-link" onclick="goToGoals()">
+                View all <i class="fas fa-arrow-right" style="font-size:0.7rem;"></i>
+            </a>
+        </div>
+
+        <!-- Mini stat strip -->
+        <div class="goals-stat-strip">
+            <div class="goals-stat-mini">
+                <div class="gsm-val" id="gDashActive">—</div>
+                <div class="gsm-lbl">Active</div>
+            </div>
+            <div class="goals-stat-mini">
+                <div class="gsm-val" id="gDashCompleted">—</div>
+                <div class="gsm-lbl">Completed</div>
+            </div>
+            <div class="goals-stat-mini">
+                <div class="gsm-val" id="gDashSaved" style="color:var(--green);">—</div>
+                <div class="gsm-lbl">Total Saved</div>
+            </div>
+        </div>
+
+        <!-- Overall progress bar -->
+        <div class="goal-overall-bar">
+            <div class="goal-overall-bar-header">
+                <span class="goal-overall-bar-label">Overall progress across active goals</span>
+                <span class="goal-overall-bar-pct" id="gDashOverallPct">0%</span>
+            </div>
+            <div class="goal-overall-bar-bg">
+                <div class="goal-overall-bar-fill" id="gDashOverallBar" style="width:0%"></div>
+            </div>
+        </div>
+
+        <!-- Top 4 active goals list -->
+        <div class="goals-summary-list" id="goalsDashList">
+            <div class="goals-empty">
+                <i class="fas fa-bullseye"></i>
+                <p>No goals yet — <a onclick="goToGoals()" style="color:var(--green);cursor:pointer;font-weight:500;">create your first goal</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- QUICK NAVIGATION -->
+    <div class="card" style="animation: fadeUp 0.4s 0.18s ease both;">
         <div class="card-header">
             <div class="card-header-left">
                 <div class="card-header-icon"><i class="fas fa-compass"></i></div>
@@ -253,39 +423,41 @@
         </div>
         <div class="nav-grid">
             <button class="nav-btn" onclick="goToIncome()">
-                <div class="nav-btn-icon"><i class="fas fa-arrow-trend-up"></i></div>
-                Income
+                <div class="nav-btn-icon"><i class="fas fa-arrow-trend-up"></i></div>Income
             </button>
             <button class="nav-btn" onclick="goToExpense()">
-                <div class="nav-btn-icon"><i class="fas fa-receipt"></i></div>
-                Expense
+                <div class="nav-btn-icon"><i class="fas fa-receipt"></i></div>Expense
             </button>
             <button class="nav-btn" onclick="goToGold()">
-                <div class="nav-btn-icon"><i class="fas fa-coins"></i></div>
-                Gold
+                <div class="nav-btn-icon"><i class="fas fa-coins"></i></div>Gold
             </button>
             <button class="nav-btn" onclick="goToSilver()">
-                <div class="nav-btn-icon"><i class="fas fa-circle-dot"></i></div>
-                Silver
+                <div class="nav-btn-icon"><i class="fas fa-circle-dot"></i></div>Silver
             </button>
             <button class="nav-btn" onclick="goToStocks()">
-                <div class="nav-btn-icon"><i class="fas fa-chart-bar"></i></div>
-                Stocks
+                <div class="nav-btn-icon"><i class="fas fa-chart-bar"></i></div>Stocks
             </button>
             <button class="nav-btn" onclick="goToSip()">
-                <div class="nav-btn-icon"><i class="fas fa-chart-line"></i></div>
-                SIP
+                <div class="nav-btn-icon"><i class="fas fa-chart-line"></i></div>SIP
             </button>
             <button class="nav-btn" onclick="goToAccounts()">
-                <div class="nav-btn-icon"><i class="fas fa-wallet"></i></div>
-                Accounts
+                <div class="nav-btn-icon"><i class="fas fa-wallet"></i></div>Accounts
+            </button>
+            <button class="nav-btn" onclick="goToEmi()">
+                <div class="nav-btn-icon"><i class="fas fa-landmark"></i></div>EMI
+            </button>
+            <button class="nav-btn" onclick="goToBills()">
+                <div class="nav-btn-icon"><i class="fas fa-file-invoice"></i></div>Bills
+            </button>
+            <button class="nav-btn" onclick="goToGoals()">
+                <div class="nav-btn-icon"><i class="fas fa-bullseye"></i></div>Goals
             </button>
         </div>
     </div>
 
     <div class="footer-note">
         <i class="fas fa-shield-alt"></i>
-        Secured · FLUX360 Personal Finance v1.0
+        Secured · FLUX360 v1.0
     </div>
 </div>
 
@@ -293,6 +465,20 @@
 <script src="../js/api.js"></script>
 <script>
     let chartInstance;
+
+    // FIX: Map categories to Font Awesome icon classes instead of emojis
+    const CATEGORY_ICONS = {
+        EMERGENCY_FUND: 'fas fa-shield-alt',
+        VACATION:       'fas fa-plane',
+        HOME:           'fas fa-house',
+        CAR:            'fas fa-car',
+        EDUCATION:      'fas fa-graduation-cap',
+        WEDDING:        'fas fa-ring',
+        RETIREMENT:     'fas fa-umbrella-beach',
+        INVESTMENT:     'fas fa-chart-line',
+        GADGET:         'fas fa-laptop',
+        CUSTOM:         'fas fa-star'
+    };
 
     document.addEventListener('DOMContentLoaded', () => {
         if (typeof requireAuth === 'function') requireAuth();
@@ -302,7 +488,6 @@
     function fmt(n) {
         return new Intl.NumberFormat('en-IN', { style:'currency', currency:'INR', minimumFractionDigits:0, maximumFractionDigits:0 }).format(n || 0);
     }
-
     function fmtShort(n) {
         const abs = Math.abs(n);
         if (abs >= 10000000) return (n < 0 ? '-' : '') + '₹' + (abs/10000000).toFixed(2) + 'Cr';
@@ -318,11 +503,20 @@
             const payload = JSON.parse(atob(token.split('.')[1]));
             if (payload.name) return payload.name;
             if (payload.sub && payload.sub.includes('@')) {
-                const username = payload.sub.split('@')[0];
-                return username.charAt(0).toUpperCase() + username.slice(1);
+                const u = payload.sub.split('@')[0];
+                return u.charAt(0).toUpperCase() + u.slice(1);
             }
             return payload.sub || 'User';
         } catch(e) { return 'User'; }
+    }
+
+    function getCurrentUserId() {
+        const token = localStorage.getItem('token');
+        if (!token) return 1;
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            return payload.userId || payload.id || 1;
+        } catch(e) { return 1; }
     }
 
     async function fetchStockPrice(symbol, exchange) {
@@ -337,37 +531,51 @@
 
     async function loadDashboard() {
         document.getElementById('userName').textContent = getUserName();
+        const userId = getCurrentUserId();
 
         try {
-            const [incomeRes, expenseRes, sipRes, goldRes, silverRes, stocksRes] = await Promise.all([
+            // FIX: Removed /api/ prefix — apiRequest() already prepends /api
+            const [incomeRes, expenseRes, sipRes, goldRes, silverRes, stocksRes, loansRes, billsRes, billRemindersRes, goalSummaryRes, goalsRes] = await Promise.all([
                 apiRequest('/incomes'),
                 apiRequest('/expenses'),
                 apiRequest('/sip'),
                 apiRequest('/gold/summary'),
                 apiRequest('/silver/portfolio'),
-                apiRequest('/stocks/holdings')
+                apiRequest('/stocks/holdings'),
+                apiRequest(`/loans/user/${userId}`),
+                apiRequest(`/bills/user/${userId}`),
+                apiRequest(`/bills/reminders/${userId}`),
+                apiRequest('/goals/summary'),
+                apiRequest('/goals')
             ]);
 
-            const incomes       = incomeRes.ok    ? await incomeRes.json()   : [];
-            const expenses      = expenseRes.ok   ? await expenseRes.json()  : [];
-            const sips          = sipRes.ok       ? await sipRes.json()      : [];
-            const goldSummary   = goldRes.ok      ? await goldRes.json()     : null;
-            const silverSummary = silverRes.ok    ? await silverRes.json()   : null;
-            const stocksList    = stocksRes.ok    ? await stocksRes.json()   : [];
+            const incomes       = incomeRes.ok        ? await incomeRes.json()        : [];
+            const expenses      = expenseRes.ok       ? await expenseRes.json()        : [];
+            const sips          = sipRes.ok           ? await sipRes.json()            : [];
+            const goldSummary   = goldRes.ok          ? await goldRes.json()           : null;
+            const silverSummary = silverRes.ok        ? await silverRes.json()         : null;
+            const stocksList    = stocksRes.ok        ? await stocksRes.json()         : [];
+            const loans         = loansRes.ok         ? await loansRes.json()          : [];
+            const bills         = billsRes.ok         ? await billsRes.json()          : [];
+            const billReminders = billRemindersRes.ok ? await billRemindersRes.json()  : null;
+            const goalSummary   = goalSummaryRes.ok   ? await goalSummaryRes.json()    : null;
+            const goals         = goalsRes.ok         ? await goalsRes.json()          : [];
 
+            // ── Income / Expense ──
             let totalIncome = 0, totalExpense = 0;
             incomes.forEach(i  => totalIncome  += parseFloat(i.amount) || 0);
             expenses.forEach(e => totalExpense += parseFloat(e.amount) || 0);
             const netSavings  = totalIncome - totalExpense;
             const savingsRate = totalIncome > 0 ? ((netSavings / totalIncome) * 100).toFixed(1) : '0.0';
 
-            document.getElementById('totalIncome').textContent  = fmt(totalIncome);
-            document.getElementById('totalExpense').textContent = fmt(totalExpense);
-            document.getElementById('netSavings').textContent   = fmt(netSavings);
-            document.getElementById('savingsRate').textContent  = savingsRate + '%';
-            document.getElementById('netSavings').style.color   = netSavings >= 0 ? 'var(--green)' : 'var(--red)';
+            document.getElementById('totalIncome').textContent     = fmt(totalIncome);
+            document.getElementById('totalExpense').textContent    = fmt(totalExpense);
+            document.getElementById('netSavings').textContent      = fmt(netSavings);
+            document.getElementById('savingsRate').textContent     = savingsRate + '%';
+            document.getElementById('netSavings').style.color      = netSavings >= 0 ? 'var(--green)' : 'var(--red)';
             document.getElementById('heroSavingsRate').textContent = savingsRate + '%';
 
+            // ── SIP ──
             let totalSipValue = 0;
             for (const sip of sips) {
                 try {
@@ -379,9 +587,11 @@
                 } catch(e) { /* skip */ }
             }
 
+            // ── Gold / Silver ──
             const totalGoldValue   = goldSummary?.currentValue        ? parseFloat(goldSummary.currentValue)        : 0;
             const totalSilverValue = silverSummary?.totalCurrentValue ? parseFloat(silverSummary.totalCurrentValue) : 0;
 
+            // ── Stocks ──
             let totalStocksValue = 0;
             if (stocksList.length > 0) {
                 await Promise.allSettled(stocksList.map(h =>
@@ -391,18 +601,61 @@
                 ));
             }
 
-            const totalInvested  = stocksList.reduce((s, h) => s + h.quantity * parseFloat(h.avgBuyPrice), 0)
-                                 + totalSipValue + totalGoldValue + totalSilverValue;
-            const totalPortfolio = totalStocksValue + totalSipValue + totalGoldValue + totalSilverValue;
-            const totalReturns   = totalPortfolio - totalInvested;
-            const netWorth       = netSavings + totalPortfolio;
+            // ── EMI / Loans ──
+            const activeLoans      = loans.filter(l => !l.closed);
+            const totalOutstanding = activeLoans.reduce((s, l) => s + (l.outstandingBalance || 0), 0);
+            const totalMonthlyEmi  = activeLoans.reduce((s, l) => s + (l.emiAmount || 0), 0);
+            const totalPayable     = loans.reduce((s, l) => s + (l.totalPayable || 0), 0);
+            const totalPaidSoFar   = totalPayable - totalOutstanding;
+            const overallProgress  = totalPayable > 0 ? Math.round((totalPaidSoFar / totalPayable) * 100) : 0;
 
-            document.getElementById('goldValue').textContent   = fmt(totalGoldValue);
-            document.getElementById('silverValue').textContent = fmt(totalSilverValue);
-            document.getElementById('stocksValue').textContent = fmt(totalStocksValue);
-            document.getElementById('sipValue').textContent    = fmt(totalSipValue);
-            document.getElementById('heroNetWorth').textContent = fmtShort(netWorth);
-            document.getElementById('heroInvested').textContent = fmtShort(totalInvested);
+            document.getElementById('statEmiOutstanding').textContent = fmtShort(totalOutstanding);
+            document.getElementById('statEmiSub').textContent         = `${activeLoans.length} active loan${activeLoans.length !== 1 ? 's' : ''}`;
+            document.getElementById('emiOutstandingValue').textContent = fmtShort(totalOutstanding);
+            document.getElementById('emiInvSub').textContent           = `${activeLoans.length} active · ${fmt(totalMonthlyEmi)}/mo`;
+            document.getElementById('heroMonthlyEmi').textContent      = fmtShort(totalMonthlyEmi);
+            if (activeLoans.length > 0) {
+                document.getElementById('emiMiniProgressWrap').style.display = 'block';
+                document.getElementById('emiMiniBar').style.width = overallProgress + '%';
+            }
+
+            // ── Bills ──
+            const now = new Date();
+            const billsDueThisMonth = bills.filter(b => {
+                if (!b.nextDueDate) return false;
+                const d = new Date(b.nextDueDate);
+                return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+            });
+            const billsMonthTotal = billsDueThisMonth.reduce((s, b) => s + b.amount, 0);
+
+            document.getElementById('statBillsMonth').textContent  = fmtShort(billsMonthTotal);
+            document.getElementById('statBillsSub').textContent    = `${bills.length} active bill${bills.length !== 1 ? 's' : ''}`;
+            document.getElementById('billsMonthValue').textContent = fmtShort(billsMonthTotal);
+            document.getElementById('billsInvSub').textContent     = `${bills.length} active · ${billsDueThisMonth.length} due this month`;
+            document.getElementById('heroBillsDue').textContent    = fmtShort(billsMonthTotal);
+
+            // ── EMI & Bills alerts ──
+            await checkEmiAlert(activeLoans);
+            if (billReminders) checkBillsAlert(billReminders);
+
+            // ── Goals ──
+            if (goalSummary) renderGoalsDashboard(goalSummary, goals);
+
+            // ── Portfolio totals ──
+            const totalGoalsSaved  = goalSummary ? parseFloat(goalSummary.totalSavedAmount) || 0 : 0;
+            const totalInvested    = stocksList.reduce((s, h) => s + h.quantity * parseFloat(h.avgBuyPrice), 0)
+                + totalSipValue + totalGoldValue + totalSilverValue;
+            const totalPortfolio   = totalStocksValue + totalSipValue + totalGoldValue + totalSilverValue;
+            const totalReturns     = totalPortfolio - totalInvested;
+            const netWorth         = netSavings + totalPortfolio - totalOutstanding;
+
+            document.getElementById('goldValue').textContent       = fmt(totalGoldValue);
+            document.getElementById('silverValue').textContent     = fmt(totalSilverValue);
+            document.getElementById('stocksValue').textContent     = fmt(totalStocksValue);
+            document.getElementById('sipValue').textContent        = fmt(totalSipValue);
+            document.getElementById('heroNetWorth').textContent    = fmtShort(netWorth);
+            document.getElementById('heroInvested').textContent    = fmtShort(totalInvested);
+            document.getElementById('heroGoalsSaved').textContent  = fmtShort(totalGoalsSaved);
 
             const retEl = document.getElementById('heroReturns');
             retEl.textContent = (totalReturns >= 0 ? '+' : '') + fmtShort(totalReturns);
@@ -415,31 +668,138 @@
         }
     }
 
+    // ── GOALS DASHBOARD ──────────────────────────────────────────────
+    function renderGoalsDashboard(summary, goals) {
+        document.getElementById('gDashActive').textContent    = summary.activeGoals ?? '—';
+        document.getElementById('gDashCompleted').textContent = summary.completedGoals ?? '—';
+        document.getElementById('gDashSaved').textContent     = fmtShort(summary.totalSavedAmount || 0);
+
+        const pct = Math.min(100, Math.round(summary.overallProgress || 0));
+        document.getElementById('gDashOverallPct').textContent   = pct + '%';
+        document.getElementById('gDashOverallBar').style.width   = pct + '%';
+
+        const activeGoals = goals
+            .filter(g => g.status === 'ACTIVE')
+            .sort((a, b) => {
+                const pri = { HIGH: 0, MEDIUM: 1, LOW: 2 };
+                return (pri[a.priority] ?? 1) - (pri[b.priority] ?? 1);
+            })
+            .slice(0, 4);
+
+        const list = document.getElementById('goalsDashList');
+
+        if (!activeGoals.length) {
+            const completedGoals = goals.filter(g => g.status === 'COMPLETED').slice(0, 2);
+            if (!completedGoals.length) {
+                list.innerHTML = `<div class="goals-empty">
+                    <i class="fas fa-bullseye"></i>
+                    <p>No goals yet — <a onclick="goToGoals()" style="color:var(--green);cursor:pointer;font-weight:500;">create your first goal</a></p>
+                </div>`;
+                return;
+            }
+            renderGoalItems(list, completedGoals);
+            return;
+        }
+
+        renderGoalItems(list, activeGoals);
+    }
+
+    function renderGoalItems(container, goalsList) {
+        container.innerHTML = goalsList.map(g => {
+            const gpct     = Math.min(100, Math.round(g.progressPercentage || 0));
+            // FIX: Use Font Awesome icon class instead of emoji
+            const iconClass = CATEGORY_ICONS[g.category] || 'fas fa-bullseye';
+            const onTrack  = g.onTrack;
+            const trackLabel = g.status === 'COMPLETED'
+                ? '<span style="color:#10b981;font-size:0.68rem;font-weight:600;">✓ Completed</span>'
+                : onTrack
+                    ? '<span style="color:var(--green);font-size:0.68rem;font-weight:600;">▲ On track</span>'
+                    : '<span style="color:var(--red);font-size:0.68rem;font-weight:600;">⚠ Behind</span>';
+
+            return `
+            <div class="goal-item" onclick="goToGoals()">
+                <div class="goal-item-icon"><i class="${iconClass}"></i></div>
+                <div class="goal-item-body">
+                    <div class="goal-item-name">${g.name}</div>
+                    <div class="goal-item-meta">
+                        ${fmtShort(g.savedAmount)} saved · ${fmtShort(g.targetAmount)} target
+                        <span style="margin-left:6px;">${trackLabel}</span>
+                    </div>
+                    <div class="goal-progress-bar-bg">
+                        <div class="goal-progress-bar-fill ${gpct >= 100 ? 'completed' : ''}" style="width:${gpct}%"></div>
+                    </div>
+                </div>
+                <div class="goal-item-right">
+                    <div class="goal-item-pct">${gpct}%</div>
+                    <div class="goal-item-remaining">${fmtShort(g.remainingAmount || 0)} left</div>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    // ── EMI ALERT ──
+    async function checkEmiAlert(activeLoans) {
+        if (!activeLoans.length) return;
+        let overdueCount = 0, dueTodayCount = 0, dueTodayAmt = 0;
+        for (const loan of activeLoans) {
+            try {
+                const res = await apiRequest(`/emi/upcoming/${loan.id}`);
+                if (!res.ok) continue;
+                const upcoming = await res.json();
+                if (upcoming.length) {
+                    const next = upcoming[0];
+                    if (next.status === 'OVERDUE')   overdueCount++;
+                    if (next.status === 'DUE_TODAY') { dueTodayCount++; dueTodayAmt += next.emiAmount; }
+                }
+            } catch(e) { /* skip */ }
+        }
+        const banner = document.getElementById('emiAlert');
+        if (overdueCount > 0) {
+            document.getElementById('emiAlertTitle').textContent = `${overdueCount} overdue EMI${overdueCount > 1 ? 's' : ''}`;
+            document.getElementById('emiAlertSub').textContent   = 'You have overdue EMI payments — please clear them to avoid penalties.';
+            banner.classList.add('danger', 'show');
+        } else if (dueTodayCount > 0) {
+            document.getElementById('emiAlertTitle').textContent = `EMI due today — ${fmt(dueTodayAmt)}`;
+            document.getElementById('emiAlertSub').textContent   = `${dueTodayCount} payment${dueTodayCount > 1 ? 's' : ''} due today across your loans.`;
+            banner.classList.add('show');
+        }
+    }
+
+    // ── BILLS ALERT ──
+    function checkBillsAlert(reminders) {
+        const banner = document.getElementById('billsAlert');
+        const total  = reminders.overdueCount + reminders.dueTodayCount + reminders.dueSoonCount;
+        if (total === 0) return;
+        if (reminders.overdueCount > 0) {
+            document.getElementById('billsAlertTitle').textContent = `${reminders.overdueCount} overdue bill${reminders.overdueCount > 1 ? 's' : ''} — ${fmt(reminders.totalOverdueAmount)} pending`;
+            document.getElementById('billsAlertSub').textContent   = 'These bills are past their due date. Please mark them as paid.';
+            banner.classList.add('danger', 'show');
+        } else {
+            const soon = reminders.dueTodayCount + reminders.dueSoonCount;
+            document.getElementById('billsAlertTitle').textContent = `${soon} bill${soon > 1 ? 's' : ''} due soon — ${fmt(reminders.totalDueSoonAmount)}`;
+            document.getElementById('billsAlertSub').textContent   = 'Upcoming bill payments within the next 7 days.';
+            banner.classList.add('show');
+        }
+    }
+
+    // ── CHART ──
     function renderChart(income, expense, savings) {
         if (chartInstance) chartInstance.destroy();
         const ctx = document.getElementById('summaryChart').getContext('2d');
-
         const gradIncome = ctx.createLinearGradient(0, 0, 0, 220);
-        gradIncome.addColorStop(0, 'rgba(22, 163, 74, 0.95)');
-        gradIncome.addColorStop(1, 'rgba(22, 163, 74, 0.6)');
-
+        gradIncome.addColorStop(0, 'rgba(22,163,74,0.95)');
+        gradIncome.addColorStop(1, 'rgba(22,163,74,0.6)');
         const gradExpense = ctx.createLinearGradient(0, 0, 0, 220);
-        gradExpense.addColorStop(0, 'rgba(220, 38, 38, 0.9)');
-        gradExpense.addColorStop(1, 'rgba(220, 38, 38, 0.5)');
-
+        gradExpense.addColorStop(0, 'rgba(220,38,38,0.9)');
+        gradExpense.addColorStop(1, 'rgba(220,38,38,0.5)');
         const gradSavings = ctx.createLinearGradient(0, 0, 0, 220);
-        gradSavings.addColorStop(0, 'rgba(34, 197, 94, 0.85)');
-        gradSavings.addColorStop(1, 'rgba(34, 197, 94, 0.4)');
-
+        gradSavings.addColorStop(0, 'rgba(34,197,94,0.85)');
+        gradSavings.addColorStop(1, 'rgba(34,197,94,0.4)');
         chartInstance = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: ['Income', 'Expense', 'Net Savings'],
-                datasets: [{
-                    data: [income, expense, Math.max(savings, 0)],
-                    backgroundColor: [gradIncome, gradExpense, gradSavings],
-                    borderRadius: 10, borderSkipped: false, barPercentage: 0.55
-                }]
+                datasets: [{ data: [income, expense, Math.max(savings, 0)], backgroundColor: [gradIncome, gradExpense, gradSavings], borderRadius: 10, borderSkipped: false, barPercentage: 0.55 }]
             },
             options: {
                 responsive: true, maintainAspectRatio: false,
@@ -462,18 +822,22 @@
         });
     }
 
-    function goToIncome()   { window.location.href = '/pages/income.html'; }
-    function goToExpense()  { window.location.href = '/pages/expense.html'; }
-    function goToSip()      { window.location.href = '/pages/sip.html'; }
-    function goToGold()     { window.location.href = '/pages/digital-gold.html'; }
-    function goToSilver()   { window.location.href = '/pages/silver.html'; }
-    function goToAccounts() { window.location.href = '/pages/accounts.html'; }
-    function goToStocks()   { window.location.href = '/pages/stocks.html'; }
+    // ── NAVIGATION ──
+    function goToIncome()   { window.location.href = 'income.html'; }
+    function goToExpense()  { window.location.href = 'expense.html'; }
+    function goToSip()      { window.location.href = 'sip.html'; }
+    function goToGold()     { window.location.href = 'digital-gold.html'; }
+    function goToSilver()   { window.location.href = 'silver.html'; }
+    function goToAccounts() { window.location.href = 'accounts.html'; }
+    function goToStocks()   { window.location.href = 'stocks.html'; }
+    function goToEmi()      { window.location.href = 'emi.html'; }
+    function goToBills()    { window.location.href = 'bills.html'; }
+    function goToGoals()    { window.location.href = 'goals.html'; }
 
     function logout() {
         if (confirm('Are you sure you want to logout?')) {
             localStorage.removeItem('token');
-            window.location.href = '/pages/login.html';
+            window.location.href = 'login.html';
         }
     }
 </script>
