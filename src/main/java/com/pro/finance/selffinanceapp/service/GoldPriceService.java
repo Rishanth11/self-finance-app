@@ -1,5 +1,6 @@
 package com.pro.finance.selffinanceapp.service;
 
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -10,7 +11,14 @@ import java.util.Map;
 @Service
 public class GoldPriceService {
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate = createRestTemplate();
+
+    private RestTemplate createRestTemplate() {
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(5000);  // 5 seconds
+        factory.setReadTimeout(5000);     // 5 seconds
+        return new RestTemplate(factory);
+    }
 
     public BigDecimal getLiveGoldPricePerGram() {
         try {

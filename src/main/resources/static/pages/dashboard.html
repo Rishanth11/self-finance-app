@@ -74,16 +74,23 @@
         .alert-banner.danger .alert-banner-btn { background: var(--red); }
         .alert-banner.danger .alert-banner-btn:hover { background: #b91c1c; }
 
+        /* ── BUDGET ALERT BANNER ── */
+        .alert-banner.budget { background: var(--green-dim); border-color: var(--green-border); }
+        .alert-banner.budget .alert-banner-icon { background: var(--green); }
+        .alert-banner.budget .alert-banner-btn { background: var(--green); }
+        .alert-banner.budget .alert-banner-btn:hover { background: #15803d; }
+
         /* ── STAT CARDS ── */
         .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 24px; animation: fadeUp 0.4s 0.08s ease both; }
         .stat-card { background: var(--white); border: 1.5px solid var(--slate-200); border-radius: 16px; padding: 18px 20px; position: relative; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
         .stat-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.07); }
         .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: 16px 16px 0 0; background: var(--green); }
         .stat-card.accent-red::before { background: var(--red); }
+        .stat-card.accent-green::before { background: var(--green); }
         .stat-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
         .stat-label { font-size: 0.7rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--slate-400); }
         .stat-icon { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0; background: var(--green-dim); color: var(--green); }
-        .stat-icon.red { background: var(--red-dim); color: var(--red); }
+        .stat-icon.red   { background: var(--red-dim);   color: var(--red); }
         .stat-value { font-size: 1.4rem; font-weight: 600; color: var(--slate-900); letter-spacing: -0.02em; margin-bottom: 3px; }
         .stat-sub { font-size: 0.72rem; color: var(--slate-400); }
 
@@ -125,6 +132,41 @@
         .emi-mini-bar-bg { height: 4px; background: var(--slate-200); border-radius: 99px; overflow: hidden; width: 80px; }
         .emi-mini-bar-fill { height: 100%; background: var(--green); border-radius: 99px; }
 
+        /* ── BUDGET SUMMARY CARD ── */
+        .budget-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+        .budget-strip-item { background: var(--slate-50); border: 1.5px solid var(--slate-200); border-radius: 10px; padding: 10px 14px; text-align: center; }
+        .budget-strip-item .bsi-val { font-size: 1.05rem; font-weight: 600; color: var(--slate-900); letter-spacing: -0.02em; }
+        .budget-strip-item .bsi-lbl { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--slate-400); font-weight: 500; margin-top: 2px; }
+
+        .budget-overall-bar { margin-bottom: 16px; }
+        .budget-overall-bar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .budget-overall-bar-label { font-size: 0.75rem; font-weight: 500; color: var(--slate-600); }
+        .budget-overall-bar-pct { font-size: 0.75rem; font-weight: 600; color: var(--green); }
+        .budget-overall-bar-bg { height: 6px; background: var(--green-dim); border-radius: 99px; overflow: hidden; }
+        .budget-overall-bar-fill { height: 100%; border-radius: 99px; transition: width 0.7s ease; background: linear-gradient(90deg, var(--green-light), var(--green)); }
+        .budget-overall-bar-fill.warn   { background: linear-gradient(90deg, var(--green-light), var(--green)); }
+        .budget-overall-bar-fill.exceed { background: linear-gradient(90deg, #f87171, var(--red)); }
+
+        .budget-cat-list { display: flex; flex-direction: column; gap: 10px; }
+        .budget-cat-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--slate-50); border: 1.5px solid var(--slate-200); border-radius: 12px; transition: background 0.15s; cursor: pointer; }
+        .budget-cat-item:hover { background: var(--green-dim); border-color: var(--green-border); }
+        .budget-cat-icon { width: 34px; height: 34px; border-radius: 9px; background: var(--green-dim); display: flex; align-items: center; justify-content: center; font-size: 0.82rem; color: var(--green); flex-shrink: 0; }
+        .budget-cat-body { flex: 1; min-width: 0; }
+        .budget-cat-name { font-size: 0.875rem; font-weight: 500; color: var(--slate-900); }
+        .budget-cat-meta { font-size: 0.7rem; color: var(--slate-400); margin-top: 1px; }
+        .budget-cat-bar-bg { height: 4px; background: var(--slate-200); border-radius: 99px; overflow: hidden; margin-top: 5px; }
+        .budget-cat-bar-fill { height: 100%; border-radius: 99px; transition: width 0.5s ease; background: var(--green); }
+        .budget-cat-bar-fill.warn   { background: var(--green); }
+        .budget-cat-bar-fill.exceed { background: var(--red); }
+        .budget-cat-right { text-align: right; flex-shrink: 0; }
+        .budget-cat-pct { font-size: 0.875rem; font-weight: 600; color: var(--green); }
+        .budget-cat-pct.warn   { color: var(--green); }
+        .budget-cat-pct.exceed { color: var(--red); }
+        .budget-cat-remain { font-size: 0.7rem; color: var(--slate-400); margin-top: 1px; }
+        .budget-empty { text-align: center; padding: 28px 16px; color: var(--slate-400); }
+        .budget-empty i { font-size: 1.8rem; display: block; margin-bottom: 8px; color: var(--slate-200); }
+        .budget-empty p { font-size: 0.82rem; }
+
         /* ── GOALS CARD ── */
         .goals-summary-list { display: flex; flex-direction: column; gap: 10px; }
         .goal-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--slate-50); border: 1.5px solid var(--slate-200); border-radius: 12px; transition: background 0.15s; cursor: pointer; }
@@ -140,20 +182,17 @@
         .goal-progress-bar-fill { height: 100%; background: var(--green); border-radius: 99px; transition: width 0.6s ease; }
         .goal-progress-bar-fill.completed { background: #10b981; }
 
-        /* Goals stat strip */
         .goals-stat-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
         .goals-stat-mini { background: var(--slate-50); border: 1.5px solid var(--slate-200); border-radius: 10px; padding: 10px 14px; text-align: center; }
         .goals-stat-mini .gsm-val { font-size: 1.1rem; font-weight: 600; color: var(--slate-900); letter-spacing: -0.02em; }
         .goals-stat-mini .gsm-lbl { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--slate-400); font-weight: 500; margin-top: 2px; }
 
-        /* Overall goal progress bar */
         .goal-overall-bar { margin-bottom: 16px; }
         .goal-overall-bar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
         .goal-overall-bar-label { font-size: 0.75rem; font-weight: 500; color: var(--slate-600); }
         .goal-overall-bar-pct { font-size: 0.75rem; font-weight: 600; color: var(--green); }
         .goal-overall-bar-bg { height: 6px; background: var(--green-dim); border-radius: 99px; overflow: hidden; }
         .goal-overall-bar-fill { height: 100%; background: linear-gradient(90deg, var(--green-light), var(--green)); border-radius: 99px; transition: width 0.7s ease; }
-
         .goals-empty { text-align: center; padding: 28px 16px; color: var(--slate-400); }
         .goals-empty i { font-size: 1.8rem; display: block; margin-bottom: 8px; color: var(--slate-200); }
         .goals-empty p { font-size: 0.82rem; }
@@ -179,6 +218,7 @@
             .hero-left .hero-value { font-size: 1.8rem; }
             .alert-banner { flex-wrap: wrap; }
             .goals-stat-strip { grid-template-columns: repeat(3,1fr); }
+            .budget-strip { grid-template-columns: repeat(3,1fr); }
         }
     </style>
 </head>
@@ -221,6 +261,7 @@
             <div class="hero-stat"><p>Monthly EMI</p><strong id="heroMonthlyEmi">₹0</strong></div>
             <div class="hero-stat"><p>Bills due</p><strong id="heroBillsDue">₹0</strong></div>
             <div class="hero-stat"><p>Goals saved</p><strong id="heroGoalsSaved">₹0</strong></div>
+            <div class="hero-stat"><p>Budget left</p><strong id="heroBudgetRemaining">₹0</strong></div>
             <div class="hero-stat"><p>Savings rate</p><strong id="heroSavingsRate">0%</strong></div>
         </div>
     </div>
@@ -246,6 +287,18 @@
         </div>
         <button class="alert-banner-btn" onclick="goToBills()">
             <i class="fas fa-file-invoice"></i> View bills
+        </button>
+    </div>
+
+    <!-- BUDGET ALERT BANNER -->
+    <div class="alert-banner budget" id="budgetAlert">
+        <div class="alert-banner-icon"><i class="fas fa-wallet"></i></div>
+        <div class="alert-banner-text">
+            <strong id="budgetAlertTitle">Budget limit reached</strong>
+            <span id="budgetAlertSub">—</span>
+        </div>
+        <button class="alert-banner-btn" onclick="goToBudget()">
+            <i class="fas fa-wallet"></i> View budgets
         </button>
     </div>
 
@@ -280,6 +333,12 @@
             <div class="stat-top"><span class="stat-label">Bills this month</span><div class="stat-icon"><i class="fas fa-file-invoice"></i></div></div>
             <div class="stat-value" id="statBillsMonth">₹0</div>
             <div class="stat-sub" id="statBillsSub">0 active bills</div>
+        </div>
+        <!-- NEW: Budget stat card -->
+        <div class="stat-card accent-green" onclick="goToBudget()" style="cursor:pointer;">
+            <div class="stat-top"><span class="stat-label">Budget remaining</span><div class="stat-icon"><i class="fas fa-wallet"></i></div></div>
+            <div class="stat-value" id="statBudgetRemaining">₹0</div>
+            <div class="stat-sub" id="statBudgetSub">0 active budgets</div>
         </div>
     </div>
 
@@ -361,6 +420,71 @@
                         <div class="inv-label">Due this month</div>
                     </div>
                 </div>
+                <!-- NEW: Budget Planner inv item -->
+                <div class="inv-item" onclick="goToBudget()">
+                    <div class="inv-item-left">
+                        <div class="inv-dot"><i class="fas fa-wallet"></i></div>
+                        <div>
+                            <div class="inv-name">Budget Planner</div>
+                            <div class="inv-sub" id="budgetInvSub">0 active budgets</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="inv-value" id="budgetInvValue">₹0</div>
+                        <div class="inv-label">Remaining budget</div>
+                        <div class="emi-mini-progress" id="budgetMiniProgressWrap" style="display:none;">
+                            <div class="emi-mini-bar-bg"><div class="emi-mini-bar-fill" id="budgetMiniBar" style="width:0%;"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BUDGET PLANNER SUMMARY CARD -->
+    <div class="card" style="animation: fadeUp 0.4s 0.15s ease both;">
+        <div class="card-header">
+            <div class="card-header-left">
+                <div class="card-header-icon"><i class="fas fa-wallet"></i></div>
+                <h3>Budget Planner</h3>
+            </div>
+            <a class="card-link" onclick="goToBudget()">
+                View all <i class="fas fa-arrow-right" style="font-size:0.7rem;"></i>
+            </a>
+        </div>
+
+        <!-- Budget strip: Total / Spent / Remaining -->
+        <div class="budget-strip">
+            <div class="budget-strip-item">
+                <div class="bsi-val" id="bDashTotal">—</div>
+                <div class="bsi-lbl">Total Budget</div>
+            </div>
+            <div class="budget-strip-item">
+                <div class="bsi-val" id="bDashSpent">—</div>
+                <div class="bsi-lbl">Spent</div>
+            </div>
+            <div class="budget-strip-item">
+                <div class="bsi-val" id="bDashRemaining" style="color:var(--green);">—</div>
+                <div class="bsi-lbl">Remaining</div>
+            </div>
+        </div>
+
+        <!-- Overall budget progress -->
+        <div class="budget-overall-bar">
+            <div class="budget-overall-bar-header">
+                <span class="budget-overall-bar-label">Overall spending across active budgets</span>
+                <span class="budget-overall-bar-pct" id="bDashOverallPct">0%</span>
+            </div>
+            <div class="budget-overall-bar-bg">
+                <div class="budget-overall-bar-fill" id="bDashOverallBar" style="width:0%"></div>
+            </div>
+        </div>
+
+        <!-- Top categories at risk -->
+        <div class="budget-cat-list" id="budgetDashList">
+            <div class="budget-empty">
+                <i class="fas fa-wallet"></i>
+                <p>No budgets yet — <a onclick="goToBudget()" style="color:var(--green);cursor:pointer;font-weight:500;">create your first budget</a></p>
             </div>
         </div>
     </div>
@@ -376,24 +500,11 @@
                 View all <i class="fas fa-arrow-right" style="font-size:0.7rem;"></i>
             </a>
         </div>
-
-        <!-- Mini stat strip -->
         <div class="goals-stat-strip">
-            <div class="goals-stat-mini">
-                <div class="gsm-val" id="gDashActive">—</div>
-                <div class="gsm-lbl">Active</div>
-            </div>
-            <div class="goals-stat-mini">
-                <div class="gsm-val" id="gDashCompleted">—</div>
-                <div class="gsm-lbl">Completed</div>
-            </div>
-            <div class="goals-stat-mini">
-                <div class="gsm-val" id="gDashSaved" style="color:var(--green);">—</div>
-                <div class="gsm-lbl">Total Saved</div>
-            </div>
+            <div class="goals-stat-mini"><div class="gsm-val" id="gDashActive">—</div><div class="gsm-lbl">Active</div></div>
+            <div class="goals-stat-mini"><div class="gsm-val" id="gDashCompleted">—</div><div class="gsm-lbl">Completed</div></div>
+            <div class="goals-stat-mini"><div class="gsm-val" id="gDashSaved" style="color:var(--green);">—</div><div class="gsm-lbl">Total Saved</div></div>
         </div>
-
-        <!-- Overall progress bar -->
         <div class="goal-overall-bar">
             <div class="goal-overall-bar-header">
                 <span class="goal-overall-bar-label">Overall progress across active goals</span>
@@ -403,8 +514,6 @@
                 <div class="goal-overall-bar-fill" id="gDashOverallBar" style="width:0%"></div>
             </div>
         </div>
-
-        <!-- Top 4 active goals list -->
         <div class="goals-summary-list" id="goalsDashList">
             <div class="goals-empty">
                 <i class="fas fa-bullseye"></i>
@@ -452,6 +561,10 @@
             <button class="nav-btn" onclick="goToGoals()">
                 <div class="nav-btn-icon"><i class="fas fa-bullseye"></i></div>Goals
             </button>
+            <!-- NEW: Budget Planner nav button -->
+            <button class="nav-btn" onclick="goToBudget()">
+                <div class="nav-btn-icon"><i class="fas fa-wallet"></i></div>Budget
+            </button>
         </div>
     </div>
 
@@ -466,7 +579,6 @@
 <script>
     let chartInstance;
 
-    // FIX: Map categories to Font Awesome icon classes instead of emojis
     const CATEGORY_ICONS = {
         EMERGENCY_FUND: 'fas fa-shield-alt',
         VACATION:       'fas fa-plane',
@@ -534,8 +646,7 @@
         const userId = getCurrentUserId();
 
         try {
-            // FIX: Removed /api/ prefix — apiRequest() already prepends /api
-            const [incomeRes, expenseRes, sipRes, goldRes, silverRes, stocksRes, loansRes, billsRes, billRemindersRes, goalSummaryRes, goalsRes] = await Promise.all([
+            const [incomeRes, expenseRes, sipRes, goldRes, silverRes, stocksRes, loansRes, billsRes, billRemindersRes, goalSummaryRes, goalsRes, budgetsRes] = await Promise.all([
                 apiRequest('/incomes'),
                 apiRequest('/expenses'),
                 apiRequest('/sip'),
@@ -546,7 +657,8 @@
                 apiRequest(`/bills/user/${userId}`),
                 apiRequest(`/bills/reminders/${userId}`),
                 apiRequest('/goals/summary'),
-                apiRequest('/goals')
+                apiRequest('/goals'),
+                apiRequest(`/budgets/user/${userId}`)
             ]);
 
             const incomes       = incomeRes.ok        ? await incomeRes.json()        : [];
@@ -560,6 +672,7 @@
             const billReminders = billRemindersRes.ok ? await billRemindersRes.json()  : null;
             const goalSummary   = goalSummaryRes.ok   ? await goalSummaryRes.json()    : null;
             const goals         = goalsRes.ok         ? await goalsRes.json()          : [];
+            const budgets       = budgetsRes.ok       ? await budgetsRes.json()        : [];
 
             // ── Income / Expense ──
             let totalIncome = 0, totalExpense = 0;
@@ -634,6 +747,39 @@
             document.getElementById('billsInvSub').textContent     = `${bills.length} active · ${billsDueThisMonth.length} due this month`;
             document.getElementById('heroBillsDue').textContent    = fmtShort(billsMonthTotal);
 
+            // ── BUDGET PLANNER ──
+            if (budgets.length > 0) {
+                let totalBudget = 0, totalSpent = 0;
+                budgets.forEach(b => {
+                    totalBudget += parseFloat(b.totalAmount) || 0;
+                    totalSpent  += (b.categories || []).reduce((s, c) => s + (parseFloat(c.spentAmount) || 0), 0);
+                });
+                const totalRemaining  = totalBudget - totalSpent;
+                const spentPct        = totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0;
+
+                // stat card
+                document.getElementById('statBudgetRemaining').textContent = fmtShort(totalRemaining);
+                document.getElementById('statBudgetSub').textContent       = `${budgets.length} active budget${budgets.length !== 1 ? 's' : ''}`;
+                document.getElementById('statBudgetRemaining').style.color = spentPct >= 100 ? 'var(--red)' : 'var(--slate-900)';
+
+                // portfolio inv item
+                document.getElementById('budgetInvValue').textContent = fmtShort(totalRemaining);
+                document.getElementById('budgetInvSub').textContent   = `${budgets.length} active · ${spentPct}% spent`;
+                document.getElementById('budgetMiniProgressWrap').style.display = 'block';
+                const barColor = spentPct >= 100 ? 'var(--red)' : 'var(--green)';
+                document.getElementById('budgetMiniBar').style.width      = Math.min(spentPct, 100) + '%';
+                document.getElementById('budgetMiniBar').style.background = barColor;
+
+                // hero
+                document.getElementById('heroBudgetRemaining').textContent = fmtShort(totalRemaining);
+
+                // budget summary card
+                renderBudgetDashboard(budgets, totalBudget, totalSpent, totalRemaining, spentPct);
+
+                // budget alert
+                checkBudgetAlert(budgets);
+            }
+
             // ── EMI & Bills alerts ──
             await checkEmiAlert(activeLoans);
             if (billReminders) checkBillsAlert(billReminders);
@@ -668,66 +814,134 @@
         }
     }
 
-    // ── GOALS DASHBOARD ──────────────────────────────────────────────
+    // ── BUDGET DASHBOARD ──────────────────────────────────────────────
+    function renderBudgetDashboard(budgets, totalBudget, totalSpent, totalRemaining, spentPct) {
+        document.getElementById('bDashTotal').textContent     = fmtShort(totalBudget);
+        document.getElementById('bDashSpent').textContent     = fmtShort(totalSpent);
+        document.getElementById('bDashRemaining').textContent = fmtShort(totalRemaining);
+        document.getElementById('bDashRemaining').style.color = spentPct >= 100 ? 'var(--red)' : 'var(--green)';
+
+        document.getElementById('bDashOverallPct').textContent = spentPct + '%';
+        document.getElementById('bDashOverallPct').style.color = spentPct >= 100 ? 'var(--red)' : 'var(--green)';
+
+        const bar = document.getElementById('bDashOverallBar');
+        bar.style.width = Math.min(spentPct, 100) + '%';
+        bar.className   = 'budget-overall-bar-fill' + (spentPct >= 100 ? ' exceed' : spentPct >= 80 ? ' warn' : '');
+
+        // Collect all categories across all budgets, sort by % spent desc, show top 4
+        const allCats = [];
+        budgets.forEach(b => {
+            (b.categories || []).forEach(c => {
+                const spent = parseFloat(c.spentAmount) || 0;
+                const alloc = parseFloat(c.allocatedAmount) || 0;
+                const pct   = alloc > 0 ? (spent / alloc) * 100 : 0;
+                allCats.push({ name: c.categoryName, spent, alloc, pct, budgetName: b.name });
+            });
+        });
+
+        allCats.sort((a, b) => b.pct - a.pct);
+        const top4 = allCats.slice(0, 4);
+
+        const list = document.getElementById('budgetDashList');
+        if (!top4.length) {
+            list.innerHTML = `<div class="budget-empty"><i class="fas fa-wallet"></i><p>No budgets yet — <a onclick="goToBudget()" style="color:var(--green);cursor:pointer;font-weight:500;">create your first budget</a></p></div>`;
+            return;
+        }
+
+        list.innerHTML = top4.map(c => {
+            const pct     = Math.min(c.pct, 100);
+            const status  = c.pct >= 100 ? 'exceed' : c.pct >= 80 ? 'warn' : '';
+            const remain  = c.alloc - c.spent;
+            const trackLabel = c.pct >= 100
+                ? '<span style="color:var(--red);font-size:0.68rem;font-weight:600;">⚠ Exceeded</span>'
+                : c.pct >= 80
+                    ? '<span style="color:var(--green);font-size:0.68rem;font-weight:600;">⚠ Near limit</span>'
+                    : '<span style="color:var(--green);font-size:0.68rem;font-weight:600;">✓ On track</span>';
+
+            return `
+            <div class="budget-cat-item" onclick="goToBudget()">
+                <div class="budget-cat-icon"><i class="fas fa-tag"></i></div>
+                <div class="budget-cat-body">
+                    <div class="budget-cat-name">${c.name}</div>
+                    <div class="budget-cat-meta">${fmtShort(c.spent)} of ${fmtShort(c.alloc)} · ${c.budgetName} ${trackLabel}</div>
+                    <div class="budget-cat-bar-bg">
+                        <div class="budget-cat-bar-fill ${status}" style="width:${pct}%"></div>
+                    </div>
+                </div>
+                <div class="budget-cat-right">
+                    <div class="budget-cat-pct ${status}">${c.pct.toFixed(0)}%</div>
+                    <div class="budget-cat-remain">${fmtShort(Math.max(remain, 0))} left</div>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    // ── BUDGET ALERT ──
+    function checkBudgetAlert(budgets) {
+        let exceededCount = 0, warningCount = 0;
+        budgets.forEach(b => {
+            (b.categories || []).forEach(c => {
+                const pct = parseFloat(c.allocatedAmount) > 0
+                    ? (parseFloat(c.spentAmount) / parseFloat(c.allocatedAmount)) * 100 : 0;
+                if (pct >= 100) exceededCount++;
+                else if (pct >= 80) warningCount++;
+            });
+        });
+        const banner = document.getElementById('budgetAlert');
+        if (exceededCount > 0) {
+            document.getElementById('budgetAlertTitle').textContent = `${exceededCount} budget categor${exceededCount > 1 ? 'ies' : 'y'} exceeded`;
+            document.getElementById('budgetAlertSub').textContent   = 'You have gone over budget in some categories. Review your spending.';
+            banner.classList.add('show');
+        } else if (warningCount > 0) {
+            document.getElementById('budgetAlertTitle').textContent = `${warningCount} budget categor${warningCount > 1 ? 'ies' : 'y'} near limit`;
+            document.getElementById('budgetAlertSub').textContent   = 'Some categories are over 80% of their budget — spend carefully.';
+            banner.classList.add('show');
+        }
+    }
+
+    // ── GOALS DASHBOARD ──
     function renderGoalsDashboard(summary, goals) {
         document.getElementById('gDashActive').textContent    = summary.activeGoals ?? '—';
         document.getElementById('gDashCompleted').textContent = summary.completedGoals ?? '—';
         document.getElementById('gDashSaved').textContent     = fmtShort(summary.totalSavedAmount || 0);
-
         const pct = Math.min(100, Math.round(summary.overallProgress || 0));
-        document.getElementById('gDashOverallPct').textContent   = pct + '%';
-        document.getElementById('gDashOverallBar').style.width   = pct + '%';
+        document.getElementById('gDashOverallPct').textContent = pct + '%';
+        document.getElementById('gDashOverallBar').style.width = pct + '%';
 
         const activeGoals = goals
             .filter(g => g.status === 'ACTIVE')
-            .sort((a, b) => {
-                const pri = { HIGH: 0, MEDIUM: 1, LOW: 2 };
-                return (pri[a.priority] ?? 1) - (pri[b.priority] ?? 1);
-            })
+            .sort((a, b) => { const pri = { HIGH:0, MEDIUM:1, LOW:2 }; return (pri[a.priority] ?? 1) - (pri[b.priority] ?? 1); })
             .slice(0, 4);
 
         const list = document.getElementById('goalsDashList');
-
         if (!activeGoals.length) {
             const completedGoals = goals.filter(g => g.status === 'COMPLETED').slice(0, 2);
             if (!completedGoals.length) {
-                list.innerHTML = `<div class="goals-empty">
-                    <i class="fas fa-bullseye"></i>
-                    <p>No goals yet — <a onclick="goToGoals()" style="color:var(--green);cursor:pointer;font-weight:500;">create your first goal</a></p>
-                </div>`;
+                list.innerHTML = `<div class="goals-empty"><i class="fas fa-bullseye"></i><p>No goals yet — <a onclick="goToGoals()" style="color:var(--green);cursor:pointer;font-weight:500;">create your first goal</a></p></div>`;
                 return;
             }
             renderGoalItems(list, completedGoals);
             return;
         }
-
         renderGoalItems(list, activeGoals);
     }
 
     function renderGoalItems(container, goalsList) {
         container.innerHTML = goalsList.map(g => {
-            const gpct     = Math.min(100, Math.round(g.progressPercentage || 0));
-            // FIX: Use Font Awesome icon class instead of emoji
+            const gpct      = Math.min(100, Math.round(g.progressPercentage || 0));
             const iconClass = CATEGORY_ICONS[g.category] || 'fas fa-bullseye';
-            const onTrack  = g.onTrack;
             const trackLabel = g.status === 'COMPLETED'
                 ? '<span style="color:#10b981;font-size:0.68rem;font-weight:600;">✓ Completed</span>'
-                : onTrack
+                : g.onTrack
                     ? '<span style="color:var(--green);font-size:0.68rem;font-weight:600;">▲ On track</span>'
                     : '<span style="color:var(--red);font-size:0.68rem;font-weight:600;">⚠ Behind</span>';
-
             return `
             <div class="goal-item" onclick="goToGoals()">
                 <div class="goal-item-icon"><i class="${iconClass}"></i></div>
                 <div class="goal-item-body">
                     <div class="goal-item-name">${g.name}</div>
-                    <div class="goal-item-meta">
-                        ${fmtShort(g.savedAmount)} saved · ${fmtShort(g.targetAmount)} target
-                        <span style="margin-left:6px;">${trackLabel}</span>
-                    </div>
-                    <div class="goal-progress-bar-bg">
-                        <div class="goal-progress-bar-fill ${gpct >= 100 ? 'completed' : ''}" style="width:${gpct}%"></div>
-                    </div>
+                    <div class="goal-item-meta">${fmtShort(g.savedAmount)} saved · ${fmtShort(g.targetAmount)} target <span style="margin-left:6px;">${trackLabel}</span></div>
+                    <div class="goal-progress-bar-bg"><div class="goal-progress-bar-fill ${gpct >= 100 ? 'completed' : ''}" style="width:${gpct}%"></div></div>
                 </div>
                 <div class="goal-item-right">
                     <div class="goal-item-pct">${gpct}%</div>
@@ -786,15 +1000,9 @@
     function renderChart(income, expense, savings) {
         if (chartInstance) chartInstance.destroy();
         const ctx = document.getElementById('summaryChart').getContext('2d');
-        const gradIncome = ctx.createLinearGradient(0, 0, 0, 220);
-        gradIncome.addColorStop(0, 'rgba(22,163,74,0.95)');
-        gradIncome.addColorStop(1, 'rgba(22,163,74,0.6)');
-        const gradExpense = ctx.createLinearGradient(0, 0, 0, 220);
-        gradExpense.addColorStop(0, 'rgba(220,38,38,0.9)');
-        gradExpense.addColorStop(1, 'rgba(220,38,38,0.5)');
-        const gradSavings = ctx.createLinearGradient(0, 0, 0, 220);
-        gradSavings.addColorStop(0, 'rgba(34,197,94,0.85)');
-        gradSavings.addColorStop(1, 'rgba(34,197,94,0.4)');
+        const gradIncome  = ctx.createLinearGradient(0,0,0,220); gradIncome.addColorStop(0,'rgba(22,163,74,0.95)');  gradIncome.addColorStop(1,'rgba(22,163,74,0.6)');
+        const gradExpense = ctx.createLinearGradient(0,0,0,220); gradExpense.addColorStop(0,'rgba(220,38,38,0.9)');  gradExpense.addColorStop(1,'rgba(220,38,38,0.5)');
+        const gradSavings = ctx.createLinearGradient(0,0,0,220); gradSavings.addColorStop(0,'rgba(34,197,94,0.85)'); gradSavings.addColorStop(1,'rgba(34,197,94,0.4)');
         chartInstance = new Chart(ctx, {
             type: 'bar',
             data: {
@@ -803,20 +1011,20 @@
             },
             options: {
                 responsive: true, maintainAspectRatio: false,
-                interaction: { mode: 'index', intersect: false },
+                interaction: { mode:'index', intersect:false },
                 plugins: {
                     legend: { display: false },
                     tooltip: {
-                        backgroundColor: '#0f172a', titleColor: '#94a3b8', bodyColor: '#ffffff',
-                        padding: 12, cornerRadius: 10,
-                        titleFont: { family: 'DM Sans', size: 11 },
-                        bodyFont: { family: 'DM Sans', size: 13, weight: '600' },
-                        callbacks: { label: ctx => '  ' + new Intl.NumberFormat('en-IN', { style:'currency', currency:'INR', minimumFractionDigits:0 }).format(ctx.parsed.y) }
+                        backgroundColor:'#0f172a', titleColor:'#94a3b8', bodyColor:'#ffffff',
+                        padding:12, cornerRadius:10,
+                        titleFont:{ family:'DM Sans', size:11 },
+                        bodyFont:{ family:'DM Sans', size:13, weight:'600' },
+                        callbacks: { label: ctx => '  ' + new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',minimumFractionDigits:0}).format(ctx.parsed.y) }
                     }
                 },
                 scales: {
-                    x: { grid: { display: false }, border: { display: false }, ticks: { color: '#94a3b8', font: { family: 'DM Sans', size: 12 } } },
-                    y: { grid: { color: '#f1f5f9' }, border: { display: false }, ticks: { color: '#94a3b8', font: { family: 'DM Sans', size: 11 }, callback: v => '₹' + (v >= 100000 ? (v/100000).toFixed(1)+'L' : v >= 1000 ? (v/1000).toFixed(0)+'K' : v) } }
+                    x: { grid:{display:false}, border:{display:false}, ticks:{color:'#94a3b8',font:{family:'DM Sans',size:12}} },
+                    y: { grid:{color:'#f1f5f9'}, border:{display:false}, ticks:{color:'#94a3b8',font:{family:'DM Sans',size:11}, callback: v => '₹'+(v>=100000?(v/100000).toFixed(1)+'L':v>=1000?(v/1000).toFixed(0)+'K':v)} }
                 }
             }
         });
@@ -833,6 +1041,7 @@
     function goToEmi()      { window.location.href = 'emi.html'; }
     function goToBills()    { window.location.href = 'bills.html'; }
     function goToGoals()    { window.location.href = 'goals.html'; }
+    function goToBudget()   { window.location.href = 'budget.html'; }
 
     function logout() {
         if (confirm('Are you sure you want to logout?')) {
