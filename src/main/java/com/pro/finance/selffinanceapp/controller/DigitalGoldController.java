@@ -46,7 +46,7 @@ public class DigitalGoldController {
 
     @PutMapping("/{id}")
     public DigitalGold updateGold(@PathVariable Long id,
-                                  @RequestBody DigitalGoldDTO dto,
+                                  @Valid @RequestBody DigitalGoldDTO dto,  // ✅ @Valid added
                                   Principal principal) {
         return service.updateGold(id, dto, principal.getName());
     }
@@ -56,9 +56,7 @@ public class DigitalGoldController {
             @RequestParam int year,
             @RequestParam int month,
             Principal principal) {
-
-        return service.getFilteredSummary(
-                principal.getName(), year, month);
+        return service.getFilteredSummary(principal.getName(), year, month);
     }
 
     @GetMapping("/filter")
@@ -66,8 +64,6 @@ public class DigitalGoldController {
             @RequestParam int year,
             @RequestParam int month,
             Principal principal) {
-
-        return service.getFilteredHistory(
-                principal.getName(), year, month);
+        return service.getFilteredHistory(principal.getName(), year, month);
     }
 }

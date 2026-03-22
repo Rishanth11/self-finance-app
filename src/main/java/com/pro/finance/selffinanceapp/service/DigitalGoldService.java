@@ -48,6 +48,19 @@ public class DigitalGoldService {
         return repo.save(gold);
     }
 
+    // 🔥 COMMON METHOD (avoid repeating logic)
+    private BigDecimal getSafeGoldPrice() {
+        BigDecimal price = priceService.getLiveGoldPricePerGram();
+
+        if (price == null) {
+            System.out.println("❌ Gold API failed - price unavailable");
+            throw new RuntimeException("Gold price unavailable. Please try again later.");
+        }
+
+        System.out.println("✅ Gold price fetched: " + price);
+        return price;
+    }
+
     public GoldSummaryDTO getSummary(String email) {
 
         User user = userRepository.findByEmail(email)
@@ -64,15 +77,10 @@ public class DigitalGoldService {
             totalInvested = totalInvested.add(gold.getTotalInvested());
         }
 
-        BigDecimal livePrice = priceService.getLiveGoldPricePerGram();
+        BigDecimal livePrice = getSafeGoldPrice();
 
-        BigDecimal currentValue = BigDecimal.ZERO;
-        BigDecimal profitLoss = BigDecimal.ZERO;
-
-        if (livePrice != null) {
-            currentValue = totalGrams.multiply(livePrice);
-            profitLoss = currentValue.subtract(totalInvested);
-        }
+        BigDecimal currentValue = totalGrams.multiply(livePrice);
+        BigDecimal profitLoss = currentValue.subtract(totalInvested);
 
         return new GoldSummaryDTO(
                 totalGrams,
@@ -91,20 +99,15 @@ public class DigitalGoldService {
         List<DigitalGold> list =
                 repo.findByUserIdOrderByPurchaseDateDesc(user.getId());
 
-        BigDecimal livePrice = priceService.getLiveGoldPricePerGram();
+        BigDecimal livePrice = getSafeGoldPrice();
 
         return list.stream().map(gold -> {
 
-            BigDecimal currentValue = BigDecimal.ZERO;
-            BigDecimal profit = BigDecimal.ZERO;
+            BigDecimal currentValue =
+                    gold.getGramsPurchased().multiply(livePrice);
 
-            if (livePrice != null) {
-                currentValue =
-                        gold.getGramsPurchased().multiply(livePrice);
-
-                profit =
-                        currentValue.subtract(gold.getTotalInvested());
-            }
+            BigDecimal profit =
+                    currentValue.subtract(gold.getTotalInvested());
 
             return new GoldHistoryDTO(
                     gold.getId(),
@@ -180,15 +183,10 @@ public class DigitalGoldService {
             totalInvested = totalInvested.add(gold.getTotalInvested());
         }
 
-        BigDecimal livePrice = priceService.getLiveGoldPricePerGram();
+        BigDecimal livePrice = getSafeGoldPrice();
 
-        BigDecimal currentValue = BigDecimal.ZERO;
-        BigDecimal profitLoss = BigDecimal.ZERO;
-
-        if (livePrice != null) {
-            currentValue = totalGrams.multiply(livePrice);
-            profitLoss = currentValue.subtract(totalInvested);
-        }
+        BigDecimal currentValue = totalGrams.multiply(livePrice);
+        BigDecimal profitLoss = currentValue.subtract(totalInvested);
 
         return new GoldSummaryDTO(
                 totalGrams,
@@ -207,22 +205,17 @@ public class DigitalGoldService {
         LocalDate start = LocalDate.of(year, month, 1);
         LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
 
-        BigDecimal livePrice = priceService.getLiveGoldPricePerGram();
+        BigDecimal livePrice = getSafeGoldPrice();
 
         return repo.findByUserIdAndPurchaseDateBetween(user.getId(), start, end)
                 .stream()
                 .map(gold -> {
 
-                    BigDecimal currentValue = BigDecimal.ZERO;
-                    BigDecimal profit = BigDecimal.ZERO;
+                    BigDecimal currentValue =
+                            gold.getGramsPurchased().multiply(livePrice);
 
-                    if (livePrice != null) {
-                        currentValue =
-                                gold.getGramsPurchased().multiply(livePrice);
-
-                        profit =
-                                currentValue.subtract(gold.getTotalInvested());
-                    }
+                    BigDecimal profit =
+                            currentValue.subtract(gold.getTotalInvested());
 
                     return new GoldHistoryDTO(
                             gold.getId(),

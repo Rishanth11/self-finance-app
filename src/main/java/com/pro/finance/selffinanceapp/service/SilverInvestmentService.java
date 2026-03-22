@@ -14,7 +14,6 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,12 +37,13 @@ public class SilverInvestmentService {
     }
 
     public SilverPortfolioSummaryDTO getPortfolioSummary(String username) {
+
         User user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new RuntimeException("User not found: " + username));
 
         List<SilverInvestment> records = silverInvestmentRepository.findByUser(user);
 
-        // Return empty summary immediately — no live price call needed
+        // ✅ If no investments → return empty
         if (records.isEmpty()) {
             return new SilverPortfolioSummaryDTO(
                     BigDecimal.ZERO,
@@ -55,15 +55,31 @@ public class SilverInvestmentService {
             );
         }
 
-        // Assigned once → effectively final → safe to use inside lambda
-        final BigDecimal currentPrice = Optional.ofNullable(
-                silverPriceService.getLiveSilverPricePerGram()
-        ).orElse(BigDecimal.ZERO);
+        // 🔥 FIXED PRICE FETCH LOGIC
+        BigDecimal fetchedPrice = silverPriceService.getLiveSilverPricePerGram();
 
+        final BigDecimal currentPrice;
+
+        if (fetchedPrice == null) {
+            System.out.println("❌ Silver API failed - price unavailable");
+
+            // 👉 Option A: Fail fast (recommended for debugging)
+            throw new RuntimeException("Silver price unavailable. Please try again later.");
+
+            // 👉 Option B (alternative UX-friendly):
+            // currentPrice = BigDecimal.ZERO;
+
+        } else {
+            System.out.println("✅ Silver price fetched: " + fetchedPrice);
+            currentPrice = fetchedPrice;
+        }
+
+        // 🔄 Map investments
         List<SilverInvestmentPnLDTO> investments = records.stream()
                 .map(inv -> mapToPnLDTO(inv, currentPrice))
                 .collect(Collectors.toList());
 
+        // 📊 Aggregations
         BigDecimal totalInvested = investments.stream()
                 .map(SilverInvestmentPnLDTO::getInvestedAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -97,25 +113,31 @@ public class SilverInvestmentService {
     public void deleteInvestment(Long investmentId, String username) {
         SilverInvestment inv = silverInvestmentRepository.findById(investmentId)
                 .orElseThrow(() -> new RuntimeException("Investment not found"));
+
         if (!inv.getUser().getEmail().equals(username)) {
             throw new RuntimeException("Unauthorized");
         }
+
         silverInvestmentRepository.delete(inv);
     }
 
     public SilverInvestment updateInvestment(Long id, SilverInvestment body, String username) {
         SilverInvestment inv = silverInvestmentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Investment not found"));
+
         if (!inv.getUser().getEmail().equals(username)) {
             throw new RuntimeException("Unauthorized");
         }
+
         inv.setGrams(body.getGrams());
         inv.setPricePerGram(body.getPricePerGram());
         inv.setPurchaseDate(body.getPurchaseDate());
+
         return silverInvestmentRepository.save(inv);
     }
 
     private SilverInvestmentPnLDTO mapToPnLDTO(SilverInvestment inv, BigDecimal currentPrice) {
+
         BigDecimal invested = inv.getGrams()
                 .multiply(inv.getPricePerGram())
                 .setScale(2, RoundingMode.HALF_UP);
