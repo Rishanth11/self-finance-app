@@ -24,7 +24,8 @@ public class SilverInvestmentService {
     private final SilverPriceService silverPriceService;
     private final UserRepository userRepository;
 
-    public SilverInvestment addInvestment(String username, BigDecimal grams, BigDecimal pricePerGram, LocalDate purchaseDate) {
+    public SilverInvestment addInvestment(String username, BigDecimal grams,
+                                          BigDecimal pricePerGram, LocalDate purchaseDate) {
         User user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new RuntimeException("User not found: " + username));
 
@@ -43,7 +44,6 @@ public class SilverInvestmentService {
 
         List<SilverInvestment> records = silverInvestmentRepository.findByUser(user);
 
-        // ✅ If no investments → return empty
         if (records.isEmpty()) {
             return new SilverPortfolioSummaryDTO(
                     BigDecimal.ZERO,
@@ -55,31 +55,18 @@ public class SilverInvestmentService {
             );
         }
 
-        // 🔥 FIXED PRICE FETCH LOGIC
-        BigDecimal fetchedPrice = silverPriceService.getLiveSilverPricePerGram();
+        BigDecimal currentPrice = silverPriceService.getLiveSilverPricePerGram();
 
-        final BigDecimal currentPrice;
-
-        if (fetchedPrice == null) {
-            System.out.println("❌ Silver API failed - price unavailable");
-
-            // 👉 Option A: Fail fast (recommended for debugging)
+        if (currentPrice == null) {
             throw new RuntimeException("Silver price unavailable. Please try again later.");
-
-            // 👉 Option B (alternative UX-friendly):
-            // currentPrice = BigDecimal.ZERO;
-
-        } else {
-            System.out.println("✅ Silver price fetched: " + fetchedPrice);
-            currentPrice = fetchedPrice;
         }
 
-        // 🔄 Map investments
+        System.out.println("✅ Silver price fetched: " + currentPrice);
+
         List<SilverInvestmentPnLDTO> investments = records.stream()
                 .map(inv -> mapToPnLDTO(inv, currentPrice))
                 .collect(Collectors.toList());
 
-        // 📊 Aggregations
         BigDecimal totalInvested = investments.stream()
                 .map(SilverInvestmentPnLDTO::getInvestedAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);

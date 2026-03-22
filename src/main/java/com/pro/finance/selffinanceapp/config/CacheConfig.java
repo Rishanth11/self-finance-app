@@ -15,7 +15,7 @@ public class CacheConfig {
 
     @Bean
     public CacheManager cacheManager() {
-        CaffeineCacheManager manager = new CaffeineCacheManager("goldPrice");
+        CaffeineCacheManager manager = new CaffeineCacheManager("goldPrice", "silverPrice"); // ✅ added silverPrice
         manager.setCaffeine(
                 Caffeine.newBuilder()
                         .expireAfterWrite(5, TimeUnit.MINUTES)

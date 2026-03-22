@@ -4,6 +4,7 @@ import com.pro.finance.selffinanceapp.dto.SilverPortfolioSummaryDTO;
 import com.pro.finance.selffinanceapp.model.SilverInvestment;
 import com.pro.finance.selffinanceapp.service.SilverInvestmentService;
 import com.pro.finance.selffinanceapp.service.SilverPriceService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,7 +48,8 @@ public class SilverController {
     @GetMapping("/portfolio")
     public ResponseEntity<?> getPortfolio(Principal principal) {
         try {
-            SilverPortfolioSummaryDTO summary = silverInvestmentService.getPortfolioSummary(principal.getName());
+            SilverPortfolioSummaryDTO summary = silverInvestmentService
+                    .getPortfolioSummary(principal.getName());
             return ResponseEntity.ok(summary);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Failed to load portfolio: " + e.getMessage());
@@ -67,7 +69,7 @@ public class SilverController {
     @PutMapping("/invest/{id}")
     public ResponseEntity<?> updateInvestment(
             @PathVariable Long id,
-            @RequestBody SilverInvestment body,
+            @Valid @RequestBody SilverInvestment body,  // ✅ @Valid added
             Principal principal) {
         try {
             SilverInvestment updated = silverInvestmentService.updateInvestment(

@@ -1,11 +1,13 @@
 package com.pro.finance.selffinanceapp.service;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Map;
 
 @Service
@@ -23,30 +25,44 @@ public class SilverPriceService {
         return new RestTemplate(factory);
     }
 
+    @Cacheable(value = "silverPrice", unless = "#result == null")
     public BigDecimal getLiveSilverPricePerGram() {
         try {
-            String url = "https://api.twelvedata.com/price?symbol=XAG/USD&apikey=" + apiKey;
+            // ✅ Free API - no key required, no rate limits
+            String silverUrl = "https://api.gold-api.com/price/XAG";
+            Map silverResponse = restTemplate.getForObject(silverUrl, Map.class);
 
-            Map response = restTemplate.getForObject(url, Map.class);
-
-            if (response == null || !response.containsKey("price")) {
-                System.out.println("Silver API invalid response: " + response);
+            if (silverResponse == null || !silverResponse.containsKey("price")) {
+                System.out.println("❌ Silver API invalid response: " + silverResponse);
                 return null;
             }
 
-            BigDecimal priceUsdPerOz = new BigDecimal(response.get("price").toString());
+            // gold-api.com returns price per troy ounce in USD
+            BigDecimal priceUsdPerOz = new BigDecimal(silverResponse.get("price").toString());
 
+            // Fetch live USD/INR from Twelve Data
+            String forexUrl = "https://api.twelvedata.com/price?symbol=USD/INR&apikey=" + apiKey;
+            Map forexResponse = restTemplate.getForObject(forexUrl, Map.class);
+
+            if (forexResponse == null || !forexResponse.containsKey("price")) {
+                System.out.println("❌ Forex API invalid response: " + forexResponse);
+                return null;
+            }
+
+            BigDecimal usdToInr   = new BigDecimal(forexResponse.get("price").toString());
             BigDecimal gramsPerOz = new BigDecimal("31.1035");
-            BigDecimal usdToInr = new BigDecimal("83");
 
             BigDecimal priceInrPerGram = priceUsdPerOz
                     .multiply(usdToInr)
-                    .divide(gramsPerOz, 2, BigDecimal.ROUND_HALF_UP);
+                    .divide(gramsPerOz, 2, RoundingMode.HALF_UP);
+
+            System.out.println("✅ Silver price (INR/gram): " + priceInrPerGram
+                    + " | USD/INR: " + usdToInr);
 
             return priceInrPerGram;
 
         } catch (Exception e) {
-            System.out.println("Silver API error: " + e.getMessage());
+            System.out.println("❌ Silver API error: " + e.getMessage());
             return null;
         }
     }
