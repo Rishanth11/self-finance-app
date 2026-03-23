@@ -297,7 +297,6 @@
 
 <div class="page">
 
-    <!-- HEADER -->
     <div class="page-header">
         <div class="page-title">
             <div class="page-title-icon"><i class="fas fa-circle-dot"></i></div>
@@ -319,7 +318,6 @@
         </div>
     </div>
 
-    <!-- STAT ROW -->
     <div class="stat-row">
         <div class="stat-card">
             <div class="stat-icon green"><i class="fas fa-weight-hanging"></i></div>
@@ -343,7 +341,6 @@
         </div>
     </div>
 
-    <!-- ADD PURCHASE CARD -->
     <div class="card">
         <div class="card-header">
             <div class="card-header-icon"><i class="fas fa-plus"></i></div>
@@ -374,7 +371,6 @@
         </div>
     </div>
 
-    <!-- PORTFOLIO CARD -->
     <div class="card">
         <div class="card-header">
             <div class="card-header-icon"><i class="fas fa-chart-pie"></i></div>
@@ -388,8 +384,9 @@
             </div>
             <div class="live-price-input-wrap">
                 <span class="live-price-prefix">₹</span>
-                <input type="number" id="livePriceInput" placeholder="Enter today's price" step="0.01" min="0" oninput="recalculate()">
+                <input type="number" id="livePriceInput" placeholder="Fetching live price…" step="0.01" min="0" oninput="recalculate()">
             </div>
+            <!-- ✅ Refresh button calls backend /silver/price — no direct Yahoo Finance call -->
             <button class="btn btn-primary btn-sm" onclick="fetchLivePrice()">
                 <i class="fas fa-rotate"></i> Refresh
             </button>
@@ -405,7 +402,6 @@
         </div>
     </div>
 
-    <!-- PURCHASE HISTORY CARD -->
     <div class="card">
         <div class="card-header">
             <div class="card-header-icon"><i class="fas fa-table"></i></div>
@@ -441,13 +437,15 @@
 <script src="../js/api.js"></script>
 <script>
     let chart;
-    let allPurchases = [];
+    let allPurchases     = [];
     let currentLivePrice = 0;
 
     document.addEventListener('DOMContentLoaded', () => {
         if (typeof requireAuth === 'function') requireAuth();
+        // ✅ loadSilver() → backend → MCX via Yahoo Finance (server-to-server, no CORS issue)
+        // The browser CANNOT call Yahoo Finance directly due to CORS restrictions.
+        // All price fetching must go through your Spring Boot backend.
         loadSilver();
-        fetchLivePrice();
     });
 
     function fmt(n) {
@@ -476,38 +474,36 @@
         recalculate();
     }
 
-    /* ── FETCH LIVE SILVER PRICE ── */
+    // ✅ FIX: Refresh button now calls /api/silver/price (your Spring Boot backend)
+    // instead of calling Yahoo Finance directly from the browser.
+    // Browser → Yahoo Finance = CORS blocked ❌
+    // Browser → Your backend → Yahoo Finance = works perfectly ✅
     async function fetchLivePrice() {
         setLiveStatus('Fetching live silver price…', '');
         try {
-            const silverRes  = await fetch('https://api.gold-api.com/price/XAG');
-            const silverData = await silverRes.json();
-            const priceUsdPerOz = parseFloat(silverData.price);
-            if (!priceUsdPerOz || priceUsdPerOz <= 0) throw new Error('Invalid silver price');
+            const res = await apiRequest('/silver/price');
 
-            const fxRes  = await fetch('https://api.frankfurter.app/latest?from=USD&to=INR');
-            const fxData = await fxRes.json();
-            const usdToInr = parseFloat(fxData.rates.INR);
-            if (!usdToInr || usdToInr <= 0) throw new Error('Invalid exchange rate');
+            if (!res.ok) throw new Error('Backend returned error: ' + res.status);
 
-            const priceInrPerGram = parseFloat((priceUsdPerOz * usdToInr / 31.1035).toFixed(2));
+            const price = parseFloat(await res.text());
+            if (isNaN(price) || price <= 0) throw new Error('Invalid price from backend');
 
-            document.getElementById('livePriceInput').value = priceInrPerGram;
-            currentLivePrice = priceInrPerGram;
+            document.getElementById('livePriceInput').value = price;
+            currentLivePrice = price;
 
             const ts = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
             setLiveStatus(
-                `✓ Live price fetched at ${ts} — $${priceUsdPerOz.toLocaleString()} /oz × ₹${Math.round(usdToInr)}/$ = ₹${priceInrPerGram.toLocaleString('en-IN')}/g`,
+                `✓ Refreshed at ${ts} — ₹${price.toLocaleString('en-IN')}/g (MCX via server)`,
                 'success'
             );
             recalculate();
+
         } catch (e) {
-            console.error('Live silver price fetch failed:', e);
-            setLiveStatus('Could not fetch live price. Check your internet or enter manually.', 'error');
+            console.error('Silver price fetch failed:', e);
+            setLiveStatus('Could not fetch silver price. Check your connection or enter manually.', 'error');
         }
     }
 
-    /* ── RECALCULATE stats client-side ── */
     function recalculate() {
         const inputVal = parseFloat(document.getElementById('livePriceInput').value);
         currentLivePrice = isNaN(inputVal) || inputVal <= 0 ? 0 : inputVal;
@@ -550,12 +546,15 @@
         renderTable(filtered);
     }
 
-    /* ── LOAD purchases from backend ── */
-    /* userId is NOT sent — Spring Security reads the logged-in user from the JWT token automatically */
+    // ✅ loadSilver() — reads the MCX-aligned price from backend portfolio response
     async function loadSilver() {
         try {
             const res = await apiRequest('/silver/portfolio');
-            if (!res.ok) return;
+            if (!res.ok) {
+                // Portfolio failed — at least get the price
+                await fetchLivePrice();
+                return;
+            }
             const data = await res.json();
 
             allPurchases = (data.investments || []).map(inv => ({
@@ -565,21 +564,33 @@
                 purchaseDate: inv.purchaseDate
             }));
 
+            // ✅ Get price from backend portfolio response (already MCX-accurate)
             if (data.investments && data.investments.length > 0 && data.investments[0].currentPricePerGram) {
                 const backendPrice = parseFloat(data.investments[0].currentPricePerGram);
                 if (backendPrice > 0) {
                     currentLivePrice = backendPrice;
                     document.getElementById('livePriceInput').value = backendPrice;
-                    setLiveStatus('✓ Live price from server — ₹' + backendPrice.toLocaleString('en-IN') + '/g', 'success');
+                    const ts = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+                    setLiveStatus(
+                        `✓ Live MCX price at ${ts} — ₹${backendPrice.toLocaleString('en-IN')}/g (from server)`,
+                        'success'
+                    );
+                } else {
+                    // Portfolio returned zero price — call /silver/price directly
+                    await fetchLivePrice();
                 }
+            } else {
+                // No investments or no price in response — call /silver/price directly
+                await fetchLivePrice();
             }
+
         } catch (e) {
             console.error('Failed to load silver investments:', e);
+            await fetchLivePrice();
         }
         recalculate();
     }
 
-    /* ── RENDER TABLE ── */
     function renderTable(list) {
         const tbody  = document.getElementById('silverTableBody');
         const tableW = document.getElementById('silverTableWrap');
@@ -627,7 +638,6 @@
         });
     }
 
-    /* ── RENDER CHART ── */
     function renderChart(invested, current) {
         if (chart) chart.destroy();
 
@@ -686,7 +696,6 @@
         });
     }
 
-    /* ── ADD ── */
     async function addSilver() {
         const grams = parseFloat(document.getElementById('grams').value);
         const price = parseFloat(document.getElementById('price').value);
@@ -707,7 +716,6 @@
         }
     }
 
-    /* ── DELETE ── */
     async function deleteSilver(id) {
         if (!confirm('Delete this purchase?')) return;
         const res = await apiRequest(`/silver/invest/${id}`, { method: 'DELETE' });
@@ -718,7 +726,6 @@
         }
     }
 
-    /* ── EDIT ── */
     async function editSilver(id) {
         const newGrams = prompt('Enter new grams purchased:');
         const newPrice = prompt('Enter new price per gram (₹):');

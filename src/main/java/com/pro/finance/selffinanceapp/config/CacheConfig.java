@@ -15,10 +15,11 @@ public class CacheConfig {
 
     @Bean
     public CacheManager cacheManager() {
-        CaffeineCacheManager manager = new CaffeineCacheManager("goldPrice", "silverPrice"); // ✅ added silverPrice
+        CaffeineCacheManager manager = new CaffeineCacheManager("goldPrice", "silverPrice");
         manager.setCaffeine(
                 Caffeine.newBuilder()
-                        .expireAfterWrite(5, TimeUnit.MINUTES)
+                        // ✅ Reduced from 5 mins to 1 min — gold prices move fast
+                        .expireAfterWrite(1, TimeUnit.MINUTES)
                         .maximumSize(10)
         );
         return manager;

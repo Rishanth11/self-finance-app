@@ -42,7 +42,6 @@
 
         .page { max-width: 1180px; margin: 0 auto; }
 
-        /* ── PAGE HEADER ── */
         .page-header {
             display: flex; align-items: center; justify-content: space-between;
             flex-wrap: wrap; gap: 16px; margin-bottom: 32px;
@@ -87,7 +86,6 @@
         }
         .month-filter button:hover { background: var(--green-dim); }
 
-        /* ── STAT ROW ── */
         .stat-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -120,7 +118,6 @@
         .stat-info strong.profit { color: var(--green); }
         .stat-info strong.loss   { color: var(--red); }
 
-        /* ── CARD ── */
         .card {
             background: var(--white); border: 1.5px solid var(--slate-200);
             border-radius: 20px; padding: 24px 26px; margin-bottom: 20px;
@@ -136,7 +133,6 @@
 
         .card-header h3 { font-size: 1rem; font-weight: 600; color: var(--slate-900); }
 
-        /* ── FORM ── */
         .form-grid { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; }
 
         .field { flex: 1 1 160px; min-width: 150px; }
@@ -168,7 +164,6 @@
             border-radius: 8px; padding: 8px 14px; margin-bottom: 16px; display: none;
         }
 
-        /* ── BUTTONS ── */
         .btn {
             display: inline-flex; align-items: center; gap: 7px;
             padding: 10px 20px; border-radius: 10px; border: none;
@@ -187,7 +182,6 @@
         .btn-ghost { background: var(--slate-100); color: var(--slate-600); }
         .btn-ghost:hover { background: var(--slate-200); }
 
-        /* ── TABLE ── */
         .table-scroll { overflow-x: auto; }
 
         table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
@@ -229,7 +223,6 @@
         .icon-btn.del  { background: var(--red-dim);   color: var(--red); }
         .icon-btn.del:hover  { background: var(--red);   color: white; }
 
-        /* ── EMPTY STATE ── */
         .empty-state {
             text-align: center; padding: 48px 20px;
             color: var(--slate-400); display: none;
@@ -237,7 +230,6 @@
         .empty-state i { font-size: 2.5rem; margin-bottom: 12px; display: block; }
         .empty-state p { font-size: 0.9rem; }
 
-        /* ── CHART ── */
         .chart-box {
             background: var(--slate-50); border: 1.5px solid var(--slate-200);
             border-radius: 14px; padding: 20px; height: 280px;
@@ -247,7 +239,6 @@
 
         .divider { height: 1px; background: var(--slate-200); margin: 22px 0; }
 
-        /* ── LIVE PRICE ROW ── */
         .live-price-row {
             display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
             background: var(--green-dim); border: 1.5px solid var(--green-border);
@@ -299,7 +290,6 @@
             letter-spacing: 0.06em; color: var(--slate-400); margin-bottom: 14px;
         }
 
-        /* ── ANIMATION ── */
         @keyframes fadeUp {
             from { opacity: 0; transform: translateY(14px); }
             to   { opacity: 1; transform: translateY(0); }
@@ -315,7 +305,6 @@
 
 <div class="page">
 
-    <!-- HEADER -->
     <div class="page-header">
         <div class="page-title">
             <div class="page-title-icon"><i class="fas fa-coins"></i></div>
@@ -337,7 +326,6 @@
         </div>
     </div>
 
-    <!-- STAT ROW -->
     <div class="stat-row">
         <div class="stat-card">
             <div class="stat-icon green"><i class="fas fa-weight-hanging"></i></div>
@@ -361,7 +349,6 @@
         </div>
     </div>
 
-    <!-- ADD PURCHASE CARD -->
     <div class="card">
         <div class="card-header">
             <div class="card-header-icon"><i class="fas fa-plus"></i></div>
@@ -392,14 +379,12 @@
         </div>
     </div>
 
-    <!-- PORTFOLIO CARD -->
     <div class="card">
         <div class="card-header">
             <div class="card-header-icon"><i class="fas fa-chart-pie"></i></div>
             <h3>Portfolio overview</h3>
         </div>
 
-        <!-- Live price input -->
         <div class="live-price-row">
             <div class="live-price-label">
                 <i class="fas fa-bolt"></i>
@@ -407,7 +392,7 @@
             </div>
             <div class="live-price-input-wrap">
                 <span class="live-price-prefix">₹</span>
-                <input type="number" id="livePriceInput" placeholder="Enter today's price" step="1" min="0" oninput="recalculate()">
+                <input type="number" id="livePriceInput" placeholder="Fetching live price…" step="1" min="0" oninput="recalculate()">
             </div>
             <button class="btn btn-primary btn-sm" onclick="fetchLivePrice()">
                 <i class="fas fa-rotate"></i> Refresh
@@ -424,7 +409,6 @@
         </div>
     </div>
 
-    <!-- PURCHASE HISTORY CARD -->
     <div class="card">
         <div class="card-header">
             <div class="card-header-icon"><i class="fas fa-table"></i></div>
@@ -460,13 +444,17 @@
 <script src="../js/api.js"></script>
 <script>
     let chart;
-    let allPurchases  = [];
+    let allPurchases     = [];
     let currentLivePrice = 0;
+
+    // ✅ India correction factor — must stay in sync with GoldPriceService.java
+    // Verified 23-Mar-2026: base ₹13,194/g × 1.0433 = ₹13,766/g (matches Groww ✅)
+    // HOW TO RECALIBRATE: newFactor = Groww price ÷ base (from server console log)
+    const INDIA_CORRECTION_FACTOR = 1.0433;
 
     document.addEventListener('DOMContentLoaded', () => {
         if (typeof requireAuth === 'function') requireAuth();
         loadGold();
-        fetchLivePrice(); // auto-fetch real price on load
     });
 
     function fmt(n) {
@@ -492,41 +480,44 @@
         loadGold();
     }
 
-    /* ── FETCH REAL LIVE GOLD PRICE (gold-api.com, no key, CORS enabled) ── */
+    // Refresh button — applies same India correction as backend
     async function fetchLivePrice() {
         setLiveStatus('Fetching live gold price…', '');
         try {
-            // Step 1: Get gold price in USD per troy ounce (free, no key, CORS enabled)
-            const goldRes = await fetch('https://api.gold-api.com/price/XAU');
-            const goldData = await goldRes.json();
+            // Step 1: XAU/USD spot price
+            const goldRes       = await fetch('https://api.gold-api.com/price/XAU');
+            const goldData      = await goldRes.json();
             const priceUsdPerOz = parseFloat(goldData.price);
-
             if (!priceUsdPerOz || priceUsdPerOz <= 0) throw new Error('Invalid gold price');
 
-            // Step 2: Get USD → INR exchange rate (free, no key)
-            const fxRes  = await fetch('https://api.frankfurter.app/latest?from=USD&to=INR');
-            const fxData = await fxRes.json();
+            // Step 2: USD → INR exchange rate
+            const fxRes    = await fetch('https://api.frankfurter.app/latest?from=USD&to=INR');
+            const fxData   = await fxRes.json();
             const usdToInr = parseFloat(fxData.rates.INR);
-
             if (!usdToInr || usdToInr <= 0) throw new Error('Invalid exchange rate');
 
-            // Step 3: Convert → ₹ per gram (1 troy oz = 31.1035 grams)
-            const priceInrPerGram = Math.round((priceUsdPerOz * usdToInr) / 31.1035);
+            // Step 3: Base INR per gram
+            const baseInrPerGram = (priceUsdPerOz * usdToInr) / 31.1035;
 
-            document.getElementById('livePriceInput').value = priceInrPerGram;
-            currentLivePrice = priceInrPerGram;
+            // Step 4: Apply India correction (+4.33%) — matches GoldPriceService.java exactly
+            const adjustedInrPerGram = Math.round(baseInrPerGram * INDIA_CORRECTION_FACTOR);
+
+            document.getElementById('livePriceInput').value = adjustedInrPerGram;
+            currentLivePrice = adjustedInrPerGram;
 
             const ts = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
-            setLiveStatus(`✓ Live price fetched at ${ts} — $${priceUsdPerOz.toLocaleString()} /oz × ₹${Math.round(usdToInr)}/$ = ₹${priceInrPerGram.toLocaleString('en-IN')}/g (24K)`, 'success');
+            setLiveStatus(
+                `✓ Refreshed at ${ts} — $${priceUsdPerOz.toLocaleString()} /oz × ₹${Math.round(usdToInr)}/$ × ${INDIA_CORRECTION_FACTOR} = ₹${adjustedInrPerGram.toLocaleString('en-IN')}/g (24K)`,
+                'success'
+            );
             recalculate();
 
         } catch (e) {
             console.error('Live price fetch failed:', e);
-            setLiveStatus('Could not fetch live price. Check your internet connection or enter manually.', 'error');
+            setLiveStatus('Could not fetch live price. Check your internet or enter manually.', 'error');
         }
     }
 
-    /* ── RECALCULATE stats client-side whenever live price changes ── */
     function recalculate() {
         const inputVal = parseFloat(document.getElementById('livePriceInput').value);
         currentLivePrice = isNaN(inputVal) || inputVal <= 0 ? 0 : inputVal;
@@ -543,10 +534,7 @@
         const currentValue  = currentLivePrice > 0 ? totalGrams * currentLivePrice : 0;
         const profitLoss    = currentValue - totalInvested;
 
-        // Header
         document.getElementById('totalGramsHeader').textContent = fmtG(totalGrams);
-
-        // Stat cards
         document.getElementById('statGrams').textContent        = fmtG(totalGrams);
         document.getElementById('statInvested').textContent     = fmt(totalInvested);
         document.getElementById('statLivePrice').textContent    = currentLivePrice > 0 ? fmt(currentLivePrice) : '—';
@@ -574,7 +562,6 @@
         renderTable(filtered);
     }
 
-    /* ── LOAD all purchases from backend ── */
     async function loadGold() {
         const mv  = document.getElementById('monthFilter').value;
         let url   = '/gold/summary';
@@ -584,11 +571,17 @@
         if (!res.ok) return;
         const data = await res.json();
 
-        // If backend provides a valid live price, use it
         if (data.livePrice && parseFloat(data.livePrice) > 0) {
             currentLivePrice = parseFloat(data.livePrice);
             document.getElementById('livePriceInput').value = currentLivePrice;
-            setLiveStatus('✓ Live price from server — ₹' + currentLivePrice.toLocaleString('en-IN') + '/g', 'success');
+            const ts = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+            setLiveStatus(
+                `✓ Live price at ${ts} — ₹${currentLivePrice.toLocaleString('en-IN')}/g (24K, from server)`,
+                'success'
+            );
+        } else {
+            console.warn('Backend returned no live price, falling back to direct fetch');
+            await fetchLivePrice();
         }
 
         await loadHistory(mv);
@@ -621,14 +614,14 @@
         tableW.style.display = '';
 
         list.forEach(g => {
-            const d          = new Date(g.purchaseDate).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
-            const grams      = parseFloat(g.gramsPurchased || 0);
-            const invested   = parseFloat(g.totalInvested || (grams * parseFloat(g.purchasePricePerGram || 0)));
-            const curVal     = currentLivePrice > 0 ? grams * currentLivePrice : null;
-            const profit     = curVal !== null ? curVal - invested : null;
-            const isProfit   = profit !== null ? profit >= 0 : true;
-            const badgeCls   = isProfit ? 'badge-profit' : 'badge-loss';
-            const badgeIcon  = isProfit ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down';
+            const d         = new Date(g.purchaseDate).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
+            const grams     = parseFloat(g.gramsPurchased || 0);
+            const invested  = parseFloat(g.totalInvested || (grams * parseFloat(g.purchasePricePerGram || 0)));
+            const curVal    = currentLivePrice > 0 ? grams * currentLivePrice : null;
+            const profit    = curVal !== null ? curVal - invested : null;
+            const isProfit  = profit !== null ? profit >= 0 : true;
+            const badgeCls  = isProfit ? 'badge-profit' : 'badge-loss';
+            const badgeIcon = isProfit ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down';
 
             tbody.innerHTML += `
         <tr>
