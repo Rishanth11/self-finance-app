@@ -1,19 +1,28 @@
 package com.pro.finance.selffinanceapp.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import com.fasterxml.jackson.databind.JsonNode;
-import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Map;
 
 @Service
 public class SilverPriceService {
 
-    // ✅ No API key needed — Yahoo Finance is free with no key required
+    // ── Inject API key from application.properties / environment variable ─────
+    // Local  → set in application-local.properties: goldapi.key=YOUR_KEY_HERE
+    // Render → set in Environment Variables: GOLDAPI_KEY=YOUR_KEY_HERE
+    @Value("${goldapi.key}")
+    private String goldApiKey;
+
     private final RestTemplate restTemplate = createRestTemplate();
 
     private RestTemplate createRestTemplate() {
@@ -23,70 +32,114 @@ public class SilverPriceService {
         return new RestTemplate(factory);
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // PRIMARY: goldapi.io — XAG/USD + frankfurter.app INR conversion
+    //
+    // goldapi.io free plan:
+    //   • No credit card required
+    //   • Requires API key via header: x-access-token
+    //   • Endpoint: https://www.goldapi.io/api/XAG/USD
+    //   • Returns price per troy ounce in USD
+    //   • Sign up at: https://www.goldapi.io/
+    //
+    // Silver India correction factor (1.0766):
+    //   • GST          → +3.0%
+    //   • Customs duty → ~1.0%
+    //   • MCX premium  → ~3.66% (silver premium is higher than gold)
+    //
+    // ⚠️ HOW TO RECALIBRATE if price drifts from Groww/MCX by more than ₹5/g:
+    //   1. Note "Base INR/gram" from console log
+    //   2. Check live price: groww.in/silver-rates
+    //   3. New factor = Groww price ÷ Base INR/gram
+    //   4. Update INDIA_CORRECTION_FACTOR below
+    // ─────────────────────────────────────────────────────────────────────────
     @Cacheable(value = "silverPrice", unless = "#result == null")
     public BigDecimal getLiveSilverPricePerGram() {
         try {
-            // ── Primary: Yahoo Finance MCX Silver Futures ─────────────────────────
-            //
-            // WHY MCX instead of XAG/USD + correction factor?
-            // Silver is highly volatile (can drop 6%+ in a single day). A fixed
-            // correction factor drifts badly on high-volatility days. MCX gives
-            // the actual Indian market price directly — no correction needed.
-            //
-            // SILVER.MCX = MCX Silver futures (1 KG contract, priced in INR/KG)
-            // regularMarketPrice → INR per KG → divide by 1000 → INR per gram
-            // This matches Groww/MCX prices exactly. ✅
-            //
-            String mcxUrl = "https://query1.finance.yahoo.com/v8/finance/chart/SILVER.MCX"
-                    + "?interval=1m&range=1d";
+            // ── Step 1: Get XAG/USD spot price from goldapi.io ────────────────────
+            String silverUrl = "https://www.goldapi.io/api/XAG/USD";
 
-            ResponseEntity<JsonNode> response = restTemplate.getForEntity(mcxUrl, JsonNode.class);
-            JsonNode meta = response.getBody()
-                    .path("chart").path("result").get(0).path("meta");
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("x-access-token", goldApiKey);
+            headers.set("Content-Type", "application/json");
 
-            double pricePerKg = meta.path("regularMarketPrice").asDouble();
+            HttpEntity<Void> request = new HttpEntity<>(headers);
+            ResponseEntity<Map> response = restTemplate.exchange(
+                    silverUrl, HttpMethod.GET, request, Map.class);
 
-            if (pricePerKg <= 0) {
-                System.out.println("❌ MCX Silver: invalid price from Yahoo Finance");
+            Map silverResponse = response.getBody();
+
+            if (silverResponse == null || !silverResponse.containsKey("price")) {
+                System.out.println("❌ goldapi.io silver: invalid response: " + silverResponse);
                 return fallbackXagPrice();
             }
 
-            // MCX silver is quoted per KG — convert to per gram
-            BigDecimal pricePerGram = BigDecimal.valueOf(pricePerKg)
-                    .divide(new BigDecimal("1000"), 2, RoundingMode.HALF_UP);
+            // ── Step 2: Get USD → INR exchange rate (free, no key) ────────────────
+            String fxUrl = "https://api.frankfurter.app/latest?from=USD&to=INR";
+            Map fxResponse = restTemplate.getForObject(fxUrl, Map.class);
 
-            System.out.println("✅ Silver price (MCX via Yahoo Finance):");
-            System.out.println("   MCX price/kg  : ₹" + pricePerKg);
-            System.out.println("   Price/gram     : ₹" + pricePerGram);
+            if (fxResponse == null || fxResponse.get("rates") == null) {
+                System.out.println("❌ Frankfurter FX invalid response");
+                return fallbackXagPrice();
+            }
 
-            return pricePerGram;
+            Map rates = (Map) fxResponse.get("rates");
+            if (!rates.containsKey("INR")) {
+                System.out.println("❌ INR rate not found in FX response");
+                return fallbackXagPrice();
+            }
+
+            // ── Step 3: Calculate base INR/gram ───────────────────────────────────
+            // Formula: (USD/oz × USD→INR) ÷ 31.1035 g/oz
+            BigDecimal priceUsdPerOz = new BigDecimal(silverResponse.get("price").toString());
+            BigDecimal usdToInr      = new BigDecimal(rates.get("INR").toString());
+            BigDecimal gramsPerOz    = new BigDecimal("31.1035");
+
+            BigDecimal baseInrPerGram = priceUsdPerOz
+                    .multiply(usdToInr)
+                    .divide(gramsPerOz, 2, RoundingMode.HALF_UP);
+
+            // ── Step 4: Apply India correction factor ─────────────────────────────
+            BigDecimal INDIA_CORRECTION_FACTOR = new BigDecimal("1.0766");
+
+            BigDecimal adjustedInrPerGram = baseInrPerGram
+                    .multiply(INDIA_CORRECTION_FACTOR)
+                    .setScale(2, RoundingMode.HALF_UP);
+
+            System.out.println("✅ Silver price breakdown (goldapi.io):");
+            System.out.println("   XAG/USD spot      : $" + priceUsdPerOz);
+            System.out.println("   USD/INR rate      : ₹" + usdToInr);
+            System.out.println("   Base INR/gram     : ₹" + baseInrPerGram + " (international spot)");
+            System.out.println("   India adj(+7.66%) : ₹" + adjustedInrPerGram + " (GST + customs + MCX)");
+
+            return adjustedInrPerGram;
 
         } catch (Exception e) {
-            System.out.println("❌ Yahoo Finance MCX error: " + e.getMessage() + " — trying fallback");
+            System.out.println("❌ goldapi.io silver fetch error: " + e.getMessage() + " — trying fallback");
             return fallbackXagPrice();
         }
     }
 
-    // ── Fallback: XAG/USD + frankfurter.app + correction ─────────────────────
-    // Used only if Yahoo Finance MCX is unavailable.
-    // Factor 1.0766 is an approximate mid-point India premium for silver.
-    // May be slightly off on high-volatility days but better than nothing.
+    // ─────────────────────────────────────────────────────────────────────────
+    // FALLBACK: gold-api.com (no key needed) — used only if goldapi.io fails
+    // Less accurate on high-volatility days but always available.
+    // ─────────────────────────────────────────────────────────────────────────
     private BigDecimal fallbackXagPrice() {
         try {
-            String goldUrl = "https://api.gold-api.com/price/XAG";
-            java.util.Map silverResponse = restTemplate.getForObject(goldUrl, java.util.Map.class);
+            String fallbackUrl = "https://api.gold-api.com/price/XAG";
+            Map silverResponse = restTemplate.getForObject(fallbackUrl, Map.class);
 
             if (silverResponse == null || !silverResponse.containsKey("price")) {
-                System.out.println("❌ Fallback XAG also failed");
+                System.out.println("❌ Fallback gold-api.com also failed");
                 return null;
             }
 
             String fxUrl = "https://api.frankfurter.app/latest?from=USD&to=INR";
-            java.util.Map fxResponse = restTemplate.getForObject(fxUrl, java.util.Map.class);
+            Map fxResponse = restTemplate.getForObject(fxUrl, Map.class);
 
             if (fxResponse == null || fxResponse.get("rates") == null) return null;
 
-            java.util.Map rates = (java.util.Map) fxResponse.get("rates");
+            Map rates = (Map) fxResponse.get("rates");
             if (!rates.containsKey("INR")) return null;
 
             BigDecimal priceUsdPerOz = new BigDecimal(silverResponse.get("price").toString());
@@ -97,17 +150,16 @@ public class SilverPriceService {
                     .multiply(usdToInr)
                     .divide(gramsPerOz, 2, RoundingMode.HALF_UP);
 
-            // Approximate correction — less accurate than MCX but usable as fallback
             BigDecimal fallbackFactor = new BigDecimal("1.0766");
             BigDecimal adjusted = baseInrPerGram
                     .multiply(fallbackFactor)
                     .setScale(2, RoundingMode.HALF_UP);
 
-            System.out.println("⚠️ Using fallback XAG price: ₹" + adjusted + "/g (approx)");
+            System.out.println("⚠️ Using fallback silver price (gold-api.com): ₹" + adjusted + "/g (approx)");
             return adjusted;
 
         } catch (Exception ex) {
-            System.out.println("❌ Fallback XAG also failed: " + ex.getMessage());
+            System.out.println("❌ Fallback gold-api.com also failed: " + ex.getMessage());
             return null;
         }
     }

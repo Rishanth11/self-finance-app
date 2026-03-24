@@ -16,5 +16,7 @@ public class GoldSummaryDTO {
     private BigDecimal livePrice;
     private BigDecimal currentValue;
     private BigDecimal profitLoss;
+    private boolean    stale;       // true when price came from cache or is unavailable
+    private String     priceAsOf;   // formatted timestamp of when price was fetched, null if unavailable
 
 }

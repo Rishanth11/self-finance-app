@@ -719,15 +719,33 @@
         } else setError('Failed to delete purchase.');
     }
 
+    // ✅ FIX: editGold now prompts for all 3 fields and uses existing record values as defaults.
+    //         Previously it silently replaced purchaseDate with today's date every time.
     async function editGold(id) {
-        const newGrams = prompt('Enter new grams purchased:');
-        const newPrice = prompt('Enter new price per gram (₹):');
-        if (!newGrams || !newPrice) return;
-        if (parseFloat(newGrams) <= 0 || parseFloat(newPrice) <= 0) return setError('Values must be greater than 0.');
+        const existing = allPurchases.find(g => g.id === id);
+
+        const newGrams = prompt('Enter new grams purchased:', existing?.gramsPurchased ?? '');
+        if (newGrams === null) return; // user cancelled
+
+        const newPrice = prompt('Enter new price per gram (₹):', existing?.purchasePricePerGram ?? '');
+        if (newPrice === null) return; // user cancelled
+
+        const newDate  = prompt('Enter purchase date (YYYY-MM-DD):', existing?.purchaseDate ?? '');
+        if (newDate === null) return;  // user cancelled
+
+        if (parseFloat(newGrams) <= 0 || parseFloat(newPrice) <= 0)
+            return setError('Grams and price must be greater than 0.');
+
+        if (!newDate.match(/^\d{4}-\d{2}-\d{2}$/))
+            return setError('Date must be in YYYY-MM-DD format (e.g. 2024-03-15).');
 
         const res = await apiRequest('/gold/' + id, {
             method: 'PUT',
-            body: JSON.stringify({ gramsPurchased: parseFloat(newGrams), purchasePricePerGram: parseFloat(newPrice), purchaseDate: new Date().toISOString().split('T')[0] })
+            body: JSON.stringify({
+                gramsPurchased:      parseFloat(newGrams),
+                purchasePricePerGram: parseFloat(newPrice),
+                purchaseDate:         newDate             // ✅ uses the prompted date, not today
+            })
         });
 
         if (res.ok) {

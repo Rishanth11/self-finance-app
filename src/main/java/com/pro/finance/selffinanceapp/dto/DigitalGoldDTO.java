@@ -9,9 +9,11 @@ import java.time.LocalDate;
 
 public class DigitalGoldDTO {
 
+    @NotNull
     @Positive
     private BigDecimal gramsPurchased;
 
+    @NotNull
     @Positive
     private BigDecimal purchasePricePerGram;
 
