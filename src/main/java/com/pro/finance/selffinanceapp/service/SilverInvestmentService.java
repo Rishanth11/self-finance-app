@@ -55,13 +55,12 @@ public class SilverInvestmentService {
             );
         }
 
+        // ── FIX: getLiveSilverPricePerGram() now NEVER returns null ───────────
+        // It returns stale cache or hardcoded approximate — so we never throw 500.
+        // Previously: if(price == null) throw RuntimeException → HTTP 500
         BigDecimal currentPrice = silverPriceService.getLiveSilverPricePerGram();
 
-        if (currentPrice == null) {
-            throw new RuntimeException("Silver price unavailable. Please try again later.");
-        }
-
-        System.out.println("✅ Silver price fetched: " + currentPrice);
+        System.out.println("✅ Silver price for portfolio calculation: ₹" + currentPrice + "/g");
 
         List<SilverInvestmentPnLDTO> investments = records.stream()
                 .map(inv -> mapToPnLDTO(inv, currentPrice))

@@ -641,179 +641,215 @@
         } catch { return 0; }
     }
 
-    async function loadDashboard() {
-        document.getElementById('userName').textContent = getUserName();
-        const userId = getCurrentUserId();
+    // ─────────────────────────────────────────────────────────────────────────────
+// DASHBOARD FIX — Replace the existing loadDashboard() function in dashboard.html
+// with this version.
+//
+// KEY FIXES:
+//   1. SIP portfolio calls now run in PARALLEL (Promise.allSettled)
+//      Old: sequential await in for...of loop → N serial HTTP calls
+//      New: all fire simultaneously → dashboard loads as fast as the slowest one
+//
+//   2. All other Promise.all calls unchanged — they were already parallel
+//
+//   3. SIP value calculation now correctly handles navAvailable=false
+// ─────────────────────────────────────────────────────────────────────────────
 
-        try {
-            const [incomeRes, expenseRes, sipRes, goldRes, silverRes, stocksRes, loansRes, billsRes, billRemindersRes, goalSummaryRes, goalsRes, budgetsRes] = await Promise.all([
-                apiRequest('/incomes'),
-                apiRequest('/expenses'),
-                apiRequest('/sip'),
-                apiRequest('/gold/summary'),
-                apiRequest('/silver/portfolio'),
-                apiRequest('/stocks/holdings'),
-                apiRequest(`/loans/user/${userId}`),
-                apiRequest(`/bills/user/${userId}`),
-                apiRequest(`/bills/reminders/${userId}`),
-                apiRequest('/goals/summary'),
-                apiRequest('/goals'),
-                apiRequest(`/budgets/user/${userId}`)
-            ]);
+function fetchWithTimeout(promise, ms = 5000) {
+    const timeout = new Promise(resolve =>
+        setTimeout(() => resolve(null), ms)
+    );
+    return Promise.race([promise, timeout]);
+}
 
-            const incomes       = incomeRes.ok        ? await incomeRes.json()        : [];
-            const expenses      = expenseRes.ok       ? await expenseRes.json()        : [];
-            const sips          = sipRes.ok           ? await sipRes.json()            : [];
-            const goldSummary   = goldRes.ok          ? await goldRes.json()           : null;
-            const silverSummary = silverRes.ok        ? await silverRes.json()         : null;
-            const stocksList    = stocksRes.ok        ? await stocksRes.json()         : [];
-            const loans         = loansRes.ok         ? await loansRes.json()          : [];
-            const bills         = billsRes.ok         ? await billsRes.json()          : [];
-            const billReminders = billRemindersRes.ok ? await billRemindersRes.json()  : null;
-            const goalSummary   = goalSummaryRes.ok   ? await goalSummaryRes.json()    : null;
-            const goals         = goalsRes.ok         ? await goalsRes.json()          : [];
-            const budgets       = budgetsRes.ok       ? await budgetsRes.json()        : [];
+async function loadDashboard() {
+    document.getElementById('userName').textContent = getUserName();
+    const userId = getCurrentUserId();
 
-            // ── Income / Expense ──
-            let totalIncome = 0, totalExpense = 0;
-            incomes.forEach(i  => totalIncome  += parseFloat(i.amount) || 0);
-            expenses.forEach(e => totalExpense += parseFloat(e.amount) || 0);
-            const netSavings  = totalIncome - totalExpense;
-            const savingsRate = totalIncome > 0 ? ((netSavings / totalIncome) * 100).toFixed(1) : '0.0';
+    try {
+        const [
+            incomeRes, expenseRes, sipRes, goldRes, silverRes,
+            stocksRes, loansRes, billsRes, billRemindersRes,
+            goalSummaryRes, goalsRes, budgetsRes
+        ] = await Promise.all([
+            apiRequest('/incomes'),
+            apiRequest('/expenses'),
+            apiRequest('/sip'),
+            apiRequest('/gold/summary'),
+            apiRequest('/silver/portfolio'),
+            apiRequest('/stocks/holdings'),
+            apiRequest(`/loans/user/${userId}`),
+            apiRequest(`/bills/user/${userId}`),
+            apiRequest(`/bills/reminders/${userId}`),
+            apiRequest('/goals/summary'),
+            apiRequest('/goals'),
+            apiRequest(`/budgets/user/${userId}`)
+        ]);
 
-            document.getElementById('totalIncome').textContent     = fmt(totalIncome);
-            document.getElementById('totalExpense').textContent    = fmt(totalExpense);
-            document.getElementById('netSavings').textContent      = fmt(netSavings);
-            document.getElementById('savingsRate').textContent     = savingsRate + '%';
-            document.getElementById('netSavings').style.color      = netSavings >= 0 ? 'var(--green)' : 'var(--red)';
-            document.getElementById('heroSavingsRate').textContent = savingsRate + '%';
+        const incomes       = incomeRes.ok        ? await incomeRes.json()        : [];
+        const expenses      = expenseRes.ok       ? await expenseRes.json()       : [];
+        const sips          = sipRes.ok           ? await sipRes.json()           : [];
+        const goldSummary   = goldRes.ok          ? await goldRes.json()          : null;
+        const silverSummary = silverRes.ok        ? await silverRes.json()        : null;
+        const stocksList    = stocksRes.ok        ? await stocksRes.json()        : [];
+        const loans         = loansRes.ok         ? await loansRes.json()         : [];
+        const bills         = billsRes.ok         ? await billsRes.json()         : [];
+        const billReminders = billRemindersRes.ok ? await billRemindersRes.json() : null;
+        const goalSummary   = goalSummaryRes.ok   ? await goalSummaryRes.json()   : null;
+        const goals         = goalsRes.ok         ? await goalsRes.json()         : [];
+        const budgets       = budgetsRes.ok       ? await budgetsRes.json()       : [];
 
-            // ── SIP ──
-            let totalSipValue = 0;
-            for (const sip of sips) {
-                try {
-                    const pRes = await apiRequest(`/sip/${sip.id}/portfolio`);
-                    if (pRes.ok) {
-                        const p = await pRes.json();
-                        if (p.navAvailable !== false) totalSipValue += parseFloat(p.currentValue) || 0;
-                    }
-                } catch(e) { /* skip */ }
+        // ── Income / Expense ──────────────────────────────────────────────────
+        let totalIncome = 0, totalExpense = 0;
+        incomes.forEach(i  => totalIncome  += parseFloat(i.amount) || 0);
+        expenses.forEach(e => totalExpense += parseFloat(e.amount) || 0);
+        const netSavings  = totalIncome - totalExpense;
+        const savingsRate = totalIncome > 0 ? ((netSavings / totalIncome) * 100).toFixed(1) : '0.0';
+
+        document.getElementById('totalIncome').textContent     = fmt(totalIncome);
+        document.getElementById('totalExpense').textContent    = fmt(totalExpense);
+        document.getElementById('netSavings').textContent      = fmt(netSavings);
+        document.getElementById('savingsRate').textContent     = savingsRate + '%';
+        document.getElementById('netSavings').style.color      = netSavings >= 0 ? 'var(--green)' : 'var(--red)';
+        document.getElementById('heroSavingsRate').textContent = savingsRate + '%';
+
+        // ── SIP — parallel fetch WITH 5-second timeout per call ───────────────
+        // FIX: fetchWithTimeout ensures a hanging SIP portfolio call (e.g. HDFC
+        // SIP with missing fundCode) resolves to null after 5s instead of
+        // blocking the entire dashboard indefinitely.
+        let totalSipValue = 0;
+
+        if (sips.length > 0) {
+            const sipPortfolioResults = await Promise.allSettled(
+                sips.map(sip =>
+                    fetchWithTimeout(
+                        apiRequest(`/sip/${sip.id}/portfolio`)
+                            .then(r => r.ok ? r.json() : null)
+                            .catch(() => null),
+                        5000   // 5 second max per SIP portfolio call
+                    )
+                )
+            );
+
+            for (const result of sipPortfolioResults) {
+                if (result.status === 'fulfilled' &&
+                    result.value !== null &&
+                    result.value.navAvailable !== false) {
+                    totalSipValue += parseFloat(result.value.currentValue) || 0;
+                }
             }
+        }
 
-            // ── Gold / Silver ──
-            const totalGoldValue   = goldSummary?.currentValue        ? parseFloat(goldSummary.currentValue)        : 0;
-            const totalSilverValue = silverSummary?.totalCurrentValue ? parseFloat(silverSummary.totalCurrentValue) : 0;
+        // ── Gold / Silver ─────────────────────────────────────────────────────
+        const totalGoldValue   = goldSummary?.currentValue
+            ? parseFloat(goldSummary.currentValue) : 0;
+        const totalSilverValue = silverSummary?.totalCurrentValue
+            ? parseFloat(silverSummary.totalCurrentValue) : 0;
 
-            // ── Stocks ──
-            let totalStocksValue = 0;
-            if (stocksList.length > 0) {
-                await Promise.allSettled(stocksList.map(h =>
+        // ── Stocks ────────────────────────────────────────────────────────────
+        let totalStocksValue = 0;
+        if (stocksList.length > 0) {
+            await Promise.allSettled(
+                stocksList.map(h =>
                     fetchStockPrice(h.symbol, h.exchange).then(price => {
                         totalStocksValue += h.quantity * (price > 0 ? price : parseFloat(h.avgBuyPrice));
                     })
-                ));
-            }
-
-            // ── EMI / Loans ──
-            const activeLoans      = loans.filter(l => !l.closed);
-            const totalOutstanding = activeLoans.reduce((s, l) => s + (l.outstandingBalance || 0), 0);
-            const totalMonthlyEmi  = activeLoans.reduce((s, l) => s + (l.emiAmount || 0), 0);
-            const totalPayable     = loans.reduce((s, l) => s + (l.totalPayable || 0), 0);
-            const totalPaidSoFar   = totalPayable - totalOutstanding;
-            const overallProgress  = totalPayable > 0 ? Math.round((totalPaidSoFar / totalPayable) * 100) : 0;
-
-            document.getElementById('statEmiOutstanding').textContent = fmtShort(totalOutstanding);
-            document.getElementById('statEmiSub').textContent         = `${activeLoans.length} active loan${activeLoans.length !== 1 ? 's' : ''}`;
-            document.getElementById('emiOutstandingValue').textContent = fmtShort(totalOutstanding);
-            document.getElementById('emiInvSub').textContent           = `${activeLoans.length} active · ${fmt(totalMonthlyEmi)}/mo`;
-            document.getElementById('heroMonthlyEmi').textContent      = fmtShort(totalMonthlyEmi);
-            if (activeLoans.length > 0) {
-                document.getElementById('emiMiniProgressWrap').style.display = 'block';
-                document.getElementById('emiMiniBar').style.width = overallProgress + '%';
-            }
-
-            // ── Bills ──
-            const now = new Date();
-            const billsDueThisMonth = bills.filter(b => {
-                if (!b.nextDueDate) return false;
-                const d = new Date(b.nextDueDate);
-                return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-            });
-            const billsMonthTotal = billsDueThisMonth.reduce((s, b) => s + b.amount, 0);
-
-            document.getElementById('statBillsMonth').textContent  = fmtShort(billsMonthTotal);
-            document.getElementById('statBillsSub').textContent    = `${bills.length} active bill${bills.length !== 1 ? 's' : ''}`;
-            document.getElementById('billsMonthValue').textContent = fmtShort(billsMonthTotal);
-            document.getElementById('billsInvSub').textContent     = `${bills.length} active · ${billsDueThisMonth.length} due this month`;
-            document.getElementById('heroBillsDue').textContent    = fmtShort(billsMonthTotal);
-
-            // ── BUDGET PLANNER ──
-            if (budgets.length > 0) {
-                let totalBudget = 0, totalSpent = 0;
-                budgets.forEach(b => {
-                    totalBudget += parseFloat(b.totalAmount) || 0;
-                    totalSpent  += (b.categories || []).reduce((s, c) => s + (parseFloat(c.spentAmount) || 0), 0);
-                });
-                const totalRemaining  = totalBudget - totalSpent;
-                const spentPct        = totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0;
-
-                // stat card
-                document.getElementById('statBudgetRemaining').textContent = fmtShort(totalRemaining);
-                document.getElementById('statBudgetSub').textContent       = `${budgets.length} active budget${budgets.length !== 1 ? 's' : ''}`;
-                document.getElementById('statBudgetRemaining').style.color = spentPct >= 100 ? 'var(--red)' : 'var(--slate-900)';
-
-                // portfolio inv item
-                document.getElementById('budgetInvValue').textContent = fmtShort(totalRemaining);
-                document.getElementById('budgetInvSub').textContent   = `${budgets.length} active · ${spentPct}% spent`;
-                document.getElementById('budgetMiniProgressWrap').style.display = 'block';
-                const barColor = spentPct >= 100 ? 'var(--red)' : 'var(--green)';
-                document.getElementById('budgetMiniBar').style.width      = Math.min(spentPct, 100) + '%';
-                document.getElementById('budgetMiniBar').style.background = barColor;
-
-                // hero
-                document.getElementById('heroBudgetRemaining').textContent = fmtShort(totalRemaining);
-
-                // budget summary card
-                renderBudgetDashboard(budgets, totalBudget, totalSpent, totalRemaining, spentPct);
-
-                // budget alert
-                checkBudgetAlert(budgets);
-            }
-
-            // ── EMI & Bills alerts ──
-            await checkEmiAlert(activeLoans);
-            if (billReminders) checkBillsAlert(billReminders);
-
-            // ── Goals ──
-            if (goalSummary) renderGoalsDashboard(goalSummary, goals);
-
-            // ── Portfolio totals ──
-            const totalGoalsSaved  = goalSummary ? parseFloat(goalSummary.totalSavedAmount) || 0 : 0;
-            const totalInvested    = stocksList.reduce((s, h) => s + h.quantity * parseFloat(h.avgBuyPrice), 0)
-                + totalSipValue + totalGoldValue + totalSilverValue;
-            const totalPortfolio   = totalStocksValue + totalSipValue + totalGoldValue + totalSilverValue;
-            const totalReturns     = totalPortfolio - totalInvested;
-            const netWorth         = netSavings + totalPortfolio - totalOutstanding;
-
-            document.getElementById('goldValue').textContent       = fmt(totalGoldValue);
-            document.getElementById('silverValue').textContent     = fmt(totalSilverValue);
-            document.getElementById('stocksValue').textContent     = fmt(totalStocksValue);
-            document.getElementById('sipValue').textContent        = fmt(totalSipValue);
-            document.getElementById('heroNetWorth').textContent    = fmtShort(netWorth);
-            document.getElementById('heroInvested').textContent    = fmtShort(totalInvested);
-            document.getElementById('heroGoalsSaved').textContent  = fmtShort(totalGoalsSaved);
-
-            const retEl = document.getElementById('heroReturns');
-            retEl.textContent = (totalReturns >= 0 ? '+' : '') + fmtShort(totalReturns);
-            retEl.style.color = totalReturns >= 0 ? 'rgba(255,255,255,1)' : 'rgba(255,200,200,1)';
-
-            renderChart(totalIncome, totalExpense, netSavings);
-
-        } catch(err) {
-            console.error('Dashboard load failed:', err);
+                )
+            );
         }
-    }
 
+        // ── EMI / Loans ───────────────────────────────────────────────────────
+        const activeLoans      = loans.filter(l => !l.closed);
+        const totalOutstanding = activeLoans.reduce((s, l) => s + (l.outstandingBalance || 0), 0);
+        const totalMonthlyEmi  = activeLoans.reduce((s, l) => s + (l.emiAmount || 0), 0);
+        const totalPayable     = loans.reduce((s, l) => s + (l.totalPayable || 0), 0);
+        const totalPaidSoFar   = totalPayable - totalOutstanding;
+        const overallProgress  = totalPayable > 0 ? Math.round((totalPaidSoFar / totalPayable) * 100) : 0;
+
+        document.getElementById('statEmiOutstanding').textContent  = fmtShort(totalOutstanding);
+        document.getElementById('statEmiSub').textContent          = `${activeLoans.length} active loan${activeLoans.length !== 1 ? 's' : ''}`;
+        document.getElementById('emiOutstandingValue').textContent  = fmtShort(totalOutstanding);
+        document.getElementById('emiInvSub').textContent            = `${activeLoans.length} active · ${fmt(totalMonthlyEmi)}/mo`;
+        document.getElementById('heroMonthlyEmi').textContent       = fmtShort(totalMonthlyEmi);
+        if (activeLoans.length > 0) {
+            document.getElementById('emiMiniProgressWrap').style.display = 'block';
+            document.getElementById('emiMiniBar').style.width = overallProgress + '%';
+        }
+
+        // ── Bills ─────────────────────────────────────────────────────────────
+        const now = new Date();
+        const billsDueThisMonth = bills.filter(b => {
+            if (!b.nextDueDate) return false;
+            const d = new Date(b.nextDueDate);
+            return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+        });
+        const billsMonthTotal = billsDueThisMonth.reduce((s, b) => s + b.amount, 0);
+
+        document.getElementById('statBillsMonth').textContent  = fmtShort(billsMonthTotal);
+        document.getElementById('statBillsSub').textContent    = `${bills.length} active bill${bills.length !== 1 ? 's' : ''}`;
+        document.getElementById('billsMonthValue').textContent = fmtShort(billsMonthTotal);
+        document.getElementById('billsInvSub').textContent     = `${bills.length} active · ${billsDueThisMonth.length} due this month`;
+        document.getElementById('heroBillsDue').textContent    = fmtShort(billsMonthTotal);
+
+        // ── Budget Planner ────────────────────────────────────────────────────
+        if (budgets.length > 0) {
+            let totalBudget = 0, totalSpent = 0;
+            budgets.forEach(b => {
+                totalBudget += parseFloat(b.totalAmount) || 0;
+                totalSpent  += (b.categories || []).reduce((s, c) => s + (parseFloat(c.spentAmount) || 0), 0);
+            });
+            const totalRemaining = totalBudget - totalSpent;
+            const spentPct       = totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0;
+
+            document.getElementById('statBudgetRemaining').textContent = fmtShort(totalRemaining);
+            document.getElementById('statBudgetSub').textContent       = `${budgets.length} active budget${budgets.length !== 1 ? 's' : ''}`;
+            document.getElementById('statBudgetRemaining').style.color = spentPct >= 100 ? 'var(--red)' : 'var(--slate-900)';
+
+            document.getElementById('budgetInvValue').textContent = fmtShort(totalRemaining);
+            document.getElementById('budgetInvSub').textContent   = `${budgets.length} active · ${spentPct}% spent`;
+            document.getElementById('budgetMiniProgressWrap').style.display = 'block';
+            const barColor = spentPct >= 100 ? 'var(--red)' : 'var(--green)';
+            document.getElementById('budgetMiniBar').style.width      = Math.min(spentPct, 100) + '%';
+            document.getElementById('budgetMiniBar').style.background = barColor;
+            document.getElementById('heroBudgetRemaining').textContent = fmtShort(totalRemaining);
+
+            renderBudgetDashboard(budgets, totalBudget, totalSpent, totalRemaining, spentPct);
+            checkBudgetAlert(budgets);
+        }
+
+        // ── EMI & Bills alerts ────────────────────────────────────────────────
+        await checkEmiAlert(activeLoans);
+        if (billReminders) checkBillsAlert(billReminders);
+
+        // ── Goals ─────────────────────────────────────────────────────────────
+        if (goalSummary) renderGoalsDashboard(goalSummary, goals);
+
+        // ── Portfolio totals ──────────────────────────────────────────────────
+        const totalGoalsSaved = goalSummary ? parseFloat(goalSummary.totalSavedAmount) || 0 : 0;
+        const totalInvested   = stocksList.reduce((s, h) => s + h.quantity * parseFloat(h.avgBuyPrice), 0)
+            + totalSipValue + totalGoldValue + totalSilverValue;
+        const totalPortfolio  = totalStocksValue + totalSipValue + totalGoldValue + totalSilverValue;
+        const totalReturns    = totalPortfolio - totalInvested;
+        const netWorth        = netSavings + totalPortfolio - totalOutstanding;
+
+        document.getElementById('goldValue').textContent       = fmt(totalGoldValue);
+        document.getElementById('silverValue').textContent     = fmt(totalSilverValue);
+        document.getElementById('stocksValue').textContent     = fmt(totalStocksValue);
+        document.getElementById('sipValue').textContent        = fmt(totalSipValue);
+        document.getElementById('heroNetWorth').textContent    = fmtShort(netWorth);
+        document.getElementById('heroInvested').textContent    = fmtShort(totalInvested);
+        document.getElementById('heroGoalsSaved').textContent  = fmtShort(totalGoalsSaved);
+
+        const retEl = document.getElementById('heroReturns');
+        retEl.textContent = (totalReturns >= 0 ? '+' : '') + fmtShort(totalReturns);
+        retEl.style.color = totalReturns >= 0 ? 'rgba(255,255,255,1)' : 'rgba(255,200,200,1)';
+
+        renderChart(totalIncome, totalExpense, netSavings);
+
+    } catch (err) {
+        console.error('Dashboard load failed:', err);
+    }
+}
     // ── BUDGET DASHBOARD ──────────────────────────────────────────────
     function renderBudgetDashboard(budgets, totalBudget, totalSpent, totalRemaining, spentPct) {
         document.getElementById('bDashTotal').textContent     = fmtShort(totalBudget);

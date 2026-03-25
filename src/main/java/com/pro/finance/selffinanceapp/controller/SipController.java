@@ -18,115 +18,103 @@ public class SipController {
     private final UserService userService;
 
     public SipController(SipService sipService, UserService userService) {
-        this.sipService = sipService;
+        this.sipService  = sipService;
         this.userService = userService;
     }
 
-    // ✅ CREATE SIP
+    // ── CREATE SIP ────────────────────────────────────────────────────────────
     @PostMapping
     public ResponseEntity<?> addSip(@RequestBody SipRequestDTO dto,
                                     Authentication authentication) {
-
         String email = authentication.getName();
-        User user = userService.findByEmail(email);
-
-        return ResponseEntity.ok(
-                sipService.createSip(dto, user)
-        );
+        User   user  = userService.findByEmail(email);
+        return ResponseEntity.ok(sipService.createSip(dto, user));
     }
 
-    // ✅ GET ALL SIPS
+    // ── GET ALL SIPS ──────────────────────────────────────────────────────────
     @GetMapping
     public ResponseEntity<?> getAll(Authentication authentication) {
-
         String email = authentication.getName();
-        User user = userService.findByEmail(email);
-
-        return ResponseEntity.ok(
-                sipService.getAllByUser(user)
-        );
+        User   user  = userService.findByEmail(email);
+        return ResponseEntity.ok(sipService.getAllByUser(user));
     }
 
-    // ✅ PORTFOLIO
+    // ── PORTFOLIO ─────────────────────────────────────────────────────────────
+    // FIX: Now returns { navAvailable: false } instead of HTTP 400/500
+    // when fundCode is null or NAV fetch fails.
     @GetMapping("/{sipId}/portfolio")
     public ResponseEntity<?> portfolio(@PathVariable Long sipId,
                                        Authentication authentication) {
-
         String email = authentication.getName();
-        User user = userService.findByEmail(email);
-
-        return ResponseEntity.ok(
-                sipService.getPortfolio(sipId, user)
-        );
+        User   user  = userService.findByEmail(email);
+        return ResponseEntity.ok(sipService.getPortfolio(sipId, user));
     }
 
-    // ✅ CHART
+    // ── CHART ─────────────────────────────────────────────────────────────────
     @GetMapping("/{sipId}/chart")
     public ResponseEntity<?> sipChart(@PathVariable Long sipId,
                                       Authentication authentication) {
-
         String email = authentication.getName();
-        User user = userService.findByEmail(email);
-
-        return ResponseEntity.ok(
-                sipService.getSipChart(sipId, user)
-        );
+        User   user  = userService.findByEmail(email);
+        return ResponseEntity.ok(sipService.getSipChart(sipId, user));
     }
 
-    // ✅ EXECUTE SIP
+    // ── EXECUTE SIP ───────────────────────────────────────────────────────────
+    // FIX: Returns a clear human-readable message when fundCode is missing,
+    // instead of a cryptic "Invalid NAV" 400.
     @PostMapping("/{sipId}/execute")
     public ResponseEntity<?> execute(@PathVariable Long sipId,
                                      Authentication authentication) {
-
         try {
             String email = authentication.getName();
-            User user = userService.findByEmail(email);
-
+            User   user  = userService.findByEmail(email);
             sipService.executeSipNow(sipId, user);
-
             return ResponseEntity.ok("SIP executed successfully");
-
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-    // ✅ DELETE SIP
+    // ── DELETE SIP ────────────────────────────────────────────────────────────
     @DeleteMapping("/{sipId}")
     public ResponseEntity<?> delete(@PathVariable Long sipId,
                                     Authentication authentication) {
-
         String email = authentication.getName();
-        User user = userService.findByEmail(email);
-
+        User   user  = userService.findByEmail(email);
         sipService.deleteSip(sipId, user);
-
         return ResponseEntity.ok("SIP deleted successfully");
     }
 
-    // ✅ DEACTIVATE SIP
+    // ── DEACTIVATE SIP ────────────────────────────────────────────────────────
     @PutMapping("/{sipId}/deactivate")
     public ResponseEntity<?> deactivate(@PathVariable Long sipId,
                                         Authentication authentication) {
-
         String email = authentication.getName();
-        User user = userService.findByEmail(email);
-
+        User   user  = userService.findByEmail(email);
         sipService.deactivateSip(sipId, user);
-
         return ResponseEntity.ok("SIP deactivated");
     }
 
-    // ✅ ACTIVATE SIP
+    // ── ACTIVATE SIP ──────────────────────────────────────────────────────────
     @PutMapping("/{sipId}/activate")
     public ResponseEntity<?> activate(@PathVariable Long sipId,
                                       Authentication authentication) {
-
         String email = authentication.getName();
-        User user = userService.findByEmail(email);
-
+        User   user  = userService.findByEmail(email);
         sipService.activateSip(sipId, user);
-
         return ResponseEntity.ok("SIP activated");
+    }
+
+    // ── NEW: FUND SEARCH ──────────────────────────────────────────────────────
+    // Search MFAPI.in for AMFI scheme codes by fund name.
+    // Frontend calls this when user types in the fund name field.
+    // Example: GET /api/sip/search-funds?q=HDFC
+    // Returns: [{ "schemeCode": "118989", "schemeName": "HDFC Mid-Cap Opportunities Fund" }, ...]
+    @GetMapping("/search-funds")
+    public ResponseEntity<?> searchFunds(@RequestParam String q) {
+        if (q == null || q.trim().length() < 2) {
+            return ResponseEntity.badRequest().body("Query must be at least 2 characters");
+        }
+        return ResponseEntity.ok(sipService.searchFunds(q.trim()));
     }
 }
