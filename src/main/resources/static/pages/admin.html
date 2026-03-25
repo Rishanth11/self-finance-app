@@ -2,41 +2,808 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Dashboard · FLUX360 Personal Finance</title>
+    <title>Admin · User Management · FLUX360</title>
     <link rel="icon" href="../images/FLUX360_logo.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --green:        #16a34a;
+            --green-light:  #22c55e;
+            --green-dim:    #dcfce7;
+            --green-border: #bbf7d0;
+            --slate-900:    #0f172a;
+            --slate-700:    #334155;
+            --slate-600:    #475569;
+            --slate-400:    #94a3b8;
+            --slate-200:    #e2e8f0;
+            --slate-100:    #f1f5f9;
+            --slate-50:     #f8fafc;
+            --white:        #ffffff;
+            --red:          #dc2626;
+            --red-dim:      #fef2f2;
+            --red-border:   #fee2e2;
+            --amber:        #d97706;
+            --amber-dim:    #fffbeb;
+            --amber-border: #fde68a;
+        }
+
+        body {
+            background: #f0f4f0;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--slate-900);
+            min-height: 100vh;
+            padding: 28px 24px;
+        }
+
+        .page { max-width: 1280px; margin: 0 auto; }
+
+        /* ── TOP BAR ── */
+        .top-bar {
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 16px; margin-bottom: 28px;
+            animation: fadeUp 0.4s ease both;
+        }
+        .brand { display: flex; align-items: center; gap: 12px; }
+        .brand-logo { height: 40px; width: auto; }
+        .brand-text h1 { font-size: 1.15rem; font-weight: 600; color: var(--slate-900); letter-spacing: -0.02em; line-height: 1.2; }
+        .brand-text p  { font-size: 0.75rem; color: var(--slate-400); margin-top: 1px; }
+
+        .top-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+        .admin-pill {
+            display: flex; align-items: center; gap: 9px;
+            background: var(--white);
+            border: 1.5px solid var(--green-border);
+            border-radius: 40px; padding: 8px 16px;
+            font-size: 0.85rem; color: var(--slate-600);
+        }
+        .admin-pill i { color: var(--green); }
+        .admin-pill strong { color: var(--slate-900); font-weight: 600; }
+
+        .back-btn {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 8px 16px; border-radius: 10px; border: 1.5px solid var(--slate-200);
+            font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 500;
+            cursor: pointer; background: var(--white); color: var(--slate-600);
+            transition: all 0.15s; text-decoration: none;
+        }
+        .back-btn:hover { border-color: var(--green-border); color: var(--green); background: var(--green-dim); }
+
+        /* ── HERO ── */
+        .hero {
+            background: linear-gradient(135deg, #15803d 0%, #16a34a 50%, #22c55e 100%);
+            border-radius: 24px; padding: 28px 32px; margin-bottom: 24px;
+            color: white; display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 20px;
+            animation: fadeUp 0.4s 0.05s ease both;
+            position: relative; overflow: hidden;
+        }
+        .hero::after  { content:''; position:absolute; right:-40px; top:-40px; width:200px; height:200px; border-radius:50%; background:rgba(255,255,255,0.06); }
+        .hero::before { content:''; position:absolute; right:80px; bottom:-60px; width:160px; height:160px; border-radius:50%; background:rgba(255,255,255,0.04); }
+        .hero-left h2 { font-size:0.82rem; font-weight:500; opacity:0.75; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px; }
+        .hero-left .hero-title { font-size:1.8rem; font-weight:600; letter-spacing:-0.03em; line-height:1; }
+        .hero-left .hero-sub { font-size:0.82rem; opacity:0.7; margin-top:8px; display:flex; align-items:center; gap:6px; }
+        .hero-stats { display:flex; gap:28px; flex-wrap:wrap; position:relative; z-index:1; }
+        .hero-stat { text-align:right; }
+        .hero-stat p { font-size:0.72rem; opacity:0.7; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:4px; }
+        .hero-stat strong { font-size:1.1rem; font-weight:600; }
+
+        /* ── STAT CARDS ── */
+        .stat-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px; margin-bottom: 24px;
+            animation: fadeUp 0.4s 0.08s ease both;
+        }
+        .stat-card {
+            background: var(--white); border: 1.5px solid var(--slate-200);
+            border-radius: 16px; padding: 18px 20px;
+            position: relative; overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s; cursor: default;
+        }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.07); }
+        .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; border-radius:16px 16px 0 0; background: var(--green); }
+        .stat-card.accent-red::before    { background: var(--red); }
+        .stat-card.accent-amber::before  { background: var(--amber); }
+
+        .stat-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+        .stat-label { font-size:0.7rem; font-weight:500; text-transform:uppercase; letter-spacing:0.06em; color:var(--slate-400); }
+        .stat-icon { width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:0.85rem; flex-shrink:0; background:var(--green-dim); color:var(--green); }
+        .stat-icon.red   { background:var(--red-dim);   color:var(--red); }
+        .stat-icon.amber { background:var(--amber-dim); color:var(--amber); }
+        .stat-value { font-size:1.6rem; font-weight:600; color:var(--slate-900); letter-spacing:-0.02em; margin-bottom:3px; }
+        .stat-sub   { font-size:0.72rem; color:var(--slate-400); }
+
+        /* ── MAIN CARD ── */
+        .card {
+            background: var(--white); border: 1.5px solid var(--slate-200);
+            border-radius: 20px; padding: 22px 24px; margin-bottom: 20px;
+            animation: fadeUp 0.4s 0.1s ease both;
+        }
+        .card-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
+        }
+        .card-header-left { display: flex; align-items: center; gap: 10px; }
+        .card-header-icon {
+            width: 32px; height: 32px; background: var(--green-dim); border-radius: 9px;
+            display: flex; align-items: center; justify-content: center; color: var(--green); font-size: 0.8rem;
+        }
+        .card-header h3 { font-size: 0.95rem; font-weight: 600; color: var(--slate-900); }
+
+        /* ── TOOLBAR ── */
+        .toolbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+        .search-wrap {
+            display: flex; align-items: center; gap: 8px;
+            background: var(--slate-50); border: 1.5px solid var(--slate-200);
+            border-radius: 10px; padding: 8px 14px;
+            transition: border-color 0.15s;
+        }
+        .search-wrap:focus-within { border-color: var(--green); background: var(--white); }
+        .search-wrap i { color: var(--slate-400); font-size: 0.8rem; }
+        .search-wrap input {
+            background: none; border: none; outline: none;
+            font-family: 'DM Sans', sans-serif; font-size: 0.875rem;
+            color: var(--slate-900); width: 200px;
+        }
+        .search-wrap input::placeholder { color: var(--slate-400); }
+
+        .filter-select {
+            background: var(--slate-50); border: 1.5px solid var(--slate-200);
+            border-radius: 10px; padding: 8px 14px;
+            font-family: 'DM Sans', sans-serif; font-size: 0.875rem;
+            color: var(--slate-700); outline: none; cursor: pointer;
+            transition: border-color 0.15s;
+        }
+        .filter-select:focus { border-color: var(--green); }
+
+        /* ── TABLE ── */
+        .table-wrap { overflow-x: auto; }
+
+        table { width: 100%; border-collapse: collapse; }
+
+        thead th {
+            padding: 10px 16px; text-align: left;
+            font-size: 0.7rem; font-weight: 500; text-transform: uppercase;
+            letter-spacing: 0.06em; color: var(--slate-400);
+            border-bottom: 1.5px solid var(--slate-200);
+            white-space: nowrap; background: var(--slate-50);
+        }
+        thead th:first-child { border-radius: 10px 0 0 10px; }
+        thead th:last-child  { border-radius: 0 10px 10px 0; }
+
+        tbody tr {
+            border-bottom: 1px solid var(--slate-100);
+            transition: background 0.15s;
+            animation: fadeUp 0.3s ease both;
+        }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: var(--slate-50); }
+
+        td { padding: 14px 16px; font-size: 0.875rem; vertical-align: middle; }
+
+        /* user cell */
+        .user-cell { display: flex; align-items: center; gap: 12px; }
+        .user-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; font-weight: 600; color: #fff; flex-shrink: 0;
+        }
+        .user-name  { font-weight: 500; font-size: 0.875rem; color: var(--slate-900); }
+        .user-email { font-size: 0.72rem; color: var(--slate-400); margin-top: 1px; }
+
+        /* role tag */
+        .role-tag {
+            display: inline-flex; align-items: center; gap: 5px;
+            font-size: 0.72rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;
+            padding: 3px 10px; border-radius: 20px;
+            background: var(--green-dim); color: var(--green);
+            border: 1px solid var(--green-border);
+        }
+        .role-tag.admin { background: #eff6ff; color: #2563eb; border-color: #bfdbfe; }
+
+        /* status badge */
+        .badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 10px; border-radius: 20px;
+            font-size: 0.72rem; font-weight: 500; letter-spacing: 0.04em;
+        }
+        .badge::before { content:''; width:5px; height:5px; border-radius:50%; background:currentColor; }
+        .badge.active   { background: var(--green-dim);   color: var(--green);  border: 1px solid var(--green-border); }
+        .badge.blocked  { background: var(--amber-dim);   color: var(--amber);  border: 1px solid var(--amber-border); }
+        .badge.inactive { background: var(--slate-100);   color: var(--slate-400); border: 1px solid var(--slate-200); }
+
+        /* action buttons */
+        .actions { display: flex; align-items: center; gap: 6px; }
+
+        .act-btn {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 6px 12px; border-radius: 8px;
+            font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 500;
+            cursor: pointer; border: 1.5px solid transparent;
+            transition: all 0.15s; white-space: nowrap;
+        }
+        .act-btn.block {
+            background: var(--amber-dim); color: var(--amber);
+            border-color: var(--amber-border);
+        }
+        .act-btn.block:hover { background: var(--amber); color: white; }
+
+        .act-btn.unblock {
+            background: var(--green-dim); color: var(--green);
+            border-color: var(--green-border);
+        }
+        .act-btn.unblock:hover { background: var(--green); color: white; }
+
+        .act-btn.delete {
+            background: var(--red-dim); color: var(--red);
+            border-color: var(--red-border);
+        }
+        .act-btn.delete:hover { background: var(--red); color: white; }
+
+        /* ── PAGINATION ── */
+        .pagination {
+            display: flex; align-items: center; justify-content: space-between;
+            padding-top: 18px; flex-wrap: wrap; gap: 10px;
+        }
+        .pagination-info { font-size: 0.78rem; color: var(--slate-400); }
+        .page-btns { display: flex; gap: 4px; }
+        .page-btn {
+            width: 32px; height: 32px; border-radius: 8px;
+            border: 1.5px solid var(--slate-200); background: var(--white);
+            color: var(--slate-600); font-family: 'DM Sans', sans-serif; font-size: 0.8rem;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all 0.15s;
+        }
+        .page-btn:hover { border-color: var(--green-border); color: var(--green); background: var(--green-dim); }
+        .page-btn.active { background: var(--green); border-color: var(--green); color: white; }
+
+        /* ── EMPTY STATE ── */
+        .empty-state { text-align: center; padding: 48px 20px; color: var(--slate-400); }
+        .empty-state i { font-size: 2rem; display: block; margin-bottom: 10px; color: var(--slate-200); }
+        .empty-state p { font-size: 0.875rem; }
+
+        /* ── MODAL ── */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(15,23,42,0.5);
+            backdrop-filter: blur(4px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000; opacity: 0; pointer-events: none;
+            transition: opacity 0.2s;
+        }
+        .modal-overlay.show { opacity: 1; pointer-events: all; }
+
+        .modal {
+            background: var(--white); border: 1.5px solid var(--slate-200);
+            border-radius: 20px; padding: 28px; width: 420px; max-width: 92vw;
+            transform: scale(0.95); transition: transform 0.2s;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+        .modal-overlay.show .modal { transform: scale(1); }
+
+        .modal-icon {
+            width: 48px; height: 48px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; margin-bottom: 18px;
+        }
+        .modal-icon.danger { background: var(--red-dim); color: var(--red); }
+        .modal-icon.amber  { background: var(--amber-dim); color: var(--amber); }
+        .modal-icon.green  { background: var(--green-dim); color: var(--green); }
+
+        .modal h3 { font-size: 1rem; font-weight: 600; margin-bottom: 8px; }
+        .modal p  { font-size: 0.85rem; color: var(--slate-600); line-height: 1.6; margin-bottom: 24px; }
+
+        .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+        .btn {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 9px 18px; border-radius: 10px; border: none;
+            font-family: 'DM Sans', sans-serif; font-size: 0.875rem;
+            font-weight: 500; cursor: pointer; transition: all 0.15s;
+        }
+        .btn-ghost  { background: var(--slate-50); color: var(--slate-600); border: 1.5px solid var(--slate-200); }
+        .btn-ghost:hover { background: var(--slate-100); }
+        .btn-green  { background: var(--green); color: white; }
+        .btn-green:hover { background: #15803d; }
+        .btn-amber  { background: var(--amber); color: white; }
+        .btn-amber:hover { background: #b45309; }
+        .btn-red    { background: var(--red); color: white; }
+        .btn-red:hover { background: #b91c1c; }
+
+        /* ── TOAST ── */
+        .toast-container {
+            position: fixed; bottom: 24px; right: 24px;
+            z-index: 2000; display: flex; flex-direction: column; gap: 8px;
+        }
+        .toast {
+            background: var(--white); border: 1.5px solid var(--slate-200);
+            border-radius: 12px; padding: 12px 16px;
+            font-size: 0.85rem; display: flex; align-items: center; gap: 10px;
+            animation: slideUp 0.3s ease;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            max-width: 300px;
+        }
+        .toast .toast-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; flex-shrink: 0; }
+        .toast.success .toast-icon { background: var(--green-dim); color: var(--green); }
+        .toast.danger  .toast-icon { background: var(--red-dim);   color: var(--red);   }
+        .toast.amber   .toast-icon { background: var(--amber-dim); color: var(--amber); }
+        .toast-msg { flex: 1; font-weight: 500; color: var(--slate-700); }
+
+        .footer-note {
+            text-align: center; margin-top: 16px; font-size: 0.72rem;
+            color: var(--slate-400); display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .footer-note i { color: var(--green); }
+
+        @keyframes fadeUp  { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes slideUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+        @media (max-width: 600px) {
+            body { padding: 16px 14px; }
+            .top-bar { flex-direction: column; align-items: flex-start; }
+            .hero { flex-direction: column; }
+            .hero-stats { justify-content: flex-start; }
+            .hero-stat { text-align: left; }
+            .search-wrap input { width: 140px; }
+        }
+    </style>
 </head>
+<body>
+<div class="page">
 
-<body onload="requireAdmin()">
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="brand">
+            <img src="../images/FLUX360_logo.png" alt="FLUX360" class="brand-logo"
+                 onerror="this.style.display='none'">
+            <div class="brand-text">
+                <h1>FLUX360</h1>
+                <p>Admin · User Management</p>
+            </div>
+        </div>
+            <div class="admin-pill">
+                <i class="fas fa-shield-alt"></i>
+                <span>Logged in as <strong>Super Admin</strong></span>
+            </div>
+        </div>
+    </div>
 
-<h2>Admin Dashboard</h2>
-<p>Only admins should access backend APIs from here.</p>
+    <!-- HERO -->
+    <div class="hero">
+        <div class="hero-left">
+            <h2>Admin Panel</h2>
+            <div class="hero-title">User Management</div>
+            <div class="hero-sub">
+                <i class="fas fa-circle" style="font-size:0.5rem;opacity:0.7;"></i>
+                View, block, and manage all registered users
+            </div>
+        </div>
+        <div class="hero-stats">
+            <div class="hero-stat"><p>Total Users</p><strong id="heroTotal">—</strong></div>
+            <div class="hero-stat"><p>Active</p><strong id="heroActive">—</strong></div>
+            <div class="hero-stat"><p>Blocked</p><strong id="heroBlocked">—</strong></div>
+        </div>
+    </div>
 
-<button onclick="callAdminApi()">Test Admin API</button>
-<p id="msg"></p>
+    <!-- STAT CARDS -->
+    <div class="stat-grid">
+        <div class="stat-card">
+            <div class="stat-top">
+                <span class="stat-label">Total Users</span>
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+            </div>
+            <div class="stat-value" id="statTotal">—</div>
+            <div class="stat-sub">All registered accounts</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-top">
+                <span class="stat-label">Active Users</span>
+                <div class="stat-icon"><i class="fas fa-user-check"></i></div>
+            </div>
+            <div class="stat-value" id="statActive">—</div>
+            <div class="stat-sub">Currently active</div>
+        </div>
+        <div class="stat-card accent-amber">
+            <div class="stat-top">
+                <span class="stat-label">Blocked</span>
+                <div class="stat-icon amber"><i class="fas fa-user-slash"></i></div>
+            </div>
+            <div class="stat-value" id="statBlocked">—</div>
+            <div class="stat-sub">Deactivated accounts</div>
+        </div>
+        <div class="stat-card accent-red">
+            <div class="stat-top">
+                <span class="stat-label">Admins</span>
+                <div class="stat-icon red"><i class="fas fa-shield-alt"></i></div>
+            </div>
+            <div class="stat-value" id="statAdmins">—</div>
+            <div class="stat-sub">Admin role users</div>
+        </div>
+    </div>
 
-<!-- Load scripts FIRST -->
-<script src="../js/guard.js"></script>
-<script src="../js/api.js"></script>
+    <!-- USER TABLE CARD -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-header-left">
+                <div class="card-header-icon"><i class="fas fa-users"></i></div>
+                <h3>All Users</h3>
+            </div>
+            <div class="toolbar">
+                <div class="search-wrap">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search by name or email…" oninput="renderTable()">
+                </div>
+                <select class="filter-select" id="filterStatus" onchange="renderTable()">
+                    <option value="all">All Status</option>
+                    <option value="ACTIVE">Active</option>
+                    <option value="BLOCKED">Blocked</option>
+                </select>
+                <select class="filter-select" id="filterRole" onchange="renderTable()">
+                    <option value="all">All Roles</option>
+                    <option value="ROLE_ADMIN">Admin</option>
+                    <option value="ROLE_USER">User</option>
+                </select>
+            </div>
+        </div>
 
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>User</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Joined</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+            <div id="emptyState" class="empty-state" style="display:none;">
+                <i class="fas fa-users-slash"></i>
+                <p>No users match your search or filter.</p>
+            </div>
+        </div>
+
+        <div class="pagination">
+            <span class="pagination-info" id="paginationInfo"></span>
+            <div class="page-btns" id="pageBtns"></div>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        <i class="fas fa-shield-alt"></i>
+        Secured · FLUX360 Admin v1.0
+    </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+    <div class="modal">
+        <div class="modal-icon" id="modalIcon"></div>
+        <h3 id="modalTitle"></h3>
+        <p id="modalBody"></p>
+        <div class="modal-actions">
+            <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+            <button class="btn" id="modalConfirmBtn"></button>
+        </div>
+    </div>
+</div>
+
+<!-- TOASTS -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="../js/guard.js" onerror="void(0)"></script>
+<script src="../js/api.js" onerror="void(0)"></script>
 <script>
-    function callAdminApi() {
-        const msg = document.getElementById("msg");
+    /* ═══════════════════════════════════════════════════════════
+       CONFIG — swap BASE_URL to your Spring Boot server
+       ═══════════════════════════════════════════════════════════ */
+    const BASE_URL = '/api/admin/users';
 
-        apiRequest("/admin/test")
-            .then(res => {
-                if (res.status === 403) {
-                    msg.innerText = "Access denied (ADMIN only)";
-                } else if (res.ok) {
-                    msg.innerText = "Admin API success ✅";
-                } else {
-                    msg.innerText = "Unexpected error";
-                }
-            })
-            .catch(() => {
-                msg.innerText = "Server error";
-            });
+    /* ═══════════════════════════════════════════════════════════
+       DEMO DATA (used when API is not connected)
+       ═══════════════════════════════════════════════════════════ */
+    const DEMO_USERS = [
+        { id:1,  name:'Aravind Krishnan', email:'aravind@flux360.io',  role:'ROLE_ADMIN', status:'ACTIVE',   createdAt:'2024-01-10' },
+        { id:2,  name:'Priya Natarajan',  email:'priya@flux360.io',    role:'ROLE_USER',  status:'ACTIVE',   createdAt:'2024-02-14' },
+        { id:3,  name:'Ravi Shankar',     email:'ravi@gmail.com',      role:'ROLE_USER',  status:'BLOCKED',  createdAt:'2024-03-05' },
+        { id:4,  name:'Meena Suresh',     email:'meena@flux360.io',    role:'ROLE_USER',  status:'ACTIVE',   createdAt:'2024-04-20' },
+        { id:5,  name:'Karthik Raja',     email:'karthik@outlook.com', role:'ROLE_USER',  status:'ACTIVE',   createdAt:'2024-05-01' },
+        { id:6,  name:'Divya Lakshmi',    email:'divya@flux360.io',    role:'ROLE_ADMIN', status:'ACTIVE',   createdAt:'2024-05-18' },
+        { id:7,  name:'Senthil Kumar',    email:'senthil@gmail.com',   role:'ROLE_USER',  status:'BLOCKED',  createdAt:'2024-06-02' },
+        { id:8,  name:'Ananya Bose',      email:'ananya@flux360.io',   role:'ROLE_USER',  status:'ACTIVE',   createdAt:'2024-06-15' },
+        { id:9,  name:'Vikram Nair',      email:'vikram@flux360.io',   role:'ROLE_USER',  status:'ACTIVE',   createdAt:'2024-07-01' },
+        { id:10, name:'Lavanya Devi',     email:'lavanya@gmail.com',   role:'ROLE_USER',  status:'ACTIVE',   createdAt:'2024-07-22' },
+        { id:11, name:'Arjun Pillai',     email:'arjun@flux360.io',    role:'ROLE_USER',  status:'ACTIVE',   createdAt:'2024-08-04' },
+        { id:12, name:'Nisha Menon',      email:'nisha@flux360.io',    role:'ROLE_ADMIN', status:'ACTIVE',   createdAt:'2024-08-19' },
+    ];
+
+    /* ═══════════════════════════════════════════════════════════
+       STATE
+       ═══════════════════════════════════════════════════════════ */
+    let users       = [];
+    let currentPage = 1;
+    const PER_PAGE  = 8;
+    let pendingAction = null;
+    let useDemo     = false;
+
+    /* ═══════════════════════════════════════════════════════════
+       AVATAR COLORS — matching app palette
+       ═══════════════════════════════════════════════════════════ */
+    const AVATAR_COLORS = ['#16a34a','#15803d','#166534','#22c55e','#4ade80','#86efac'];
+
+    function avatarColor(name) {
+        let h = 0;
+        for (const c of name) h = (h << 5) - h + c.charCodeAt(0);
+        return AVATAR_COLORS[Math.abs(h) % AVATAR_COLORS.length];
     }
-</script>
+    function initials(name) {
+        return name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+    }
 
+    /* ═══════════════════════════════════════════════════════════
+       API HELPERS
+       ═══════════════════════════════════════════════════════════ */
+    function authHeaders() {
+        const token = localStorage.getItem('token');
+        return token ? { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' };
+    }
+
+    async function apiFetch(path, method = 'GET', body = null) {
+        const opts = { method, headers: authHeaders() };
+        if (body) opts.body = JSON.stringify(body);
+        const res = await fetch(BASE_URL + path, opts);
+        if (!res.ok) throw new Error(await res.text());
+        return res.status === 204 ? null : res.json();
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       LOAD USERS
+       ═══════════════════════════════════════════════════════════ */
+    async function loadUsers() {
+        try {
+            const data = await apiFetch('');
+            users = Array.isArray(data) ? data : [];
+            useDemo = false;
+        } catch (e) {
+            // API not connected — use demo data
+            users = JSON.parse(JSON.stringify(DEMO_USERS));
+            useDemo = true;
+        }
+        updateStats();
+        renderTable();
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       STATS
+       ═══════════════════════════════════════════════════════════ */
+    function updateStats() {
+        const total   = users.length;
+        const active  = users.filter(u => u.status === 'ACTIVE').length;
+        const blocked = users.filter(u => u.status === 'BLOCKED').length;
+        const admins  = users.filter(u => u.role === 'ROLE_ADMIN').length;
+
+        animateNum('statTotal',   total);
+        animateNum('statActive',  active);
+        animateNum('statBlocked', blocked);
+        animateNum('statAdmins',  admins);
+        document.getElementById('heroTotal').textContent   = total;
+        document.getElementById('heroActive').textContent  = active;
+        document.getElementById('heroBlocked').textContent = blocked;
+    }
+
+    function animateNum(id, target) {
+        const el = document.getElementById(id);
+        let n = 0;
+        const step = Math.max(1, Math.ceil(target / 20));
+        const t = setInterval(() => {
+            n = Math.min(n + step, target);
+            el.textContent = n;
+            if (n >= target) clearInterval(t);
+        }, 30);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       FILTER + RENDER TABLE
+       ═══════════════════════════════════════════════════════════ */
+    function getFiltered() {
+        const q      = document.getElementById('searchInput').value.toLowerCase();
+        const status = document.getElementById('filterStatus').value;
+        const role   = document.getElementById('filterRole').value;
+        return users.filter(u => {
+            const matchQ = u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q);
+            const matchS = status === 'all' || u.status === status;
+            const matchR = role   === 'all' || u.role   === role;
+            return matchQ && matchS && matchR;
+        });
+    }
+
+    function renderTable() {
+        const filtered   = getFiltered();
+        const total      = filtered.length;
+        const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
+        if (currentPage > totalPages) currentPage = 1;
+
+        const start = (currentPage - 1) * PER_PAGE;
+        const page  = filtered.slice(start, start + PER_PAGE);
+
+        const tbody = document.getElementById('tableBody');
+        const empty = document.getElementById('emptyState');
+
+        if (!page.length) {
+            tbody.innerHTML = '';
+            empty.style.display = 'block';
+        } else {
+            empty.style.display = 'none';
+            tbody.innerHTML = page.map((u, i) => {
+                const color      = avatarColor(u.name);
+                const roleLabel  = u.role === 'ROLE_ADMIN' ? 'Admin' : 'User';
+                const roleClass  = u.role === 'ROLE_ADMIN' ? 'admin' : '';
+                const statusLow  = (u.status || 'ACTIVE').toLowerCase();
+                const joined     = u.createdAt ? u.createdAt.split('T')[0] : '—';
+
+                const blockBtn = u.status === 'BLOCKED'
+                    ? `<button class="act-btn unblock" onclick="confirmAction('unblock',${u.id})"><i class="fas fa-user-check"></i> Unblock</button>`
+                    : `<button class="act-btn block"   onclick="confirmAction('block',${u.id})"><i class="fas fa-user-slash"></i> Block</button>`;
+
+                return `
+                <tr style="animation-delay:${i*40}ms">
+                    <td style="color:var(--slate-400);font-size:0.78rem;">${start + i + 1}</td>
+                    <td>
+                        <div class="user-cell">
+                            <div class="user-avatar" style="background:${color}">${initials(u.name)}</div>
+                            <div>
+                                <div class="user-name">${u.name}</div>
+                                <div class="user-email">${u.email}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="role-tag ${roleClass}">${roleLabel}</span></td>
+                    <td><span class="badge ${statusLow}">${u.status || 'ACTIVE'}</span></td>
+                    <td style="color:var(--slate-400);font-size:0.82rem;">${joined}</td>
+                    <td>
+                        <div class="actions">
+                            ${blockBtn}
+                            <button class="act-btn delete" onclick="confirmAction('delete',${u.id})">
+                                <i class="fas fa-trash-alt"></i> Delete
+                            </button>
+                        </div>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        // Pagination info
+        document.getElementById('paginationInfo').textContent =
+            total === 0 ? '0 users' : `Showing ${start+1}–${Math.min(start+PER_PAGE, total)} of ${total} users`;
+
+        // Page buttons
+        const pageBtns = document.getElementById('pageBtns');
+        pageBtns.innerHTML = '';
+        for (let p = 1; p <= totalPages; p++) {
+            const btn = document.createElement('button');
+            btn.className = 'page-btn' + (p === currentPage ? ' active' : '');
+            btn.textContent = p;
+            btn.onclick = () => { currentPage = p; renderTable(); };
+            pageBtns.appendChild(btn);
+        }
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       CONFIRM MODAL
+       ═══════════════════════════════════════════════════════════ */
+    function confirmAction(type, userId) {
+        const user = users.find(u => u.id === userId);
+        if (!user) return;
+        pendingAction = { type, userId };
+
+        const icon    = document.getElementById('modalIcon');
+        const title   = document.getElementById('modalTitle');
+        const body    = document.getElementById('modalBody');
+        const confirm = document.getElementById('modalConfirmBtn');
+
+        if (type === 'delete') {
+            icon.innerHTML  = '<i class="fas fa-trash-alt"></i>';
+            icon.className  = 'modal-icon danger';
+            title.textContent = 'Delete Account';
+            body.textContent  = `Permanently delete ${user.name}'s account? All their data will be removed. This cannot be undone.`;
+            confirm.textContent = 'Delete Account';
+            confirm.className   = 'btn btn-red';
+        } else if (type === 'block') {
+            icon.innerHTML  = '<i class="fas fa-user-slash"></i>';
+            icon.className  = 'modal-icon amber';
+            title.textContent = 'Block User';
+            body.textContent  = `Block ${user.name}? They won't be able to log in until you unblock them.`;
+            confirm.textContent = 'Block User';
+            confirm.className   = 'btn btn-amber';
+        } else {
+            icon.innerHTML  = '<i class="fas fa-user-check"></i>';
+            icon.className  = 'modal-icon green';
+            title.textContent = 'Unblock User';
+            body.textContent  = `Restore access for ${user.name}? They will be able to log in immediately.`;
+            confirm.textContent = 'Unblock User';
+            confirm.className   = 'btn btn-green';
+        }
+
+        confirm.onclick = executeAction;
+        document.getElementById('modalOverlay').classList.add('show');
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       EXECUTE ACTION
+       ═══════════════════════════════════════════════════════════ */
+    async function executeAction() {
+        if (!pendingAction) return;
+        const { type, userId } = pendingAction;
+        const user = users.find(u => u.id === userId);
+        closeModal();
+        pendingAction = null;
+
+        try {
+            if (!useDemo) {
+                if      (type === 'delete')  await apiFetch(`/${userId}`, 'DELETE');
+                else if (type === 'block')   await apiFetch(`/${userId}/block`, 'PUT');
+                else if (type === 'unblock') await apiFetch(`/${userId}/unblock`, 'PUT');
+            }
+
+            // Apply locally
+            if (type === 'delete') {
+                users = users.filter(u => u.id !== userId);
+                showToast(`${user.name}'s account deleted`, 'danger', 'fa-trash-alt');
+            } else if (type === 'block') {
+                user.status = 'BLOCKED';
+                showToast(`${user.name} has been blocked`, 'amber', 'fa-user-slash');
+            } else {
+                user.status = 'ACTIVE';
+                showToast(`${user.name} has been unblocked`, 'success', 'fa-user-check');
+            }
+
+            updateStats();
+            renderTable();
+        } catch(e) {
+            showToast('Action failed: ' + e.message, 'danger', 'fa-exclamation-circle');
+        }
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       MODAL HELPERS
+       ═══════════════════════════════════════════════════════════ */
+    function handleOverlayClick(e) {
+        if (e.target === document.getElementById('modalOverlay')) closeModal();
+    }
+    function closeModal() {
+        document.getElementById('modalOverlay').classList.remove('show');
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       TOAST
+       ═══════════════════════════════════════════════════════════ */
+    function showToast(message, type, icon) {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<div class="toast-icon"><i class="fas ${icon}"></i></div><span class="toast-msg">${message}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 3500);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       INIT
+       ═══════════════════════════════════════════════════════════ */
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof requireAuth === 'function') requireAuth();
+        loadUsers();
+    });
+</script>
 </body>
 </html>

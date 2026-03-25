@@ -1,5 +1,6 @@
 package com.pro.finance.selffinanceapp.config;
 
+import com.pro.finance.selffinanceapp.model.UserStatus; // ✅ added
 import com.pro.finance.selffinanceapp.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,6 +34,7 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    /* 🔥 FIXED USER DETAILS SERVICE */
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> userRepository.findByEmail(username)
@@ -43,7 +45,7 @@ public class SecurityConfig {
                         .accountExpired(false)
                         .accountLocked(false)
                         .credentialsExpired(false)
-                        .disabled(false)
+                        .disabled(u.getStatus() == UserStatus.BLOCKED) // ✅ FIX HERE
                         .build()
                 )
                 .orElseThrow(() ->
@@ -81,7 +83,7 @@ public class SecurityConfig {
                                 "/favicon.ico",
                                 "/error"
                         ).permitAll()
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // allow CORS preflight
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated()
                 );
 
