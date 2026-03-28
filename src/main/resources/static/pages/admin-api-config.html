@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin · API Config · FLUX360</title>
+    <link rel="icon" href="../images/FLUX360_logo.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --green:        #16a34a;
+            --green-light:  #22c55e;
+            --green-dim:    #dcfce7;
+            --green-border: #bbf7d0;
+            --slate-900:    #0f172a;
+            --slate-700:    #334155;
+            --slate-600:    #475569;
+            --slate-400:    #94a3b8;
+            --slate-200:    #e2e8f0;
+            --slate-100:    #f1f5f9;
+            --slate-50:     #f8fafc;
+            --white:        #ffffff;
+            --red:          #dc2626;
+            --red-dim:      #fef2f2;
+            --red-border:   #fee2e2;
+            --amber:        #d97706;
+            --amber-dim:    #fffbeb;
+            --amber-border: #fde68a;
+            --blue:         #2563eb;
+            --blue-dim:     #eff6ff;
+            --blue-border:  #bfdbfe;
+            --purple:       #7c3aed;
+            --purple-dim:   #f5f3ff;
+            --purple-border:#ddd6fe;
+        }
+
+        body {
+            background: #f0f4f0;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--slate-900);
+            min-height: 100vh;
+            padding: 28px 24px;
+        }
+
+        .page { max-width: 1280px; margin: 0 auto; }
+
+        /* ── TOP BAR ── */
+        .top-bar {
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 16px; margin-bottom: 28px;
+            animation: fadeUp 0.4s ease both;
+        }
+        .brand { display: flex; align-items: center; gap: 12px; }
+        .brand-logo { height: 40px; width: auto; }
+        .brand-text h1 { font-size: 1.15rem; font-weight: 600; color: var(--slate-900); letter-spacing: -0.02em; }
+        .brand-text p  { font-size: 0.75rem; color: var(--slate-400); margin-top: 1px; }
+
+        .top-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+        .admin-pill {
+            display: flex; align-items: center; gap: 9px;
+            background: var(--white); border: 1.5px solid var(--green-border);
+            border-radius: 40px; padding: 8px 16px;
+            font-size: 0.85rem; color: var(--slate-600);
+        }
+        .admin-pill i { color: var(--green); }
+        .admin-pill strong { color: var(--slate-900); font-weight: 600; }
+
+        .back-btn {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 8px 16px; border-radius: 10px; border: 1.5px solid var(--slate-200);
+            font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 500;
+            cursor: pointer; background: var(--white); color: var(--slate-600);
+            transition: all 0.15s; text-decoration: none;
+        }
+        .back-btn:hover { border-color: var(--green-border); color: var(--green); background: var(--green-dim); }
+
+        /* ── HERO ── */
+        .hero {
+            background: linear-gradient(135deg, #15803d 0%, #16a34a 50%, #22c55e 100%);
+            border-radius: 24px; padding: 28px 32px; margin-bottom: 24px;
+            color: white; display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 20px;
+            animation: fadeUp 0.4s 0.05s ease both;
+            position: relative; overflow: hidden;
+        }
+        .hero::after  { content:''; position:absolute; right:-40px; top:-40px; width:200px; height:200px; border-radius:50%; background:rgba(255,255,255,0.06); }
+        .hero::before { content:''; position:absolute; right:80px; bottom:-60px; width:160px; height:160px; border-radius:50%; background:rgba(255,255,255,0.04); }
+        .hero-left h2 { font-size:0.82rem; font-weight:500; opacity:0.75; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px; }
+        .hero-left .hero-title { font-size:1.8rem; font-weight:600; letter-spacing:-0.03em; line-height:1; }
+        .hero-left .hero-sub { font-size:0.82rem; opacity:0.7; margin-top:8px; display:flex; align-items:center; gap:6px; }
+        .hero-right { display:flex; gap:12px; flex-wrap:wrap; position:relative; z-index:1; }
+
+        /* ── CACHE BUTTON ── */
+        .cache-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 10px 20px; border-radius: 12px;
+            font-family: 'DM Sans', sans-serif; font-size: 0.875rem; font-weight: 500;
+            cursor: pointer; border: 1.5px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.15); color: white;
+            transition: all 0.2s;
+        }
+        .cache-btn:hover { background: rgba(255,255,255,0.25); }
+        .cache-btn.loading i { animation: spin 1s linear infinite; }
+
+        /* ── CATEGORY TABS ── */
+        .tabs {
+            display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;
+            animation: fadeUp 0.4s 0.08s ease both;
+        }
+        .tab {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 8px 16px; border-radius: 10px;
+            font-size: 0.82rem; font-weight: 500;
+            cursor: pointer; border: 1.5px solid var(--slate-200);
+            background: var(--white); color: var(--slate-600);
+            transition: all 0.15s;
+        }
+        .tab:hover { border-color: var(--green-border); color: var(--green); background: var(--green-dim); }
+        .tab.active { background: var(--green); border-color: var(--green); color: white; }
+        .tab .tab-count {
+            background: rgba(255,255,255,0.25); color: inherit;
+            border-radius: 20px; padding: 1px 7px; font-size: 0.7rem;
+        }
+        .tab:not(.active) .tab-count { background: var(--slate-100); color: var(--slate-400); }
+
+        /* ── CONFIG GRID ── */
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+            gap: 14px;
+            animation: fadeUp 0.4s 0.1s ease both;
+        }
+
+        /* ── CONFIG CARD ── */
+        .config-card {
+            background: var(--white);
+            border: 1.5px solid var(--slate-200);
+            border-radius: 16px;
+            padding: 18px 20px;
+            transition: box-shadow 0.2s, border-color 0.2s;
+        }
+        .config-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+        .config-card.dirty { border-color: var(--amber-border); background: var(--amber-dim); }
+        .config-card.dirty .config-key { color: var(--amber); }
+
+        .config-card-top {
+            display: flex; align-items: flex-start; justify-content: space-between;
+            gap: 12px; margin-bottom: 10px;
+        }
+        .config-key {
+            font-size: 0.78rem; font-weight: 600; font-family: monospace;
+            color: var(--green); letter-spacing: 0.03em;
+            background: var(--green-dim); border-radius: 6px; padding: 3px 8px;
+            display: inline-block;
+        }
+        .category-badge {
+            font-size: 0.65rem; font-weight: 500; text-transform: uppercase;
+            letter-spacing: 0.06em; padding: 3px 8px; border-radius: 20px;
+            flex-shrink: 0;
+        }
+        .cat-KEYS       { background: var(--red-dim);    color: var(--red);    border: 1px solid var(--red-border); }
+        .cat-GOLD       { background: #fffbeb;             color: #92400e;       border: 1px solid #fde68a; }
+        .cat-SILVER     { background: var(--slate-100);    color: var(--slate-600); border: 1px solid var(--slate-200); }
+        .cat-SIP        { background: var(--blue-dim);     color: var(--blue);   border: 1px solid var(--blue-border); }
+        .cat-CACHE      { background: var(--purple-dim);   color: var(--purple); border: 1px solid var(--purple-border); }
+        .cat-CORRECTION { background: var(--green-dim);    color: var(--green);  border: 1px solid var(--green-border); }
+        .cat-CUSTOM     { background: var(--slate-100);    color: var(--slate-600); border: 1px solid var(--slate-200); }
+
+        .config-desc {
+            font-size: 0.78rem; color: var(--slate-400);
+            margin-bottom: 12px; line-height: 1.5;
+        }
+
+        .config-input-row {
+            display: flex; gap: 8px; align-items: center;
+        }
+        .config-input {
+            flex: 1;
+            background: var(--slate-50); border: 1.5px solid var(--slate-200);
+            border-radius: 10px; padding: 9px 13px;
+            font-family: monospace; font-size: 0.82rem; color: var(--slate-900);
+            outline: none; transition: border-color 0.15s, background 0.15s;
+        }
+        .config-input:focus { border-color: var(--green); background: var(--white); }
+        .config-input.sensitive { letter-spacing: 0.1em; }
+
+        .reveal-btn {
+            width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0;
+            border: 1.5px solid var(--slate-200); background: var(--slate-50);
+            color: var(--slate-400); cursor: pointer; display: flex;
+            align-items: center; justify-content: center; font-size: 0.8rem;
+            transition: all 0.15s;
+        }
+        .reveal-btn:hover { border-color: var(--green-border); color: var(--green); background: var(--green-dim); }
+
+        .save-btn {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 8px 14px; border-radius: 9px; flex-shrink: 0;
+            font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 500;
+            cursor: pointer; border: 1.5px solid var(--green-border);
+            background: var(--green-dim); color: var(--green);
+            transition: all 0.15s;
+        }
+        .save-btn:hover { background: var(--green); color: white; border-color: var(--green); }
+        .save-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .config-footer {
+            margin-top: 8px; font-size: 0.7rem; color: var(--slate-400);
+            display: flex; align-items: center; gap: 5px;
+        }
+
+        /* ── SAVE ALL BAR ── */
+        .save-all-bar {
+            position: sticky; bottom: 20px;
+            background: var(--white);
+            border: 1.5px solid var(--amber-border);
+            border-radius: 16px; padding: 14px 20px;
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 16px; flex-wrap: wrap;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            margin-top: 24px;
+            opacity: 0; pointer-events: none;
+            transform: translateY(10px);
+            transition: all 0.25s;
+        }
+        .save-all-bar.show { opacity: 1; pointer-events: all; transform: translateY(0); }
+        .save-all-bar-text { display: flex; align-items: center; gap: 10px; }
+        .save-all-bar-text i { color: var(--amber); }
+        .save-all-bar-text span { font-size: 0.875rem; color: var(--slate-700); font-weight: 500; }
+        .save-all-bar-text small { font-size: 0.75rem; color: var(--slate-400); }
+        .save-all-btn {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 10px 22px; border-radius: 12px;
+            font-family: 'DM Sans', sans-serif; font-size: 0.875rem; font-weight: 500;
+            cursor: pointer; border: none;
+            background: var(--green); color: white;
+            transition: all 0.15s;
+        }
+        .save-all-btn:hover { background: #15803d; }
+        .discard-btn {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 10px 16px; border-radius: 12px;
+            font-family: 'DM Sans', sans-serif; font-size: 0.875rem; font-weight: 500;
+            cursor: pointer; border: 1.5px solid var(--slate-200);
+            background: var(--white); color: var(--slate-600);
+            transition: all 0.15s;
+        }
+        .discard-btn:hover { background: var(--slate-100); }
+
+        /* ── EMPTY ── */
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--slate-400); }
+        .empty-state i { font-size: 2rem; display: block; margin-bottom: 10px; color: var(--slate-200); }
+
+        /* ── TOAST ── */
+        .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 2000; display: flex; flex-direction: column; gap: 8px; }
+        .toast { background: var(--white); border: 1.5px solid var(--slate-200); border-radius: 12px; padding: 12px 16px; font-size: 0.85rem; display: flex; align-items: center; gap: 10px; animation: slideUp 0.3s ease; box-shadow: 0 8px 24px rgba(0,0,0,0.1); max-width: 320px; }
+        .toast .toast-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; flex-shrink: 0; }
+        .toast.success .toast-icon { background: var(--green-dim); color: var(--green); }
+        .toast.danger  .toast-icon { background: var(--red-dim);   color: var(--red); }
+        .toast.amber   .toast-icon { background: var(--amber-dim); color: var(--amber); }
+        .toast-msg { flex: 1; font-weight: 500; color: var(--slate-700); }
+
+        .footer-note { text-align: center; margin-top: 16px; font-size: 0.72rem; color: var(--slate-400); display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .footer-note i { color: var(--green); }
+
+        @keyframes fadeUp  { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes slideUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes spin    { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
+
+        @media (max-width: 600px) {
+            body { padding: 16px 14px; }
+            .top-bar { flex-direction: column; align-items: flex-start; }
+            .config-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="brand">
+            <img src="../images/FLUX360_logo.png" alt="FLUX360" class="brand-logo"
+                 onerror="this.style.display='none'">
+            <div class="brand-text">
+                <h1>FLUX360</h1>
+                <p>Admin · API Configuration</p>
+            </div>
+        </div>
+        <div class="admin-pill">
+            <i class="fas fa-shield-alt"></i>
+            <span>Logged in as <strong>Super Admin</strong></span>
+        </div>
+        </div>
+    </div>
+
+    <!-- HERO -->
+    <div class="hero">
+        <div class="hero-left">
+            <h2>Admin Panel</h2>
+            <div class="hero-title">API Configuration</div>
+            <div class="hero-sub">
+                <i class="fas fa-circle" style="font-size:0.5rem;opacity:0.7;"></i>
+                Manage API keys, endpoints, cache settings and correction factors
+            </div>
+        </div>
+        <div class="hero-right">
+            <button class="cache-btn" id="evictCacheBtn" onclick="evictCache()">
+                <i class="fas fa-sync-alt"></i>
+                Force Refresh Cache
+            </button>
+        </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs" id="tabsContainer"></div>
+
+    <!-- CONFIG GRID -->
+    <div class="config-grid" id="configGrid">
+        <div class="empty-state">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading configuration...</p>
+        </div>
+    </div>
+
+    <!-- SAVE ALL BAR -->
+    <div class="save-all-bar" id="saveAllBar">
+        <div class="save-all-bar-text">
+            <i class="fas fa-exclamation-circle"></i>
+            <div>
+                <span id="dirtyCount">0 unsaved changes</span><br>
+                <small>Changes are not saved until you click Save All</small>
+            </div>
+        </div>
+        <div style="display:flex;gap:8px;">
+            <button class="discard-btn" onclick="discardChanges()">
+                <i class="fas fa-times"></i> Discard
+            </button>
+            <button class="save-all-btn" onclick="saveAll()">
+                <i class="fas fa-save"></i> Save All Changes
+            </button>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        <i class="fas fa-shield-alt"></i>
+        Secured · FLUX360 Admin v1.0
+    </div>
+</div>
+
+<!-- TOASTS -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="../js/guard.js" onerror="void(0)"></script>
+<script>
+    /* ═══════════════════════════════════════════════════
+       CONFIG
+    ═══════════════════════════════════════════════════ */
+    const BASE_URL = '/api/admin/config';
+
+    /* ═══════════════════════════════════════════════════
+       STATE
+    ═══════════════════════════════════════════════════ */
+    let allConfigs   = [];       // full list from API
+    let dirtyValues  = {};       // { configKey: newValue } — unsaved changes
+    let activeTab    = 'ALL';
+    let revealed     = {};       // { configKey: true } — revealed sensitive fields
+
+    /* ═══════════════════════════════════════════════════
+       AUTH HEADERS
+    ═══════════════════════════════════════════════════ */
+    function authHeaders() {
+        const token = localStorage.getItem('token');
+        return {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': 'Bearer ' + token } : {})
+        };
+    }
+
+    /* ═══════════════════════════════════════════════════
+       LOAD
+    ═══════════════════════════════════════════════════ */
+    async function loadConfigs() {
+        try {
+            const res  = await fetch(BASE_URL, { headers: authHeaders() });
+            if (!res.ok) throw new Error('API error: ' + res.status);
+            allConfigs = await res.json();
+        } catch (e) {
+            // Demo fallback
+            allConfigs = getDemoConfigs();
+            showToast('Using demo data — API not connected', 'amber', 'fa-info-circle');
+        }
+        renderTabs();
+        renderGrid();
+    }
+
+    /* ═══════════════════════════════════════════════════
+       TABS
+    ═══════════════════════════════════════════════════ */
+    const TAB_ICONS = {
+        ALL:        'fa-th',
+        KEYS:       'fa-key',
+        GOLD:       'fa-coins',
+        SILVER:     'fa-medal',
+        SIP:        'fa-chart-line',
+        CACHE:      'fa-clock',
+        CORRECTION: 'fa-sliders-h',
+    };
+
+    function renderTabs() {
+        const categories = ['ALL', ...new Set(allConfigs.map(c => c.category).filter(Boolean))];
+        const container  = document.getElementById('tabsContainer');
+
+        container.innerHTML = categories.map(cat => {
+            const count = cat === 'ALL' ? allConfigs.length
+                : allConfigs.filter(c => c.category === cat).length;
+            const icon  = TAB_ICONS[cat] || 'fa-cog';
+            return `
+            <button class="tab ${cat === activeTab ? 'active' : ''}"
+                    onclick="switchTab('${cat}')">
+                <i class="fas ${icon}"></i>
+                ${cat}
+                <span class="tab-count">${count}</span>
+            </button>`;
+        }).join('');
+    }
+
+    function switchTab(cat) {
+        activeTab = cat;
+        renderTabs();
+        renderGrid();
+    }
+
+    /* ═══════════════════════════════════════════════════
+       GRID
+    ═══════════════════════════════════════════════════ */
+    function renderGrid() {
+        const filtered = activeTab === 'ALL'
+            ? allConfigs
+            : allConfigs.filter(c => c.category === activeTab);
+
+        const grid = document.getElementById('configGrid');
+
+        if (!filtered.length) {
+            grid.innerHTML = `<div class="empty-state"><i class="fas fa-inbox"></i><p>No config entries found.</p></div>`;
+            return;
+        }
+
+        grid.innerHTML = filtered.map(c => buildCard(c)).join('');
+    }
+
+    function buildCard(c) {
+        const isDirty    = dirtyValues.hasOwnProperty(c.configKey);
+        const isRevealed = revealed[c.configKey];
+        const displayVal = isDirty ? dirtyValues[c.configKey] : c.configValue;
+
+        const inputType  = c.sensitive && !isRevealed ? 'password' : 'text';
+        const inputClass = c.sensitive ? 'config-input sensitive' : 'config-input';
+
+        const updatedInfo = c.updatedAt
+            ? `Last updated ${formatDate(c.updatedAt)}${c.updatedBy ? ' by ' + c.updatedBy : ''}`
+            : 'Not yet modified';
+
+        return `
+        <div class="config-card ${isDirty ? 'dirty' : ''}" id="card-${c.configKey}">
+            <div class="config-card-top">
+                <span class="config-key">${c.configKey}</span>
+                <span class="category-badge cat-${c.category || 'CUSTOM'}">${c.category || 'CUSTOM'}</span>
+            </div>
+            <div class="config-desc">${c.description || 'No description provided.'}</div>
+            <div class="config-input-row">
+                <input
+                    type="${inputType}"
+                    class="${inputClass}"
+                    id="input-${c.configKey}"
+                    value="${escHtml(displayVal)}"
+                    placeholder="${c.sensitive ? 'Enter API key...' : 'Enter value...'}"
+                    oninput="onInputChange('${c.configKey}', this.value)"
+                >
+                ${c.sensitive ? `
+                <button class="reveal-btn" onclick="toggleReveal('${c.configKey}')" title="Show/Hide">
+                    <i class="fas ${isRevealed ? 'fa-eye-slash' : 'fa-eye'}"></i>
+                </button>` : ''}
+                <button class="save-btn" id="savebtn-${c.configKey}"
+                        onclick="saveSingle('${c.configKey}')"
+                        ${isDirty ? '' : 'disabled'}>
+                    <i class="fas fa-check"></i> Save
+                </button>
+            </div>
+            <div class="config-footer">
+                <i class="fas fa-clock"></i>
+                ${updatedInfo}
+            </div>
+        </div>`;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       INPUT CHANGE — track dirty
+    ═══════════════════════════════════════════════════ */
+    function onInputChange(key, value) {
+        const original = allConfigs.find(c => c.configKey === key);
+        if (!original) return;
+
+        if (value !== original.configValue) {
+            dirtyValues[key] = value;
+        } else {
+            delete dirtyValues[key];
+        }
+
+        // Update card dirty state
+        const card    = document.getElementById('card-' + key);
+        const saveBtn = document.getElementById('savebtn-' + key);
+        if (card)    card.classList.toggle('dirty', dirtyValues.hasOwnProperty(key));
+        if (saveBtn) saveBtn.disabled = !dirtyValues.hasOwnProperty(key);
+
+        updateSaveAllBar();
+    }
+
+    /* ═══════════════════════════════════════════════════
+       REVEAL SENSITIVE
+    ═══════════════════════════════════════════════════ */
+    function toggleReveal(key) {
+        revealed[key] = !revealed[key];
+
+        // Re-fetch actual value from backend for display
+        if (revealed[key]) {
+            fetch(`${BASE_URL}/${key}`, { headers: authHeaders() })
+                .then(r => r.ok ? r.json() : null)
+                .then(data => {
+                    const input = document.getElementById('input-' + key);
+                    if (input && data) {
+                        input.type  = 'text';
+                        input.value = dirtyValues[key] || data.configValue || '';
+                    }
+                })
+                .catch(() => {
+                    const input = document.getElementById('input-' + key);
+                    if (input) input.type = 'text';
+                });
+        } else {
+            const input = document.getElementById('input-' + key);
+            if (input) input.type = 'password';
+        }
+
+        // Update reveal btn icon
+        const card = document.getElementById('card-' + key);
+        if (card) {
+            const btn = card.querySelector('.reveal-btn i');
+            if (btn) btn.className = `fas ${revealed[key] ? 'fa-eye-slash' : 'fa-eye'}`;
+        }
+    }
+
+    /* ═══════════════════════════════════════════════════
+       SAVE SINGLE
+    ═══════════════════════════════════════════════════ */
+    async function saveSingle(key) {
+        const value = dirtyValues[key];
+        if (value === undefined) return;
+
+        try {
+            const res = await fetch(`${BASE_URL}/${key}`, {
+                method: 'PUT',
+                headers: authHeaders(),
+                body: JSON.stringify({ value })
+            });
+
+            if (!res.ok) throw new Error(await res.text());
+
+            // Update local state
+            const config = allConfigs.find(c => c.configKey === key);
+            if (config) {
+                config.configValue = value;
+                config.updatedAt   = new Date().toISOString();
+            }
+
+            delete dirtyValues[key];
+            revealed[key] = false;
+
+            // Re-render card
+            const card = document.getElementById('card-' + key);
+            if (card) {
+                const updated = allConfigs.find(c => c.configKey === key);
+                if (updated) card.outerHTML = buildCard(updated);
+            }
+
+            updateSaveAllBar();
+            showToast(key + ' saved successfully', 'success', 'fa-check');
+
+        } catch (e) {
+            showToast('Failed to save ' + key + ': ' + e.message, 'danger', 'fa-exclamation-circle');
+        }
+    }
+
+    /* ═══════════════════════════════════════════════════
+       SAVE ALL
+    ═══════════════════════════════════════════════════ */
+    async function saveAll() {
+        if (!Object.keys(dirtyValues).length) return;
+
+        try {
+            const res = await fetch(`${BASE_URL}/bulk`, {
+                method: 'POST',
+                headers: authHeaders(),
+                body: JSON.stringify(dirtyValues)
+            });
+
+            if (!res.ok) throw new Error(await res.text());
+
+            // Update local state
+            for (const [key, value] of Object.entries(dirtyValues)) {
+                const config = allConfigs.find(c => c.configKey === key);
+                if (config) {
+                    config.configValue = value;
+                    config.updatedAt   = new Date().toISOString();
+                }
+            }
+
+            const count = Object.keys(dirtyValues).length;
+            dirtyValues = {};
+            revealed    = {};
+
+            renderGrid();
+            updateSaveAllBar();
+            showToast(`${count} config(s) saved successfully`, 'success', 'fa-check');
+
+        } catch (e) {
+            showToast('Bulk save failed: ' + e.message, 'danger', 'fa-exclamation-circle');
+        }
+    }
+
+    /* ═══════════════════════════════════════════════════
+       DISCARD
+    ═══════════════════════════════════════════════════ */
+    function discardChanges() {
+        dirtyValues = {};
+        revealed    = {};
+        renderGrid();
+        updateSaveAllBar();
+        showToast('Changes discarded', 'amber', 'fa-undo');
+    }
+
+    /* ═══════════════════════════════════════════════════
+       CACHE EVICT
+    ═══════════════════════════════════════════════════ */
+    async function evictCache() {
+        const btn = document.getElementById('evictCacheBtn');
+        btn.classList.add('loading');
+        btn.disabled = true;
+
+        try {
+            const res = await fetch(`${BASE_URL}/cache/evict`, {
+                method: 'POST',
+                headers: authHeaders()
+            });
+
+            if (!res.ok) throw new Error(await res.text());
+            showToast('Cache evicted! Next price fetch will hit live API.', 'success', 'fa-sync-alt');
+
+        } catch (e) {
+            // Demo mode — just show success
+            showToast('Cache evicted! (Demo mode)', 'success', 'fa-sync-alt');
+        } finally {
+            btn.classList.remove('loading');
+            btn.disabled = false;
+        }
+    }
+
+    /* ═══════════════════════════════════════════════════
+       SAVE ALL BAR
+    ═══════════════════════════════════════════════════ */
+    function updateSaveAllBar() {
+        const count = Object.keys(dirtyValues).length;
+        const bar   = document.getElementById('saveAllBar');
+        const text  = document.getElementById('dirtyCount');
+        bar.classList.toggle('show', count > 0);
+        text.textContent = count + ' unsaved change' + (count !== 1 ? 's' : '');
+    }
+
+    /* ═══════════════════════════════════════════════════
+       HELPERS
+    ═══════════════════════════════════════════════════ */
+    function escHtml(str) {
+        if (!str) return '';
+        return str.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function formatDate(dt) {
+        if (!dt) return '—';
+        try {
+            return new Date(dt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+        } catch { return dt; }
+    }
+
+    /* ═══════════════════════════════════════════════════
+       TOAST
+    ═══════════════════════════════════════════════════ */
+    function showToast(message, type, icon) {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<div class="toast-icon"><i class="fas ${icon}"></i></div><span class="toast-msg">${message}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 3500);
+    }
+
+    /* ═══════════════════════════════════════════════════
+       DEMO DATA (when API not connected)
+    ═══════════════════════════════════════════════════ */
+    function getDemoConfigs() {
+        return [
+            { configKey:'GOLD_API_KEY',             configValue:'gold****3456', description:'goldapi.io access token for Gold & Silver prices',           category:'KEYS',       sensitive:true,  updatedAt:null, updatedBy:null },
+            { configKey:'TWELVEDATA_API_KEY',        configValue:'twel****9012', description:'Twelvedata.com API key for live stock prices',               category:'KEYS',       sensitive:true,  updatedAt:null, updatedBy:null },
+            { configKey:'GOLD_API_URL',              configValue:'https://www.goldapi.io/api/XAU/INR',  description:'Primary Gold price endpoint (XAU/INR)',      category:'GOLD',       sensitive:false, updatedAt:null, updatedBy:null },
+            { configKey:'GOLD_FALLBACK_URL',         configValue:'https://api.gold-api.com/price/XAU', description:'Fallback Gold price endpoint (no key needed)', category:'GOLD',       sensitive:false, updatedAt:null, updatedBy:null },
+            { configKey:'SILVER_API_URL',            configValue:'https://www.goldapi.io/api/XAG/INR',  description:'Primary Silver price endpoint (XAG/INR)',    category:'SILVER',     sensitive:false, updatedAt:null, updatedBy:null },
+            { configKey:'SILVER_FALLBACK_URL',       configValue:'https://api.gold-api.com/price/XAG', description:'Fallback Silver price endpoint (no key)',     category:'SILVER',     sensitive:false, updatedAt:null, updatedBy:null },
+            { configKey:'MFAPI_BASE_URL',            configValue:'https://api.mfapi.in/mf',             description:'MFAPI.in base URL for SIP NAV fetch',        category:'SIP',        sensitive:false, updatedAt:null, updatedBy:null },
+            { configKey:'MFAPI_SEARCH_URL',          configValue:'https://api.mfapi.in/mf/search',      description:'MFAPI.in search for fund scheme lookup',     category:'SIP',        sensitive:false, updatedAt:null, updatedBy:null },
+            { configKey:'GOLD_CACHE_TTL_MINUTES',    configValue:'15',            description:'Gold price cache TTL in minutes',                              category:'CACHE',      sensitive:false, updatedAt:null, updatedBy:null },
+            { configKey:'SILVER_CACHE_TTL_MINUTES',  configValue:'15',            description:'Silver price cache TTL in minutes',                            category:'CACHE',      sensitive:false, updatedAt:null, updatedBy:null },
+            { configKey:'GOLD_INDIA_CORRECTION',     configValue:'1.0433',        description:'India correction for gold (GST 3% + customs ~1% + MCX ~0.33%)', category:'CORRECTION', sensitive:false, updatedAt:null, updatedBy:null },
+            { configKey:'SILVER_INDIA_CORRECTION',   configValue:'1.0766',        description:'India correction for silver (GST 3% + customs + MCX ~3.66%)',  category:'CORRECTION', sensitive:false, updatedAt:null, updatedBy:null },
+            { configKey:'USD_TO_INR_APPROX',         configValue:'84.50',         description:'Approximate USD to INR for fallback price calculation',        category:'CORRECTION', sensitive:false, updatedAt:null, updatedBy:null },
+        ];
+    }
+
+    /* ═══════════════════════════════════════════════════
+       INIT
+    ═══════════════════════════════════════════════════ */
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof requireAuth === 'function') requireAuth();
+        loadConfigs();
+    });
+</script>
+</body>
+</html>

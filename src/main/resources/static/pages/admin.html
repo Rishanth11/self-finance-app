@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin · User Management · FLUX360</title>
+    <title>Admin · Dashboard · FLUX360</title>
     <link rel="icon" href="../images/FLUX360_logo.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,6 +32,9 @@
             --amber:        #d97706;
             --amber-dim:    #fffbeb;
             --amber-border: #fde68a;
+            --blue:         #2563eb;
+            --blue-dim:     #eff6ff;
+            --blue-border:  #bfdbfe;
         }
 
         body {
@@ -55,26 +58,14 @@
         .brand-text h1 { font-size: 1.15rem; font-weight: 600; color: var(--slate-900); letter-spacing: -0.02em; line-height: 1.2; }
         .brand-text p  { font-size: 0.75rem; color: var(--slate-400); margin-top: 1px; }
 
-        .top-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-
         .admin-pill {
             display: flex; align-items: center; gap: 9px;
-            background: var(--white);
-            border: 1.5px solid var(--green-border);
+            background: var(--white); border: 1.5px solid var(--green-border);
             border-radius: 40px; padding: 8px 16px;
             font-size: 0.85rem; color: var(--slate-600);
         }
         .admin-pill i { color: var(--green); }
         .admin-pill strong { color: var(--slate-900); font-weight: 600; }
-
-        .back-btn {
-            display: inline-flex; align-items: center; gap: 7px;
-            padding: 8px 16px; border-radius: 10px; border: 1.5px solid var(--slate-200);
-            font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 500;
-            cursor: pointer; background: var(--white); color: var(--slate-600);
-            transition: all 0.15s; text-decoration: none;
-        }
-        .back-btn:hover { border-color: var(--green-border); color: var(--green); background: var(--green-dim); }
 
         /* ── HERO ── */
         .hero {
@@ -89,270 +80,222 @@
         .hero::before { content:''; position:absolute; right:80px; bottom:-60px; width:160px; height:160px; border-radius:50%; background:rgba(255,255,255,0.04); }
         .hero-left h2 { font-size:0.82rem; font-weight:500; opacity:0.75; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px; }
         .hero-left .hero-title { font-size:1.8rem; font-weight:600; letter-spacing:-0.03em; line-height:1; }
-        .hero-left .hero-sub { font-size:0.82rem; opacity:0.7; margin-top:8px; display:flex; align-items:center; gap:6px; }
-        .hero-stats { display:flex; gap:28px; flex-wrap:wrap; position:relative; z-index:1; }
-        .hero-stat { text-align:right; }
-        .hero-stat p { font-size:0.72rem; opacity:0.7; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:4px; }
-        .hero-stat strong { font-size:1.1rem; font-weight:600; }
+        .hero-left .hero-sub   { font-size:0.82rem; opacity:0.7; margin-top:8px; display:flex; align-items:center; gap:6px; }
+        .hero-right { display:flex; gap:10px; flex-wrap:wrap; position:relative; z-index:1; }
 
-        /* ── STAT CARDS ── */
+        .hero-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 10px 18px; border-radius: 12px;
+            font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 500;
+            cursor: pointer; text-decoration: none;
+            border: 1.5px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.15); color: white;
+            transition: all 0.2s;
+        }
+        .hero-btn:hover { background: rgba(255,255,255,0.28); }
+        .hero-btn.solid {
+            background: white; color: var(--green);
+            border-color: white;
+        }
+        .hero-btn.solid:hover { background: var(--green-dim); }
+
+        /* ── SECTION LABEL ── */
+        .section-label {
+            font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.08em; color: var(--slate-400);
+            margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+        }
+        .section-label::after {
+            content: ''; flex: 1; height: 1px; background: var(--slate-200);
+        }
+
+        /* ── USER STAT CARDS ── */
         .stat-grid {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 14px; margin-bottom: 24px;
+            gap: 14px; margin-bottom: 28px;
             animation: fadeUp 0.4s 0.08s ease both;
         }
         .stat-card {
             background: var(--white); border: 1.5px solid var(--slate-200);
             border-radius: 16px; padding: 18px 20px;
             position: relative; overflow: hidden;
-            transition: transform 0.2s, box-shadow 0.2s; cursor: default;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
         .stat-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.07); }
         .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; border-radius:16px 16px 0 0; background: var(--green); }
-        .stat-card.accent-red::before    { background: var(--red); }
-        .stat-card.accent-amber::before  { background: var(--amber); }
+        .stat-card.red::before    { background: var(--red); }
+        .stat-card.amber::before  { background: var(--amber); }
+        .stat-card.blue::before   { background: var(--blue); }
 
         .stat-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
-        .stat-label { font-size:0.7rem; font-weight:500; text-transform:uppercase; letter-spacing:0.06em; color:var(--slate-400); }
-        .stat-icon { width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:0.85rem; flex-shrink:0; background:var(--green-dim); color:var(--green); }
-        .stat-icon.red   { background:var(--red-dim);   color:var(--red); }
-        .stat-icon.amber { background:var(--amber-dim); color:var(--amber); }
+        .stat-label-text { font-size:0.7rem; font-weight:500; text-transform:uppercase; letter-spacing:0.06em; color:var(--slate-400); }
+        .stat-icon { width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:0.85rem; flex-shrink:0; }
+        .stat-icon.green  { background:var(--green-dim);  color:var(--green); }
+        .stat-icon.red    { background:var(--red-dim);    color:var(--red); }
+        .stat-icon.amber  { background:var(--amber-dim);  color:var(--amber); }
+        .stat-icon.blue   { background:var(--blue-dim);   color:var(--blue); }
         .stat-value { font-size:1.6rem; font-weight:600; color:var(--slate-900); letter-spacing:-0.02em; margin-bottom:3px; }
         .stat-sub   { font-size:0.72rem; color:var(--slate-400); }
 
-        /* ── MAIN CARD ── */
-        .card {
+        /* ── MODULE CARDS (quick links) ── */
+        .module-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 14px; margin-bottom: 28px;
+            animation: fadeUp 0.4s 0.12s ease both;
+        }
+        .module-card {
             background: var(--white); border: 1.5px solid var(--slate-200);
-            border-radius: 20px; padding: 22px 24px; margin-bottom: 20px;
-            animation: fadeUp 0.4s 0.1s ease both;
+            border-radius: 20px; padding: 22px 24px;
+            display: flex; flex-direction: column; gap: 14px;
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+            text-decoration: none; color: inherit;
+            cursor: pointer;
         }
-        .card-header {
-            display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
-        }
-        .card-header-left { display: flex; align-items: center; gap: 10px; }
-        .card-header-icon {
-            width: 32px; height: 32px; background: var(--green-dim); border-radius: 9px;
-            display: flex; align-items: center; justify-content: center; color: var(--green); font-size: 0.8rem;
-        }
-        .card-header h3 { font-size: 0.95rem; font-weight: 600; color: var(--slate-900); }
-
-        /* ── TOOLBAR ── */
-        .toolbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-
-        .search-wrap {
-            display: flex; align-items: center; gap: 8px;
-            background: var(--slate-50); border: 1.5px solid var(--slate-200);
-            border-radius: 10px; padding: 8px 14px;
-            transition: border-color 0.15s;
-        }
-        .search-wrap:focus-within { border-color: var(--green); background: var(--white); }
-        .search-wrap i { color: var(--slate-400); font-size: 0.8rem; }
-        .search-wrap input {
-            background: none; border: none; outline: none;
-            font-family: 'DM Sans', sans-serif; font-size: 0.875rem;
-            color: var(--slate-900); width: 200px;
-        }
-        .search-wrap input::placeholder { color: var(--slate-400); }
-
-        .filter-select {
-            background: var(--slate-50); border: 1.5px solid var(--slate-200);
-            border-radius: 10px; padding: 8px 14px;
-            font-family: 'DM Sans', sans-serif; font-size: 0.875rem;
-            color: var(--slate-700); outline: none; cursor: pointer;
-            transition: border-color 0.15s;
-        }
-        .filter-select:focus { border-color: var(--green); }
-
-        /* ── TABLE ── */
-        .table-wrap { overflow-x: auto; }
-
-        table { width: 100%; border-collapse: collapse; }
-
-        thead th {
-            padding: 10px 16px; text-align: left;
-            font-size: 0.7rem; font-weight: 500; text-transform: uppercase;
-            letter-spacing: 0.06em; color: var(--slate-400);
-            border-bottom: 1.5px solid var(--slate-200);
-            white-space: nowrap; background: var(--slate-50);
-        }
-        thead th:first-child { border-radius: 10px 0 0 10px; }
-        thead th:last-child  { border-radius: 0 10px 10px 0; }
-
-        tbody tr {
-            border-bottom: 1px solid var(--slate-100);
-            transition: background 0.15s;
-            animation: fadeUp 0.3s ease both;
-        }
-        tbody tr:last-child { border-bottom: none; }
-        tbody tr:hover { background: var(--slate-50); }
-
-        td { padding: 14px 16px; font-size: 0.875rem; vertical-align: middle; }
-
-        /* user cell */
-        .user-cell { display: flex; align-items: center; gap: 12px; }
-        .user-avatar {
-            width: 36px; height: 36px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 0.8rem; font-weight: 600; color: #fff; flex-shrink: 0;
-        }
-        .user-name  { font-weight: 500; font-size: 0.875rem; color: var(--slate-900); }
-        .user-email { font-size: 0.72rem; color: var(--slate-400); margin-top: 1px; }
-
-        /* role tag */
-        .role-tag {
-            display: inline-flex; align-items: center; gap: 5px;
-            font-size: 0.72rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;
-            padding: 3px 10px; border-radius: 20px;
-            background: var(--green-dim); color: var(--green);
-            border: 1px solid var(--green-border);
-        }
-        .role-tag.admin { background: #eff6ff; color: #2563eb; border-color: #bfdbfe; }
-
-        /* status badge */
-        .badge {
-            display: inline-flex; align-items: center; gap: 5px;
-            padding: 4px 10px; border-radius: 20px;
-            font-size: 0.72rem; font-weight: 500; letter-spacing: 0.04em;
-        }
-        .badge::before { content:''; width:5px; height:5px; border-radius:50%; background:currentColor; }
-        .badge.active   { background: var(--green-dim);   color: var(--green);  border: 1px solid var(--green-border); }
-        .badge.blocked  { background: var(--amber-dim);   color: var(--amber);  border: 1px solid var(--amber-border); }
-        .badge.inactive { background: var(--slate-100);   color: var(--slate-400); border: 1px solid var(--slate-200); }
-
-        /* action buttons */
-        .actions { display: flex; align-items: center; gap: 6px; }
-
-        .act-btn {
-            display: inline-flex; align-items: center; gap: 5px;
-            padding: 6px 12px; border-radius: 8px;
-            font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 500;
-            cursor: pointer; border: 1.5px solid transparent;
-            transition: all 0.15s; white-space: nowrap;
-        }
-        .act-btn.block {
-            background: var(--amber-dim); color: var(--amber);
-            border-color: var(--amber-border);
-        }
-        .act-btn.block:hover { background: var(--amber); color: white; }
-
-        .act-btn.unblock {
-            background: var(--green-dim); color: var(--green);
+        .module-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 28px rgba(22,163,74,0.12);
             border-color: var(--green-border);
         }
-        .act-btn.unblock:hover { background: var(--green); color: white; }
-
-        .act-btn.delete {
-            background: var(--red-dim); color: var(--red);
-            border-color: var(--red-border);
+        .module-card-top { display: flex; align-items: center; gap: 14px; }
+        .module-icon {
+            width: 46px; height: 46px; border-radius: 14px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem;
         }
-        .act-btn.delete:hover { background: var(--red); color: white; }
-
-        /* ── PAGINATION ── */
-        .pagination {
+        .module-icon.green  { background: var(--green-dim);  color: var(--green); }
+        .module-icon.blue   { background: var(--blue-dim);   color: var(--blue); }
+        .module-icon.amber  { background: var(--amber-dim);  color: var(--amber); }
+        .module-icon.red    { background: var(--red-dim);    color: var(--red); }
+        .module-title { font-size: 0.95rem; font-weight: 600; color: var(--slate-900); }
+        .module-desc  { font-size: 0.78rem; color: var(--slate-400); margin-top: 2px; line-height: 1.4; }
+        .module-footer {
             display: flex; align-items: center; justify-content: space-between;
-            padding-top: 18px; flex-wrap: wrap; gap: 10px;
+            padding-top: 12px; border-top: 1px solid var(--slate-100);
         }
-        .pagination-info { font-size: 0.78rem; color: var(--slate-400); }
-        .page-btns { display: flex; gap: 4px; }
-        .page-btn {
-            width: 32px; height: 32px; border-radius: 8px;
-            border: 1.5px solid var(--slate-200); background: var(--white);
-            color: var(--slate-600); font-family: 'DM Sans', sans-serif; font-size: 0.8rem;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            transition: all 0.15s;
-        }
-        .page-btn:hover { border-color: var(--green-border); color: var(--green); background: var(--green-dim); }
-        .page-btn.active { background: var(--green); border-color: var(--green); color: white; }
-
-        /* ── EMPTY STATE ── */
-        .empty-state { text-align: center; padding: 48px 20px; color: var(--slate-400); }
-        .empty-state i { font-size: 2rem; display: block; margin-bottom: 10px; color: var(--slate-200); }
-        .empty-state p { font-size: 0.875rem; }
-
-        /* ── MODAL ── */
-        .modal-overlay {
-            position: fixed; inset: 0;
-            background: rgba(15,23,42,0.5);
-            backdrop-filter: blur(4px);
+        .module-meta { font-size: 0.72rem; color: var(--slate-400); display: flex; align-items: center; gap: 6px; }
+        .module-arrow {
+            width: 28px; height: 28px; border-radius: 8px;
+            background: var(--green-dim); color: var(--green);
             display: flex; align-items: center; justify-content: center;
-            z-index: 1000; opacity: 0; pointer-events: none;
-            transition: opacity 0.2s;
+            font-size: 0.75rem; transition: background 0.15s;
         }
-        .modal-overlay.show { opacity: 1; pointer-events: all; }
+        .module-card:hover .module-arrow { background: var(--green); color: white; }
 
-        .modal {
+        /* ── API HEALTH SECTION ── */
+        .health-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 14px; margin-bottom: 28px;
+            animation: fadeUp 0.4s 0.15s ease both;
+        }
+        .health-card {
             background: var(--white); border: 1.5px solid var(--slate-200);
-            border-radius: 20px; padding: 28px; width: 420px; max-width: 92vw;
-            transform: scale(0.95); transition: transform 0.2s;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            border-radius: 16px; padding: 16px 18px;
+            transition: box-shadow 0.2s;
         }
-        .modal-overlay.show .modal { transform: scale(1); }
+        .health-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
 
-        .modal-icon {
-            width: 48px; height: 48px; border-radius: 12px;
+        .health-card-top {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .health-name {
+            display: flex; align-items: center; gap: 10px;
+        }
+        .health-icon {
+            width: 34px; height: 34px; border-radius: 9px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; margin-bottom: 18px;
+            font-size: 0.85rem; flex-shrink: 0;
         }
-        .modal-icon.danger { background: var(--red-dim); color: var(--red); }
-        .modal-icon.amber  { background: var(--amber-dim); color: var(--amber); }
-        .modal-icon.green  { background: var(--green-dim); color: var(--green); }
+        .health-title { font-size: 0.875rem; font-weight: 600; color: var(--slate-900); }
+        .health-url   { font-size: 0.68rem; color: var(--slate-400); margin-top: 1px; font-family: monospace; }
 
-        .modal h3 { font-size: 1rem; font-weight: 600; margin-bottom: 8px; }
-        .modal p  { font-size: 0.85rem; color: var(--slate-600); line-height: 1.6; margin-bottom: 24px; }
+        /* status pill */
+        .status-pill {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 10px; border-radius: 20px;
+            font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em;
+            text-transform: uppercase; flex-shrink: 0;
+        }
+        .status-pill::before { content:''; width:5px; height:5px; border-radius:50%; background:currentColor; }
+        .status-pill.live    { background:var(--green-dim);  color:var(--green);  border:1px solid var(--green-border); }
+        .status-pill.down    { background:var(--red-dim);    color:var(--red);    border:1px solid var(--red-border); }
+        .status-pill.checking{ background:var(--amber-dim);  color:var(--amber);  border:1px solid var(--amber-border); }
+        .status-pill.free    { background:var(--blue-dim);   color:var(--blue);   border:1px solid var(--blue-border); }
 
-        .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+        .health-price {
+            font-size: 1.05rem; font-weight: 600; color: var(--slate-900);
+            margin-bottom: 2px;
+        }
+        .health-meta {
+            font-size: 0.7rem; color: var(--slate-400);
+            display: flex; align-items: center; gap: 5px;
+        }
 
-        .btn {
+        /* refresh btn */
+        .refresh-btn {
             display: inline-flex; align-items: center; gap: 6px;
-            padding: 9px 18px; border-radius: 10px; border: none;
-            font-family: 'DM Sans', sans-serif; font-size: 0.875rem;
-            font-weight: 500; cursor: pointer; transition: all 0.15s;
+            padding: 6px 12px; border-radius: 8px;
+            font-family: 'DM Sans', sans-serif; font-size: 0.75rem; font-weight: 500;
+            cursor: pointer; border: 1.5px solid var(--slate-200);
+            background: var(--slate-50); color: var(--slate-600);
+            transition: all 0.15s; white-space: nowrap;
         }
-        .btn-ghost  { background: var(--slate-50); color: var(--slate-600); border: 1.5px solid var(--slate-200); }
-        .btn-ghost:hover { background: var(--slate-100); }
-        .btn-green  { background: var(--green); color: white; }
-        .btn-green:hover { background: #15803d; }
-        .btn-amber  { background: var(--amber); color: white; }
-        .btn-amber:hover { background: #b45309; }
-        .btn-red    { background: var(--red); color: white; }
-        .btn-red:hover { background: #b91c1c; }
+        .refresh-btn:hover { border-color: var(--green-border); color: var(--green); background: var(--green-dim); }
+        .refresh-btn.spinning i { animation: spin 1s linear infinite; }
+
+        /* health section header */
+        .health-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 12px; flex-wrap: wrap; gap: 10px;
+        }
+
+        /* ── LAST CHECKED BAR ── */
+        .last-checked-bar {
+            background: var(--white); border: 1.5px solid var(--slate-200);
+            border-radius: 12px; padding: 10px 16px;
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 10px; margin-bottom: 20px;
+            font-size: 0.78rem; color: var(--slate-400);
+            animation: fadeUp 0.4s 0.18s ease both;
+        }
+        .last-checked-bar span { display: flex; align-items: center; gap: 6px; }
+        .pulse {
+            width: 7px; height: 7px; border-radius: 50%; background: var(--green);
+            animation: pulse 2s infinite;
+        }
 
         /* ── TOAST ── */
-        .toast-container {
-            position: fixed; bottom: 24px; right: 24px;
-            z-index: 2000; display: flex; flex-direction: column; gap: 8px;
-        }
-        .toast {
-            background: var(--white); border: 1.5px solid var(--slate-200);
-            border-radius: 12px; padding: 12px 16px;
-            font-size: 0.85rem; display: flex; align-items: center; gap: 10px;
-            animation: slideUp 0.3s ease;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-            max-width: 300px;
-        }
-        .toast .toast-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; flex-shrink: 0; }
-        .toast.success .toast-icon { background: var(--green-dim); color: var(--green); }
-        .toast.danger  .toast-icon { background: var(--red-dim);   color: var(--red);   }
-        .toast.amber   .toast-icon { background: var(--amber-dim); color: var(--amber); }
-        .toast-msg { flex: 1; font-weight: 500; color: var(--slate-700); }
+        .toast-container { position:fixed; bottom:24px; right:24px; z-index:2000; display:flex; flex-direction:column; gap:8px; }
+        .toast { background:var(--white); border:1.5px solid var(--slate-200); border-radius:12px; padding:12px 16px; font-size:0.85rem; display:flex; align-items:center; gap:10px; animation:slideUp 0.3s ease; box-shadow:0 8px 24px rgba(0,0,0,0.1); max-width:300px; }
+        .toast .toast-icon { width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:0.8rem; flex-shrink:0; }
+        .toast.success .toast-icon { background:var(--green-dim); color:var(--green); }
+        .toast.danger  .toast-icon { background:var(--red-dim);   color:var(--red); }
+        .toast.amber   .toast-icon { background:var(--amber-dim); color:var(--amber); }
+        .toast-msg { flex:1; font-weight:500; color:var(--slate-700); }
 
-        .footer-note {
-            text-align: center; margin-top: 16px; font-size: 0.72rem;
-            color: var(--slate-400); display: flex; align-items: center; justify-content: center; gap: 6px;
+        .footer-note { text-align:center; margin-top:16px; font-size:0.72rem; color:var(--slate-400); display:flex; align-items:center; justify-content:center; gap:6px; }
+        .footer-note i { color:var(--green); }
+
+        .logout-btn {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 8px 16px; border-radius: 10px;
+            border: 1.5px solid var(--red-border);
+            font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 500;
+            cursor: pointer; background: var(--red-dim); color: var(--red);
+            transition: all 0.15s;
         }
-        .footer-note i { color: var(--green); }
+        .logout-btn:hover { background: var(--red); color: white; }
 
-        @keyframes fadeUp  { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
-        @keyframes slideUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes fadeUp  { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes slideUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes spin    { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+        @keyframes pulse   { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
 
-        @media (max-width: 600px) {
-            body { padding: 16px 14px; }
-            .top-bar { flex-direction: column; align-items: flex-start; }
-            .hero { flex-direction: column; }
-            .hero-stats { justify-content: flex-start; }
-            .hero-stat { text-align: left; }
-            .search-wrap input { width: 140px; }
+        @media (max-width:600px) {
+            body { padding:16px 14px; }
+            .top-bar { flex-direction:column; align-items:flex-start; }
+            .hero { flex-direction:column; }
+            .module-grid, .health-grid, .stat-grid { grid-template-columns:1fr; }
         }
     </style>
 </head>
@@ -366,13 +309,17 @@
                  onerror="this.style.display='none'">
             <div class="brand-text">
                 <h1>FLUX360</h1>
-                <p>Admin · User Management</p>
+                <p>Admin · Dashboard</p>
             </div>
         </div>
+        <div style="display:flex;align-items:center;gap:10px;">
             <div class="admin-pill">
                 <i class="fas fa-shield-alt"></i>
-                <span>Logged in as <strong>Super Admin</strong></span>
+                <span>Logged in as <strong id="adminName">Super Admin</strong></span>
             </div>
+            <button class="logout-btn" onclick="handleLogout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
         </div>
     </div>
 
@@ -380,104 +327,106 @@
     <div class="hero">
         <div class="hero-left">
             <h2>Admin Panel</h2>
-            <div class="hero-title">User Management</div>
+            <div class="hero-title">Dashboard</div>
             <div class="hero-sub">
                 <i class="fas fa-circle" style="font-size:0.5rem;opacity:0.7;"></i>
-                View, block, and manage all registered users
+                <span id="heroGreeting">Welcome back — everything looks good</span>
             </div>
         </div>
-        <div class="hero-stats">
-            <div class="hero-stat"><p>Total Users</p><strong id="heroTotal">—</strong></div>
-            <div class="hero-stat"><p>Active</p><strong id="heroActive">—</strong></div>
-            <div class="hero-stat"><p>Blocked</p><strong id="heroBlocked">—</strong></div>
+        <div class="hero-right">
+            <a href="user-management.html" class="hero-btn">
+                <i class="fas fa-users"></i> Users
+            </a>
+            <a href="admin-api-config.html" class="hero-btn solid">
+                <i class="fas fa-key"></i> API Config
+            </a>
         </div>
     </div>
 
-    <!-- STAT CARDS -->
-    <div class="stat-grid">
+    <!-- USER STATS -->
+    <div class="section-label"><i class="fas fa-users"></i> User Overview</div>
+    <div class="stat-grid" id="statGrid">
         <div class="stat-card">
             <div class="stat-top">
-                <span class="stat-label">Total Users</span>
-                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <span class="stat-label-text">Total Users</span>
+                <div class="stat-icon green"><i class="fas fa-users"></i></div>
             </div>
             <div class="stat-value" id="statTotal">—</div>
             <div class="stat-sub">All registered accounts</div>
         </div>
         <div class="stat-card">
             <div class="stat-top">
-                <span class="stat-label">Active Users</span>
-                <div class="stat-icon"><i class="fas fa-user-check"></i></div>
+                <span class="stat-label-text">Active</span>
+                <div class="stat-icon green"><i class="fas fa-user-check"></i></div>
             </div>
             <div class="stat-value" id="statActive">—</div>
             <div class="stat-sub">Currently active</div>
         </div>
-        <div class="stat-card accent-amber">
+        <div class="stat-card amber">
             <div class="stat-top">
-                <span class="stat-label">Blocked</span>
+                <span class="stat-label-text">Blocked</span>
                 <div class="stat-icon amber"><i class="fas fa-user-slash"></i></div>
             </div>
             <div class="stat-value" id="statBlocked">—</div>
             <div class="stat-sub">Deactivated accounts</div>
         </div>
-        <div class="stat-card accent-red">
+        <div class="stat-card blue">
             <div class="stat-top">
-                <span class="stat-label">Admins</span>
-                <div class="stat-icon red"><i class="fas fa-shield-alt"></i></div>
+                <span class="stat-label-text">Admins</span>
+                <div class="stat-icon blue"><i class="fas fa-shield-alt"></i></div>
             </div>
             <div class="stat-value" id="statAdmins">—</div>
             <div class="stat-sub">Admin role users</div>
         </div>
     </div>
 
-    <!-- USER TABLE CARD -->
-    <div class="card">
-        <div class="card-header">
-            <div class="card-header-left">
-                <div class="card-header-icon"><i class="fas fa-users"></i></div>
-                <h3>All Users</h3>
-            </div>
-            <div class="toolbar">
-                <div class="search-wrap">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="searchInput" placeholder="Search by name or email…" oninput="renderTable()">
+    <!-- MODULES -->
+    <div class="section-label"><i class="fas fa-th-large"></i> Admin Modules</div>
+    <div class="module-grid">
+        <a href="user-management.html" class="module-card">
+            <div class="module-card-top">
+                <div class="module-icon green"><i class="fas fa-users"></i></div>
+                <div>
+                    <div class="module-title">User Management</div>
+                    <div class="module-desc">View, block, unblock and delete user accounts</div>
                 </div>
-                <select class="filter-select" id="filterStatus" onchange="renderTable()">
-                    <option value="all">All Status</option>
-                    <option value="ACTIVE">Active</option>
-                    <option value="BLOCKED">Blocked</option>
-                </select>
-                <select class="filter-select" id="filterRole" onchange="renderTable()">
-                    <option value="all">All Roles</option>
-                    <option value="ROLE_ADMIN">Admin</option>
-                    <option value="ROLE_USER">User</option>
-                </select>
             </div>
-        </div>
-
-        <div class="table-wrap">
-            <table>
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>User</th>
-                    <th>Role</th>
-                    <th>Status</th>
-                    <th>Joined</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody id="tableBody"></tbody>
-            </table>
-            <div id="emptyState" class="empty-state" style="display:none;">
-                <i class="fas fa-users-slash"></i>
-                <p>No users match your search or filter.</p>
+            <div class="module-footer">
+                <span class="module-meta"><i class="fas fa-circle" style="font-size:0.4rem;color:var(--green)"></i> <span id="modUserCount">— users</span></span>
+                <div class="module-arrow"><i class="fas fa-arrow-right"></i></div>
             </div>
-        </div>
+        </a>
 
-        <div class="pagination">
-            <span class="pagination-info" id="paginationInfo"></span>
-            <div class="page-btns" id="pageBtns"></div>
-        </div>
+        <a href="admin-api-config.html" class="module-card">
+            <div class="module-card-top">
+                <div class="module-icon blue"><i class="fas fa-key"></i></div>
+                <div>
+                    <div class="module-title">API Configuration</div>
+                    <div class="module-desc">Manage API keys, endpoints, cache TTL and correction factors</div>
+                </div>
+            </div>
+            <div class="module-footer">
+                <span class="module-meta"><i class="fas fa-circle" style="font-size:0.4rem;color:var(--blue)"></i> Gold · Silver · SIP · Stocks</span>
+                <div class="module-arrow" style="background:var(--blue-dim);color:var(--blue)"><i class="fas fa-arrow-right"></i></div>
+            </div>
+        </a>
+    </div>
+
+    <!-- API HEALTH -->
+    <div class="health-header">
+        <div class="section-label" style="margin-bottom:0;flex:1"><i class="fas fa-heartbeat"></i> API Health</div>
+        <button class="refresh-btn" id="refreshBtn" onclick="checkAllHealth()">
+            <i class="fas fa-sync-alt"></i> Refresh All
+        </button>
+    </div>
+
+    <div class="last-checked-bar">
+        <span><div class="pulse"></div> Live monitoring</span>
+        <span id="lastCheckedText"><i class="fas fa-clock"></i> Not checked yet</span>
+    </div>
+
+    <div class="health-grid" id="healthGrid">
+        <!-- Injected by JS -->
     </div>
 
     <div class="footer-note">
@@ -486,124 +435,155 @@
     </div>
 </div>
 
-<!-- MODAL -->
-<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
-    <div class="modal">
-        <div class="modal-icon" id="modalIcon"></div>
-        <h3 id="modalTitle"></h3>
-        <p id="modalBody"></p>
-        <div class="modal-actions">
-            <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-            <button class="btn" id="modalConfirmBtn"></button>
-        </div>
-    </div>
-</div>
-
 <!-- TOASTS -->
 <div class="toast-container" id="toastContainer"></div>
 
 <script src="../js/guard.js" onerror="void(0)"></script>
-<script src="../js/api.js" onerror="void(0)"></script>
 <script>
-    /* ═══════════════════════════════════════════════════════════
-       CONFIG — swap BASE_URL to your Spring Boot server
-       ═══════════════════════════════════════════════════════════ */
-    const BASE_URL = '/api/admin/users';
 
-    /* ═══════════════════════════════════════════════════════════
-       DEMO DATA (used when API is not connected)
-       ═══════════════════════════════════════════════════════════ */
-    const DEMO_USERS = [
-        { id:1,  name:'Aravind Krishnan', email:'aravind@flux360.io',  role:'ROLE_ADMIN', status:'ACTIVE',   createdAt:'2024-01-10' },
-        { id:2,  name:'Priya Natarajan',  email:'priya@flux360.io',    role:'ROLE_USER',  status:'ACTIVE',   createdAt:'2024-02-14' },
-        { id:3,  name:'Ravi Shankar',     email:'ravi@gmail.com',      role:'ROLE_USER',  status:'BLOCKED',  createdAt:'2024-03-05' },
-        { id:4,  name:'Meena Suresh',     email:'meena@flux360.io',    role:'ROLE_USER',  status:'ACTIVE',   createdAt:'2024-04-20' },
-        { id:5,  name:'Karthik Raja',     email:'karthik@outlook.com', role:'ROLE_USER',  status:'ACTIVE',   createdAt:'2024-05-01' },
-        { id:6,  name:'Divya Lakshmi',    email:'divya@flux360.io',    role:'ROLE_ADMIN', status:'ACTIVE',   createdAt:'2024-05-18' },
-        { id:7,  name:'Senthil Kumar',    email:'senthil@gmail.com',   role:'ROLE_USER',  status:'BLOCKED',  createdAt:'2024-06-02' },
-        { id:8,  name:'Ananya Bose',      email:'ananya@flux360.io',   role:'ROLE_USER',  status:'ACTIVE',   createdAt:'2024-06-15' },
-        { id:9,  name:'Vikram Nair',      email:'vikram@flux360.io',   role:'ROLE_USER',  status:'ACTIVE',   createdAt:'2024-07-01' },
-        { id:10, name:'Lavanya Devi',     email:'lavanya@gmail.com',   role:'ROLE_USER',  status:'ACTIVE',   createdAt:'2024-07-22' },
-        { id:11, name:'Arjun Pillai',     email:'arjun@flux360.io',    role:'ROLE_USER',  status:'ACTIVE',   createdAt:'2024-08-04' },
-        { id:12, name:'Nisha Menon',      email:'nisha@flux360.io',    role:'ROLE_ADMIN', status:'ACTIVE',   createdAt:'2024-08-19' },
-    ];
+    /* ═══════════════════════════════════════
+       API ENDPOINTS
+    ═══════════════════════════════════════ */
+    const USERS_URL  = '/api/admin/users';
+    const CONFIG_URL = '/api/admin/config';
+    const HEALTH_URL = '/api/admin/config/cache/evict'; // POST — used just to test admin connectivity
 
-    /* ═══════════════════════════════════════════════════════════
-       STATE
-       ═══════════════════════════════════════════════════════════ */
-    let users       = [];
-    let currentPage = 1;
-    const PER_PAGE  = 8;
-    let pendingAction = null;
-    let useDemo     = false;
-
-    /* ═══════════════════════════════════════════════════════════
-       AVATAR COLORS — matching app palette
-       ═══════════════════════════════════════════════════════════ */
-    const AVATAR_COLORS = ['#16a34a','#15803d','#166534','#22c55e','#4ade80','#86efac'];
-
-    function avatarColor(name) {
-        let h = 0;
-        for (const c of name) h = (h << 5) - h + c.charCodeAt(0);
-        return AVATAR_COLORS[Math.abs(h) % AVATAR_COLORS.length];
-    }
-    function initials(name) {
-        return name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
-    }
-
-    /* ═══════════════════════════════════════════════════════════
-       API HELPERS
-       ═══════════════════════════════════════════════════════════ */
+    /* ═══════════════════════════════════════
+       AUTH
+    ═══════════════════════════════════════ */
     function authHeaders() {
         const token = localStorage.getItem('token');
-        return token ? { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' };
+        return {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': 'Bearer ' + token } : {})
+        };
     }
 
-    async function apiFetch(path, method = 'GET', body = null) {
-        const opts = { method, headers: authHeaders() };
-        if (body) opts.body = JSON.stringify(body);
-        const res = await fetch(BASE_URL + path, opts);
-        if (!res.ok) throw new Error(await res.text());
-        return res.status === 204 ? null : res.json();
+    /* ═══════════════════════════════════════
+       API DEFINITIONS
+       Each entry = one health card
+    ═══════════════════════════════════════ */
+    const API_DEFINITIONS = [
+        {
+            id:       'gold',
+            title:    'Gold Price API',
+            subtitle: 'goldapi.io — XAU/INR',
+            icon:     'fa-coins',
+            iconColor:'amber',
+            keyName:  'GOLD_API_KEY',
+            urlKey:   'GOLD_API_URL',
+            priceEndpoint: '/api/gold/price',   // your Spring Boot endpoint
+            type:     'keyed',
+        },
+        {
+            id:       'silver',
+            title:    'Silver Price API',
+            subtitle: 'goldapi.io — XAG/INR',
+            icon:     'fa-medal',
+            iconColor:'slate',
+            keyName:  'GOLD_API_KEY',
+            urlKey:   'SILVER_API_URL',
+            priceEndpoint: '/api/silver/price',
+            type:     'keyed',
+        },
+        {
+            id:       'gold_fallback',
+            title:    'Gold Fallback API',
+            subtitle: 'gold-api.com — no key',
+            icon:     'fa-coins',
+            iconColor:'green',
+            urlKey:   'GOLD_FALLBACK_URL',
+            priceEndpoint: null,
+            type:     'free',
+        },
+        {
+            id:       'silver_fallback',
+            title:    'Silver Fallback API',
+            subtitle: 'gold-api.com — no key',
+            icon:     'fa-medal',
+            iconColor:'green',
+            urlKey:   'SILVER_FALLBACK_URL',
+            priceEndpoint: null,
+            type:     'free',
+        },
+        {
+            id:       'mfapi',
+            title:    'SIP NAV API',
+            subtitle: 'mfapi.in — free, no key',
+            icon:     'fa-chart-line',
+            iconColor:'blue',
+            urlKey:   'MFAPI_BASE_URL',
+            priceEndpoint: null,
+            type:     'free',
+        },
+        {
+            id:       'stocks',
+            title:    'Stocks Price API',
+            subtitle: 'twelvedata.com',
+            icon:     'fa-chart-bar',
+            iconColor:'red',
+            keyName:  'TWELVEDATA_API_KEY',
+            urlKey:   null,
+            priceEndpoint: null,
+            type:     'keyed',
+        },
+    ];
+
+    /* ═══════════════════════════════════════
+       STATE
+    ═══════════════════════════════════════ */
+    let healthState  = {};  // { apiId: { status, price, checkedAt, url } }
+    let configValues = {};  // { configKey: value } from DB
+
+    /* ═══════════════════════════════════════
+       INIT
+    ═══════════════════════════════════════ */
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof requireAuth === 'function') requireAuth();
+        setGreeting();
+        loadUserStats();
+        loadConfigThenHealth();
+    });
+
+    function setGreeting() {
+        const h = new Date().getHours();
+        const greet = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+        document.getElementById('heroGreeting').textContent = greet + ' — checking system status…';
     }
 
-    /* ═══════════════════════════════════════════════════════════
-       LOAD USERS
-       ═══════════════════════════════════════════════════════════ */
-    async function loadUsers() {
+    /* ═══════════════════════════════════════
+       LOAD USER STATS
+    ═══════════════════════════════════════ */
+    async function loadUserStats() {
         try {
-            const data = await apiFetch('');
-            users = Array.isArray(data) ? data : [];
-            useDemo = false;
+            const res = await fetch(USERS_URL, { headers: authHeaders() });
+            if (!res.ok) throw new Error();
+            const users = await res.json();
+
+            const total   = users.length;
+            const active  = users.filter(u => u.status === 'ACTIVE').length;
+            const blocked = users.filter(u => u.status === 'BLOCKED').length;
+            const admins  = users.filter(u => u.role  === 'ROLE_ADMIN').length;
+
+            animateNum('statTotal',   total);
+            animateNum('statActive',  active);
+            animateNum('statBlocked', blocked);
+            animateNum('statAdmins',  admins);
+            document.getElementById('modUserCount').textContent = total + ' users';
+
         } catch (e) {
-            // API not connected — use demo data
-            users = JSON.parse(JSON.stringify(DEMO_USERS));
-            useDemo = true;
+            // Demo fallback
+            animateNum('statTotal',   12);
+            animateNum('statActive',  9);
+            animateNum('statBlocked', 2);
+            animateNum('statAdmins',  3);
+            document.getElementById('modUserCount').textContent = '12 users (demo)';
         }
-        updateStats();
-        renderTable();
-    }
-
-    /* ═══════════════════════════════════════════════════════════
-       STATS
-       ═══════════════════════════════════════════════════════════ */
-    function updateStats() {
-        const total   = users.length;
-        const active  = users.filter(u => u.status === 'ACTIVE').length;
-        const blocked = users.filter(u => u.status === 'BLOCKED').length;
-        const admins  = users.filter(u => u.role === 'ROLE_ADMIN').length;
-
-        animateNum('statTotal',   total);
-        animateNum('statActive',  active);
-        animateNum('statBlocked', blocked);
-        animateNum('statAdmins',  admins);
-        document.getElementById('heroTotal').textContent   = total;
-        document.getElementById('heroActive').textContent  = active;
-        document.getElementById('heroBlocked').textContent = blocked;
     }
 
     function animateNum(id, target) {
         const el = document.getElementById(id);
+        if (!el) return;
         let n = 0;
         const step = Math.max(1, Math.ceil(target / 20));
         const t = setInterval(() => {
@@ -613,181 +593,231 @@
         }, 30);
     }
 
-    /* ═══════════════════════════════════════════════════════════
-       FILTER + RENDER TABLE
-       ═══════════════════════════════════════════════════════════ */
-    function getFiltered() {
-        const q      = document.getElementById('searchInput').value.toLowerCase();
-        const status = document.getElementById('filterStatus').value;
-        const role   = document.getElementById('filterRole').value;
-        return users.filter(u => {
-            const matchQ = u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q);
-            const matchS = status === 'all' || u.status === status;
-            const matchR = role   === 'all' || u.role   === role;
-            return matchQ && matchS && matchR;
-        });
-    }
-
-    function renderTable() {
-        const filtered   = getFiltered();
-        const total      = filtered.length;
-        const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
-        if (currentPage > totalPages) currentPage = 1;
-
-        const start = (currentPage - 1) * PER_PAGE;
-        const page  = filtered.slice(start, start + PER_PAGE);
-
-        const tbody = document.getElementById('tableBody');
-        const empty = document.getElementById('emptyState');
-
-        if (!page.length) {
-            tbody.innerHTML = '';
-            empty.style.display = 'block';
-        } else {
-            empty.style.display = 'none';
-            tbody.innerHTML = page.map((u, i) => {
-                const color      = avatarColor(u.name);
-                const roleLabel  = u.role === 'ROLE_ADMIN' ? 'Admin' : 'User';
-                const roleClass  = u.role === 'ROLE_ADMIN' ? 'admin' : '';
-                const statusLow  = (u.status || 'ACTIVE').toLowerCase();
-                const joined     = u.createdAt ? u.createdAt.split('T')[0] : '—';
-
-                const blockBtn = u.status === 'BLOCKED'
-                    ? `<button class="act-btn unblock" onclick="confirmAction('unblock',${u.id})"><i class="fas fa-user-check"></i> Unblock</button>`
-                    : `<button class="act-btn block"   onclick="confirmAction('block',${u.id})"><i class="fas fa-user-slash"></i> Block</button>`;
-
-                return `
-                <tr style="animation-delay:${i*40}ms">
-                    <td style="color:var(--slate-400);font-size:0.78rem;">${start + i + 1}</td>
-                    <td>
-                        <div class="user-cell">
-                            <div class="user-avatar" style="background:${color}">${initials(u.name)}</div>
-                            <div>
-                                <div class="user-name">${u.name}</div>
-                                <div class="user-email">${u.email}</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td><span class="role-tag ${roleClass}">${roleLabel}</span></td>
-                    <td><span class="badge ${statusLow}">${u.status || 'ACTIVE'}</span></td>
-                    <td style="color:var(--slate-400);font-size:0.82rem;">${joined}</td>
-                    <td>
-                        <div class="actions">
-                            ${blockBtn}
-                            <button class="act-btn delete" onclick="confirmAction('delete',${u.id})">
-                                <i class="fas fa-trash-alt"></i> Delete
-                            </button>
-                        </div>
-                    </td>
-                </tr>`;
-            }).join('');
-        }
-
-        // Pagination info
-        document.getElementById('paginationInfo').textContent =
-            total === 0 ? '0 users' : `Showing ${start+1}–${Math.min(start+PER_PAGE, total)} of ${total} users`;
-
-        // Page buttons
-        const pageBtns = document.getElementById('pageBtns');
-        pageBtns.innerHTML = '';
-        for (let p = 1; p <= totalPages; p++) {
-            const btn = document.createElement('button');
-            btn.className = 'page-btn' + (p === currentPage ? ' active' : '');
-            btn.textContent = p;
-            btn.onclick = () => { currentPage = p; renderTable(); };
-            pageBtns.appendChild(btn);
-        }
-    }
-
-    /* ═══════════════════════════════════════════════════════════
-       CONFIRM MODAL
-       ═══════════════════════════════════════════════════════════ */
-    function confirmAction(type, userId) {
-        const user = users.find(u => u.id === userId);
-        if (!user) return;
-        pendingAction = { type, userId };
-
-        const icon    = document.getElementById('modalIcon');
-        const title   = document.getElementById('modalTitle');
-        const body    = document.getElementById('modalBody');
-        const confirm = document.getElementById('modalConfirmBtn');
-
-        if (type === 'delete') {
-            icon.innerHTML  = '<i class="fas fa-trash-alt"></i>';
-            icon.className  = 'modal-icon danger';
-            title.textContent = 'Delete Account';
-            body.textContent  = `Permanently delete ${user.name}'s account? All their data will be removed. This cannot be undone.`;
-            confirm.textContent = 'Delete Account';
-            confirm.className   = 'btn btn-red';
-        } else if (type === 'block') {
-            icon.innerHTML  = '<i class="fas fa-user-slash"></i>';
-            icon.className  = 'modal-icon amber';
-            title.textContent = 'Block User';
-            body.textContent  = `Block ${user.name}? They won't be able to log in until you unblock them.`;
-            confirm.textContent = 'Block User';
-            confirm.className   = 'btn btn-amber';
-        } else {
-            icon.innerHTML  = '<i class="fas fa-user-check"></i>';
-            icon.className  = 'modal-icon green';
-            title.textContent = 'Unblock User';
-            body.textContent  = `Restore access for ${user.name}? They will be able to log in immediately.`;
-            confirm.textContent = 'Unblock User';
-            confirm.className   = 'btn btn-green';
-        }
-
-        confirm.onclick = executeAction;
-        document.getElementById('modalOverlay').classList.add('show');
-    }
-
-    /* ═══════════════════════════════════════════════════════════
-       EXECUTE ACTION
-       ═══════════════════════════════════════════════════════════ */
-    async function executeAction() {
-        if (!pendingAction) return;
-        const { type, userId } = pendingAction;
-        const user = users.find(u => u.id === userId);
-        closeModal();
-        pendingAction = null;
-
+    /* ═══════════════════════════════════════
+       LOAD CONFIG THEN CHECK HEALTH
+    ═══════════════════════════════════════ */
+    async function loadConfigThenHealth() {
         try {
-            if (!useDemo) {
-                if      (type === 'delete')  await apiFetch(`/${userId}`, 'DELETE');
-                else if (type === 'block')   await apiFetch(`/${userId}/block`, 'PUT');
-                else if (type === 'unblock') await apiFetch(`/${userId}/unblock`, 'PUT');
+            const res = await fetch(CONFIG_URL, { headers: authHeaders() });
+            if (res.ok) {
+                const configs = await res.json();
+                configs.forEach(c => { configValues[c.configKey] = c.configValue; });
             }
+        } catch (e) { /* use defaults */ }
 
-            // Apply locally
-            if (type === 'delete') {
-                users = users.filter(u => u.id !== userId);
-                showToast(`${user.name}'s account deleted`, 'danger', 'fa-trash-alt');
-            } else if (type === 'block') {
-                user.status = 'BLOCKED';
-                showToast(`${user.name} has been blocked`, 'amber', 'fa-user-slash');
+        renderHealthCards(); // render skeleton first
+        checkAllHealth();
+    }
+
+    /* ═══════════════════════════════════════
+       RENDER HEALTH CARDS (skeleton / live)
+    ═══════════════════════════════════════ */
+    function renderHealthCards() {
+        const grid = document.getElementById('healthGrid');
+        grid.innerHTML = API_DEFINITIONS.map(api => buildHealthCard(api)).join('');
+    }
+
+    function buildHealthCard(api) {
+        const s = healthState[api.id];
+
+        const iconColorMap = {
+            amber: { bg: 'var(--amber-dim)',  fg: 'var(--amber)' },
+            green: { bg: 'var(--green-dim)',  fg: 'var(--green)' },
+            blue:  { bg: 'var(--blue-dim)',   fg: 'var(--blue)' },
+            red:   { bg: 'var(--red-dim)',    fg: 'var(--red)' },
+            slate: { bg: 'var(--slate-100)',  fg: 'var(--slate-600)' },
+        };
+        const ic = iconColorMap[api.iconColor] || iconColorMap.green;
+
+        const urlDisplay = api.urlKey && configValues[api.urlKey]
+            ? truncateUrl(configValues[api.urlKey])
+            : api.subtitle;
+
+        // Key status indicator
+        let keyBadge = '';
+        if (api.type === 'keyed') {
+            const keyVal = api.keyName && configValues[api.keyName];
+            const keySet = keyVal && keyVal.length > 0 && !keyVal.includes('****');
+            // masked values from list endpoint — just show "configured" if non-empty
+            const configured = keyVal && keyVal.length > 0;
+            keyBadge = `<span class="status-pill ${configured ? 'live' : 'down'}" style="font-size:0.65rem;padding:2px 7px;">
+                ${configured ? 'Key Set' : 'No Key'}
+            </span>`;
+        } else {
+            keyBadge = `<span class="status-pill free" style="font-size:0.65rem;padding:2px 7px;">Free</span>`;
+        }
+
+        if (!s) {
+            // Skeleton / not checked yet
+            return `
+            <div class="health-card" id="hcard-${api.id}">
+                <div class="health-card-top">
+                    <div class="health-name">
+                        <div class="health-icon" style="background:${ic.bg};color:${ic.fg}">
+                            <i class="fas ${api.icon}"></i>
+                        </div>
+                        <div>
+                            <div class="health-title">${api.title}</div>
+                            <div class="health-url">${urlDisplay}</div>
+                        </div>
+                    </div>
+                    <span class="status-pill checking">Checking…</span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px;">
+                    <div>
+                        <div class="health-price" style="color:var(--slate-300)">— —</div>
+                        <div class="health-meta"><i class="fas fa-clock"></i> Not checked yet</div>
+                    </div>
+                    ${keyBadge}
+                </div>
+            </div>`;
+        }
+
+        const statusClass = s.status === 'live' ? 'live' : s.status === 'free' ? 'free' : 'down';
+        const statusLabel = s.status === 'live' ? 'Live' : s.status === 'free' ? 'Free' : 'Down';
+
+        return `
+        <div class="health-card" id="hcard-${api.id}">
+            <div class="health-card-top">
+                <div class="health-name">
+                    <div class="health-icon" style="background:${ic.bg};color:${ic.fg}">
+                        <i class="fas ${api.icon}"></i>
+                    </div>
+                    <div>
+                        <div class="health-title">${api.title}</div>
+                        <div class="health-url">${urlDisplay}</div>
+                    </div>
+                </div>
+                <span class="status-pill ${statusClass}">${statusLabel}</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px;">
+                <div>
+                    <div class="health-price">${s.price || '—'}</div>
+                    <div class="health-meta">
+                        <i class="fas fa-clock"></i>
+                        ${s.checkedAt ? 'Checked ' + formatTime(s.checkedAt) : 'Just now'}
+                    </div>
+                </div>
+                ${keyBadge}
+            </div>
+        </div>`;
+    }
+
+    /* ═══════════════════════════════════════
+       CHECK ALL HEALTH
+    ═══════════════════════════════════════ */
+    async function checkAllHealth() {
+        const btn = document.getElementById('refreshBtn');
+        btn.classList.add('spinning');
+        btn.disabled = true;
+
+        // Reset to checking state
+        API_DEFINITIONS.forEach(api => { delete healthState[api.id]; });
+        renderHealthCards();
+
+        // Check all in parallel
+        await Promise.all(API_DEFINITIONS.map(api => checkOne(api)));
+
+        renderHealthCards();
+
+        const now = new Date();
+        document.getElementById('lastCheckedText').innerHTML =
+            `<i class="fas fa-check-circle" style="color:var(--green)"></i> Last checked at ${formatTime(now)}`;
+
+        // Update hero greeting
+        const downCount = Object.values(healthState).filter(s => s.status === 'down').length;
+        const greetEl = document.getElementById('heroGreeting');
+        if (downCount === 0) {
+            greetEl.textContent = 'All systems operational ✓';
+        } else {
+            greetEl.textContent = `${downCount} API${downCount > 1 ? 's' : ''} may be down — check health below`;
+        }
+
+        btn.classList.remove('spinning');
+        btn.disabled = false;
+    }
+
+    /* ═══════════════════════════════════════
+       CHECK ONE API
+    ═══════════════════════════════════════ */
+    async function checkOne(api) {
+        try {
+            if (api.priceEndpoint) {
+                // Call your Spring Boot price endpoint
+                const res = await fetch(api.priceEndpoint, {
+                    headers: authHeaders(),
+                    signal: AbortSignal.timeout(15000)
+                });
+
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+
+                const data = await res.json();
+                // Expect { price: 14000.00 } or just a number
+                const price = data?.price ?? data?.pricePerGram ?? data;
+                const priceStr = price ? '₹' + Number(price).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '/g' : '—';
+
+                healthState[api.id] = { status: 'live', price: priceStr, checkedAt: new Date() };
+
+            } else if (api.type === 'free' && api.urlKey && configValues[api.urlKey]) {
+                // Ping the free API URL directly from admin
+                const url = configValues[api.urlKey];
+                const testUrl = url.includes('mfapi.in') ? url + '/119598' : url; // test with a real fund code for MFAPI
+                const res = await fetch(testUrl, {
+                    signal: AbortSignal.timeout(10000)
+                });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const data = await res.json();
+
+                let priceStr = '—';
+                if (data?.price) {
+                    priceStr = '$' + Number(data.price).toFixed(2) + '/oz';
+                } else if (data?.data?.[0]?.nav) {
+                    priceStr = 'NAV: ₹' + data.data[0].nav;
+                }
+
+                healthState[api.id] = { status: 'free', price: priceStr, checkedAt: new Date() };
+
+            } else if (api.type === 'keyed') {
+                // Just check if key is configured — can't call directly (CORS)
+                const keyVal = api.keyName && configValues[api.keyName];
+                if (keyVal && keyVal.length > 3) {
+                    healthState[api.id] = { status: 'live', price: 'Key configured', checkedAt: new Date() };
+                } else {
+                    healthState[api.id] = { status: 'down', price: 'Key missing!', checkedAt: new Date() };
+                }
             } else {
-                user.status = 'ACTIVE';
-                showToast(`${user.name} has been unblocked`, 'success', 'fa-user-check');
+                healthState[api.id] = { status: 'down', price: 'Not configured', checkedAt: new Date() };
             }
 
-            updateStats();
-            renderTable();
-        } catch(e) {
-            showToast('Action failed: ' + e.message, 'danger', 'fa-exclamation-circle');
+        } catch (e) {
+            healthState[api.id] = {
+                status: 'down',
+                price: e.name === 'TimeoutError' ? 'Timeout' : 'Unreachable',
+                checkedAt: new Date()
+            };
         }
     }
 
-    /* ═══════════════════════════════════════════════════════════
-       MODAL HELPERS
-       ═══════════════════════════════════════════════════════════ */
-    function handleOverlayClick(e) {
-        if (e.target === document.getElementById('modalOverlay')) closeModal();
-    }
-    function closeModal() {
-        document.getElementById('modalOverlay').classList.remove('show');
+    /* ═══════════════════════════════════════
+       HELPERS
+    ═══════════════════════════════════════ */
+    function truncateUrl(url) {
+        try {
+            const u = new URL(url);
+            return u.hostname + u.pathname.slice(0, 20) + (u.pathname.length > 20 ? '…' : '');
+        } catch { return url.slice(0, 36) + '…'; }
     }
 
-    /* ═══════════════════════════════════════════════════════════
-       TOAST
-       ═══════════════════════════════════════════════════════════ */
+    function formatTime(date) {
+        return new Date(date).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    }
+
+    function handleLogout() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/pages/login.html';
+    }
+
     function showToast(message, type, icon) {
         const container = document.getElementById('toastContainer');
         const toast = document.createElement('div');
@@ -797,13 +827,6 @@
         setTimeout(() => toast.remove(), 3500);
     }
 
-    /* ═══════════════════════════════════════════════════════════
-       INIT
-       ═══════════════════════════════════════════════════════════ */
-    document.addEventListener('DOMContentLoaded', () => {
-        if (typeof requireAuth === 'function') requireAuth();
-        loadUsers();
-    });
 </script>
 </body>
 </html>

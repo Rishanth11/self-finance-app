@@ -6,9 +6,12 @@ import com.pro.finance.selffinanceapp.dto.GoldSummaryDTO;
 import com.pro.finance.selffinanceapp.model.DigitalGold;
 import com.pro.finance.selffinanceapp.service.DigitalGoldService;
 
+import com.pro.finance.selffinanceapp.service.GoldPriceService;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 
@@ -18,8 +21,11 @@ public class DigitalGoldController {
 
     private final DigitalGoldService service;
 
-    public DigitalGoldController(DigitalGoldService service) {
+    private final GoldPriceService goldPriceService;
+
+    public DigitalGoldController(DigitalGoldService service, GoldPriceService goldPriceService) {
         this.service = service;
+        this.goldPriceService = goldPriceService;
     }
 
     @PostMapping
@@ -65,5 +71,11 @@ public class DigitalGoldController {
             @RequestParam int month,
             Principal principal) {
         return service.getFilteredHistory(principal.getName(), year, month);
+    }
+
+    @GetMapping("/price")
+    public ResponseEntity<BigDecimal> getGoldPrice() {
+        BigDecimal price = goldPriceService.getLiveGoldPricePerGram();
+        return price != null ? ResponseEntity.ok(price) : ResponseEntity.status(503).build();
     }
 }
