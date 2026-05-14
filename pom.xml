@@ -5,8 +5,9 @@
              http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.yourorg</groupId>
-	<artifactId>pfms-backend</artifactId>
+	<groupId>com.rishanth</groupId>
+	<artifactId>flux360-backend</artifactId>
+	<name>FLUX360 Backend</name>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
