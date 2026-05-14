@@ -2,8 +2,6 @@ package com.rishanth.flux360.service;
 
 import com.rishanth.flux360.dto.SipPortfolioDTO;
 import com.rishanth.flux360.dto.SipRequestDTO;
-import com.pro.finance.selffinanceapp.model.*;
-import com.pro.finance.selffinanceapp.repository.*;
 import com.rishanth.flux360.model.SipInvestment;
 import com.rishanth.flux360.model.SipTransaction;
 import com.rishanth.flux360.model.User;

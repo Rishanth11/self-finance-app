@@ -1,6 +1,6 @@
 package com.rishanth.flux360.service;
 
-import com.pro.finance.selffinanceapp.dto.*;
+
 import com.rishanth.flux360.dto.LoanRequestDTO;
 import com.rishanth.flux360.dto.LoanResponseDTO;
 import com.rishanth.flux360.dto.LoanSummaryDTO;
